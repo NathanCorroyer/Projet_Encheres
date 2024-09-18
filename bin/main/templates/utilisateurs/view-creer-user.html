@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
+
+<head>
+
+<title data-th-text="#{index.title}"></title>
+
+</head>
+
+
+<body>
+	<main id="contenuPage">
+		<!-- AJOUTER LE LISTING DES USERS -->
+		
+		<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/creer')}">
+			
+		</form>
+	</main>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
+
+<head>
+
+<title data-th-text="#{index.title}"></title>
+
+</head>
+
+
+<body>
+	<main id="contenuPage" class="center-main">
+		<section class="center-section">
+			<h1 data-th-text="#{index.h1}"></h1>
+		</section>
+	</main>
+</body>
+</html>

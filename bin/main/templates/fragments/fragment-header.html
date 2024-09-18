@@ -1,0 +1,36 @@
+<header xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-header" class=" bg-dark">
+		
+	<nav class="navbar navbar-expand-lg">
+		<div>
+			<a href="/" >
+				<img data-th-src="@{/img/logo.png}" alt="Logo du site" class="mb-2"/>
+			</a>
+			<div>
+				<a href="/?language=fr" class="text-decoration-none">
+					<img alt="Français" src="/img/French.webp" width="50px" height="30px">
+				</a>
+				<a href="/?language=en" class="text-decoration-none">
+					<img alt="English" src="/img/English.webp" width="50px" height="30px">
+				</a>
+			</div>
+		</div>
+		
+		<ul class="navbar-nav me-auto mb-2 mb-lg-0" style="position:absolute; right:0;">
+			<li class="nav-item">
+				<a href="" data-th-text="#{frag-header.articles}" class="nav-link text-white"></a>
+			</li>
+			<li class="nav-item" data-th-if="${#authorization.expression('hasRole(''ADMIN'')')}">
+				<a href="/admin/users" data-th-text="#{frag-header.users}" class="nav-link text-white"></a>
+			</li>
+			
+			<li class="nav-item">
+				<a href="" data-th-text="#{frag-header.profil}" class="nav-link text-white"></a>
+			</li>
+			<!-- TODO Ajouter un contrôle sur la connexion de l'utilisateur	 -->
+			<li class="nav-item">
+				<a href="/logout" data-th-text="#{logout}" class="nav-link text-white"></a>
+			</li>
+		</ul>
+
+	</nav>
+</header>

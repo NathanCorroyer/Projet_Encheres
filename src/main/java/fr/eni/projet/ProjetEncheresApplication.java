@@ -1,4 +1,4 @@
-package fr.eni.Projet_Encheres;
+package fr.eni.projet;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
