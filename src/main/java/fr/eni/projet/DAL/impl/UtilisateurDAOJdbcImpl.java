@@ -35,6 +35,9 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		
+		
+		//blablabla
+		
 		namedParameters
 		.addValue("pseudo", utilisateur.getPseudo())
 		.addValue("nom", utilisateur.getNom())
