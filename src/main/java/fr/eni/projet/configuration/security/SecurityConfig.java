@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 	private static final String SELECT_USER = "select pseudo, mot_de_passe, 1 from UTILISATEURS WHERE pseudo = ?";
-	private static final String SELECT_ROLES = "select u.pseudo, r.role from UTILISATEURS u INNER JOIN roles r on u.no_utilisateur = r.no_utilisateur WHERE u.pseudo = ?";
+	private static final String SELECT_ROLES = "select u.pseudo, r.role from UTILISATEURS u INNER JOIN roles r on u.code_role = r.id WHERE u.pseudo = ?";
 	protected final Log logger = LogFactory.getLog(getClass());
 
 

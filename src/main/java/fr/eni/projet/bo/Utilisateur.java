@@ -13,6 +13,7 @@ public class Utilisateur {
 	private String password;
 	private int credit = 0;
 	private boolean actif = true;
+	private int code_role;
 	
 	
 	//----------------------- CONSTRUCTEURS ----------------------------------- 
@@ -20,7 +21,7 @@ public class Utilisateur {
 	}
 	
 	
-	public Utilisateur(int id, String pseudo, String nom, String prenom, String email, String telephone, String rue, String code_postal, String ville, String password, int credit, boolean actif) {
+	public Utilisateur(int id, String pseudo, String nom, String prenom, String email, String telephone, String rue, String code_postal, String ville, String password, int credit, boolean actif, int code_role) {
 		super();
 		this.id = id;
 		this.pseudo = pseudo;
@@ -34,6 +35,7 @@ public class Utilisateur {
 		this.password = password;
 		this.credit = credit;
 		this.actif = actif;
+		this.code_role = code_role;
 	}
 	
 	//----------------------- GETTERS / SETTERS -----------------------------------
@@ -110,16 +112,28 @@ public class Utilisateur {
 		this.actif = actif;
 	}
 
+	
+	public int getCode_role() {
+		return code_role;
+	}
+	
+	
+	public void setCode_role(int code_role) {
+		this.code_role = code_role;
+	}
+
 
 
 	
 	//----------------------- METHODES -----------------------------------
-	
+
+
 	@Override
 	public String toString() {
 		return "Utilisateur [id=" + id + ", pseudo=" + pseudo + ", nom=" + nom + ", prenom=" + prenom + ", email=" + email + ", telephone=" + telephone + ", rue=" + rue + ", code_postal="
-				+ code_postal + ", ville=" + ville + ", password=" + password + ", credit=" + credit + ", actif=" + actif + "]";
+				+ code_postal + ", ville=" + ville + ", password=" + password + ", credit=" + credit + ", actif=" + actif + ", code_role=" + code_role + "]";
 	}
+
 	
 	
 }

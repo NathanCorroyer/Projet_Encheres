@@ -46,7 +46,6 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 		@Override
 		public Enchere mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Enchere enchere = new Enchere();
-			enchere.setId(rs.getInt("no_enchere"));
 			enchere.setDate(rs.getObject("date_enchere", LocalDateTime.class));
 			enchere.setMontant(rs.getInt("montant_enchere"));
 			

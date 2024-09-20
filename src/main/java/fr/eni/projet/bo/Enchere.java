@@ -3,7 +3,6 @@ package fr.eni.projet.bo;
 import java.time.LocalDateTime;
 
 public class Enchere {
-	private int id;
 	
 	private LocalDateTime date;
 	
@@ -17,12 +16,9 @@ public class Enchere {
 	//----------------------- CONSTRUCTEURS -----------------------------------
 	
 	public Enchere() {
-		super();
 	}
 	
-	public Enchere(int id, LocalDateTime date, int montant, Article article, Utilisateur acheteur) {
-		super();
-		this.id = id;
+	public Enchere(LocalDateTime date, int montant, Article article, Utilisateur acheteur) {
 		this.date = date;
 		this.montant = montant;
 		this.article = article;
@@ -32,13 +28,7 @@ public class Enchere {
 	
 	//----------------------- GETTERS / SETTERS -----------------------------------
 
-	public int getId() {
-		return id;
-	}
 	
-	public void setId(int id) {
-		this.id = id;
-	}
 	
 	public LocalDateTime getDate() {
 		return date;
@@ -77,7 +67,7 @@ public class Enchere {
 	
 	@Override
 	public String toString() {
-		return "Enchere [id=" + id + ", date=" + date + ", montant=" + montant + ", article=" + article + ", acheteur=" + acheteur + "]";
+		return "Enchere [date=" + date + ", montant=" + montant + ", article=" + article + ", acheteur=" + acheteur + "]";
 	}
 	
 }

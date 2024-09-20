@@ -1,6 +1,6 @@
 package fr.eni.projet.controller;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -18,13 +18,13 @@ import fr.eni.projet.exceptions.BusinessException;
 public class UtilisateurController {
 	
 	private UtilisateurService userService;
-	//private PasswordEncoder passwordEncoder;
-	
 	
 	
 	public UtilisateurController(UtilisateurService userService) {
 		this.userService = userService;
 	}
+
+	
 
 //	public UtilisateurController(UtilisateurService userService, PasswordEncoder passwordEncoder) {
 //		this.userService = userService;
@@ -42,11 +42,10 @@ public class UtilisateurController {
 			return "view-film-form";
 		} else {
 			try {
-//				String password = user.getPassword();
-//				System.out.println("password :" + password);
-//				password = passwordEncoder.encode(password);
-//				System.out.println("encodedPassword :" + password );
-//				user.setPassword(password);
+				String password = user.getPassword();
+				password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
+				user.setPassword(password);
+				
 				userService.create(user);
 				return "redirect:/";
 			} catch (BusinessException e) {

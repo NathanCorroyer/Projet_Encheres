@@ -18,10 +18,10 @@ import fr.eni.projet.bo.Utilisateur;
 @Repository
 public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 
-	private final static String INSERT = "INSERT INTO UTILISATEURS(pseudo, nom, prenom, email, telephone, rue, code_postal, ville, mot_de_passe, credit) VALUES (:pseudo, :nom, :prenom, :email, :telephone, :rue, :code_postal, :ville, :mot_de_passe, :credit)";
-	private final static String FIND_BY_ID = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, rue, code_postal, ville, credit, actif FROM UTILISATEURS WHERE no_utilisateur = :no_utilisateur";
-	private final static String FIND_BY_PSEUDO = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, rue, code_postal, ville, credit, actif FROM UTILISATEURS WHERE pseudo = :pseudo";
-	private final static String FIND_ALL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, rue, code_postal, ville, credit, actif FROM UTILISATEURS";
+	private final static String INSERT = "INSERT INTO UTILISATEURS(pseudo, nom, prenom, email, telephone, rue, code_postal, ville, mot_de_passe, credit, code_role) VALUES (:pseudo, :nom, :prenom, :email, :telephone, :rue, :code_postal, :ville, :mot_de_passe, :credit, :code_role)";
+	private final static String FIND_BY_ID = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, rue, code_postal, ville, credit, actif, code_role FROM UTILISATEURS WHERE no_utilisateur = :no_utilisateur";
+	private final static String FIND_BY_PSEUDO = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, rue, code_postal, ville, credit, actif, code_role FROM UTILISATEURS WHERE pseudo = :pseudo";
+	private final static String FIND_ALL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, rue, code_postal, ville, credit, actif, code_role FROM UTILISATEURS";
 	//private final static String DELETE = "DELETE FROM UTILISATEURS WHERE no_utilisateur = :no_utilisateur";
 	private final static String UPDATE = "UPDATE UTILISATEURS SET pseudo = :pseudo, nom = :nom, prenom = :prenom, email = :email, telephone = :telephone, rue = :rue, "
 			+ "code_postal = :code_postal, ville = :ville, mot_de_passe = :mot_de_passe, credit = :credit WHERE no_utilisateur = :no_utilisateur";
@@ -45,13 +45,13 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 		.addValue("code_postal", utilisateur.getCode_postal())
 		.addValue("ville", utilisateur.getVille())
 		.addValue("mot_de_passe", utilisateur.getPassword())
-		.addValue("credit", utilisateur.getCredit());
+		.addValue("credit", utilisateur.getCredit())
+		.addValue("code_role", 1);
 		
 		namedParameterJdbcTemplate.update(INSERT, namedParameters, keyHolder);
 		if (keyHolder != null && keyHolder.getKey() != null) {
 			utilisateur.setId(keyHolder.getKey().intValue());
 		}
-		
 	}
 
 	@Override
@@ -79,16 +79,16 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		
 		namedParameters
-		.addValue("pseudo", utilisateur.getPseudo())
-		.addValue("nom", utilisateur.getNom())
-		.addValue("prenom", utilisateur.getPrenom())
-		.addValue("email", utilisateur.getEmail())
-		.addValue("telephone", utilisateur.getTelephone())
-		.addValue("rue", utilisateur.getRue())
-		.addValue("code_postal", utilisateur.getCode_postal())
-		.addValue("ville", utilisateur.getVille())
-		.addValue("mot_de_passe", utilisateur.getPassword())
-		.addValue("credit", utilisateur.getCredit());
+			.addValue("pseudo", utilisateur.getPseudo())
+			.addValue("nom", utilisateur.getNom())
+			.addValue("prenom", utilisateur.getPrenom())
+			.addValue("email", utilisateur.getEmail())
+			.addValue("telephone", utilisateur.getTelephone())
+			.addValue("rue", utilisateur.getRue())
+			.addValue("code_postal", utilisateur.getCode_postal())
+			.addValue("ville", utilisateur.getVille())
+			.addValue("mot_de_passe", utilisateur.getPassword())
+			.addValue("credit", utilisateur.getCredit());
 		
 		namedParameterJdbcTemplate.update(UPDATE, namedParameters);
 	}
@@ -121,6 +121,7 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 			user.setVille(rs.getString("ville"));
 			user.setCredit(rs.getInt("credit"));
 			user.setActif(rs.getBoolean("actif"));
+			user.setCode_role(rs.getInt("code_role"));
 			
 			return user;
 		}
