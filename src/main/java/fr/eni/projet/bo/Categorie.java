@@ -6,6 +6,7 @@ public class Categorie {
 	private String libelle;
 	
 	// TODO : test git
+	// TODO : test git 2
 	
 	//----------------------- CONSTRUCTEURS -----------------------------------
 	
