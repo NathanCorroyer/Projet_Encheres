@@ -5,7 +5,7 @@ public class BusinessCode {
 //Clefs de validation des utilisateurs
 //Clefs de validation des Catégories
 //Clefs de validation des articles
-//Clefs de validation des retraits
+//Clefs de validation des adresses
 //Clefs de validation des encheres
 
 

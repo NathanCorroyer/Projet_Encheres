@@ -1,6 +1,6 @@
 package fr.eni.projet.bo;
 
-public class Retrait {
+public class Adresse {
 	
 	private int id_article;
 	private String rue;
@@ -9,9 +9,9 @@ public class Retrait {
 	
 	//----------------------- CONSTRUCTEURS -----------------------------------
 	
-	public Retrait() {
+	public Adresse() {
 	}
-	public Retrait(int id_article, String rue, String code_postal, String ville) {
+	public Adresse(int id_article, String rue, String code_postal, String ville) {
 		this.id_article = id_article;
 		this.rue = rue;
 		this.code_postal = code_postal;
@@ -50,7 +50,7 @@ public class Retrait {
 	
 	@Override
 	public String toString() {
-		return "Retrait [id_article=" + id_article + ", rue=" + rue + ", code_postal=" + code_postal + ", ville=" + ville + "]";
+		return "Adresse [id_article=" + id_article + ", rue=" + rue + ", code_postal=" + code_postal + ", ville=" + ville + "]";
 	}
 	
 	
