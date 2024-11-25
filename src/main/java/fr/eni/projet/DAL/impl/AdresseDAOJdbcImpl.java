@@ -8,12 +8,12 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import fr.eni.projet.DAL.RetraitDAO;
-import fr.eni.projet.bo.Retrait;
+import fr.eni.projet.DAL.AdresseDAO;
+import fr.eni.projet.bo.Adresse;
 
 
 @Repository
-public class RetraitDAOJdbcImpl implements RetraitDAO {
+public class AdresseDAOJdbcImpl implements AdresseDAO {
 	private final static String INSERT = "";
 	private final static String FIND_BY_ID = "";
 	
@@ -22,28 +22,28 @@ public class RetraitDAOJdbcImpl implements RetraitDAO {
 	
 	
 	@Override
-	public void create(Retrait retrait) {
+	public void create(Adresse adresse) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public Retrait readByIdArticle(int id_article) {
+	public Adresse readByIdArticle(int id_article) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	
-	class RetraitRowMapper implements RowMapper<Retrait>{
+	class AdresseRowMapper implements RowMapper<Adresse>{
 
 		@Override
-		public Retrait mapRow(ResultSet rs, int rowNum) throws SQLException {
-			Retrait retrait = new Retrait();
-			retrait.setId_article(rs.getInt("no_article"));
-			retrait.setRue(rs.getString("rue"));
-			retrait.setCode_postal(rs.getString("code_postal"));
-			retrait.setVille(rs.getString("ville"));
-			return retrait;
+		public Adresse mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Adresse adresse = new Adresse();
+			adresse.setId_article(rs.getInt("no_article"));
+			adresse.setRue(rs.getString("rue"));
+			adresse.setCode_postal(rs.getString("code_postal"));
+			adresse.setVille(rs.getString("ville"));
+			return adresse;
 		}
 		
 	}
