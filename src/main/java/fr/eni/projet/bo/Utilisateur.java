@@ -7,9 +7,7 @@ public class Utilisateur {
 	private String prenom;
 	private String email;
 	private String telephone;
-	private String rue;
-	private String code_postal;
-	private String ville;
+	private Adresse adresse;
 	private String password;
 	private int credit = 0;
 	private boolean actif = true;
@@ -21,7 +19,7 @@ public class Utilisateur {
 	}
 	
 	
-	public Utilisateur(int id, String pseudo, String nom, String prenom, String email, String telephone, String rue, String code_postal, String ville, String password, int credit, boolean actif, int code_role) {
+	public Utilisateur(int id, String pseudo, String nom, String prenom, String email, String telephone, Adresse adresse, String password, int credit, boolean actif, int code_role) {
 		super();
 		this.id = id;
 		this.pseudo = pseudo;
@@ -29,9 +27,7 @@ public class Utilisateur {
 		this.prenom = prenom;
 		this.email = email;
 		this.telephone = telephone;
-		this.rue = rue;
-		this.code_postal = code_postal;
-		this.ville = ville;
+		this.adresse=adresse;
 		this.password = password;
 		this.credit = credit;
 		this.actif = actif;
@@ -75,24 +71,14 @@ public class Utilisateur {
 	public void setTelephone(String telephone) {
 		this.telephone = telephone;
 	}
-	public String getRue() {
-		return rue;
+	public Adresse getAdresse() {
+		return adresse;
 	}
-	public void setRue(String rue) {
-		this.rue = rue;
+	
+	public void setAdresse(Adresse adresse) {
+		this.adresse = adresse;
 	}
-	public String getCode_postal() {
-		return code_postal;
-	}
-	public void setCode_postal(String code_postal) {
-		this.code_postal = code_postal;
-	}
-	public String getVille() {
-		return ville;
-	}
-	public void setVille(String ville) {
-		this.ville = ville;
-	}
+	
 	public String getPassword() {
 		return password;
 	}
@@ -130,8 +116,7 @@ public class Utilisateur {
 
 	@Override
 	public String toString() {
-		return "Utilisateur [id=" + id + ", pseudo=" + pseudo + ", nom=" + nom + ", prenom=" + prenom + ", email=" + email + ", telephone=" + telephone + ", rue=" + rue + ", code_postal="
-				+ code_postal + ", ville=" + ville + ", password=" + password + ", credit=" + credit + ", actif=" + actif + ", code_role=" + code_role + "]";
+		return "Utilisateur [id=" + id + ", pseudo=" + pseudo + ", nom=" + nom + ", prenom=" + prenom + ", email=" + email + ", telephone=" + telephone + ", adresse =  " + adresse  + " password=" + password + ", credit=" + credit + ", actif=" + actif + ", code_role=" + code_role + "]";
 	}
 
 	
