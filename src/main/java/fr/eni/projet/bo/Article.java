@@ -2,6 +2,8 @@ package fr.eni.projet.bo;
 
 import java.time.LocalDateTime;
 
+import fr.eni.projet.enums.StatutEnchere;
+
 public class Article {
 	private int id;
 	private String nom;
@@ -12,6 +14,9 @@ public class Article {
 	private int prix_vente;
 	private Utilisateur proprietaire;
 	private Categorie categorie;
+	private Retrait retrait;
+	private StatutEnchere statut_enchere;
+	private String path_image;
 	
 	
 
@@ -20,7 +25,7 @@ public class Article {
 	public Article() {
 	}
 	
-	public Article(int id, String nom, String description, LocalDateTime date_debut, LocalDateTime date_fin, int prix_initial, int prix_vente, Utilisateur proprietaire, Categorie categorie) {
+	public Article(int id, String nom, String description, LocalDateTime date_debut, LocalDateTime date_fin, int prix_initial, int prix_vente, Utilisateur proprietaire, Categorie categorie, Retrait retrait, StatutEnchere statut_enchere, String path_image) {
 		super();
 		this.id = id;
 		this.nom = nom;
@@ -31,6 +36,10 @@ public class Article {
 		this.prix_vente = prix_vente;
 		this.proprietaire = proprietaire;
 		this.categorie = categorie;
+		this.retrait = retrait;
+		this.statut_enchere= statut_enchere;
+		this.path_image= path_image;
+		
 	}
 	
 	//----------------------- GETTERS / SETTERS -----------------------------------
@@ -83,6 +92,16 @@ public class Article {
 	public void setProprietaire(Utilisateur proprietaire) {
 		this.proprietaire = proprietaire;
 	}
+	
+	
+	public Retrait getRetrait() {
+		return retrait;
+	}
+
+	public void setRetrait(Retrait retrait) {
+		this.retrait = retrait;
+	}
+
 	public Categorie getCategorie() {
 		return categorie;
 	}
@@ -90,6 +109,23 @@ public class Article {
 		this.categorie = categorie;
 	}
 
+	
+	public StatutEnchere getStatut_enchere() {
+		return statut_enchere;
+	}
+	
+	public void setStatut_enchere(StatutEnchere statut_enchere) {
+		this.statut_enchere = statut_enchere;
+	}
+	
+	
+	public String getPath_image() {
+		return path_image;
+	}
+	
+	public void setPath_image(String path_image) {
+		this.path_image = path_image;
+	}
 	
 	
 	//------------ Méthodes spéciales --------------
