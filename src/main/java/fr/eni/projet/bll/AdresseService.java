@@ -1,11 +1,10 @@
-package fr.eni.projet.DAL;
+package fr.eni.projet.bll;
 
 import java.util.List;
 
 import fr.eni.projet.bo.Adresse;
 
-public interface AdresseDAO {
-
+public interface AdresseService {
 	public void create(Adresse adresse);
 
 	public Adresse readByIdArticle(int id);

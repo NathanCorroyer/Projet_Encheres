@@ -80,9 +80,9 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	}
 
 	@Override
-	public void delete(Article article) {
+	public void delete(int id) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("no_article", article.getId());
+		namedParameters.addValue("no_article", id);
 		namedParameterJdbcTemplate.update(DELETE, namedParameters);
 	}
 
@@ -107,5 +107,17 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 
 			return article;
 		}
+	}
+
+	@Override
+	public List<Article> findByCategorie(int categorieId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Article> findByUtilisateur(int utilisateurId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

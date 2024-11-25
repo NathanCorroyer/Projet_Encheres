@@ -11,7 +11,14 @@ public interface ArticleService {
 
 	public List<Article> findAll();
 
-	public void delete(Article article);
+	public void delete(int id);
 
 	public void update(Article article);
+
+	Article findById(int id);
+
+	List<Article> findByCategorie(int categorieId);
+
+	List<Article> findByUtilisateur(int utilisateurId);
+
 }
