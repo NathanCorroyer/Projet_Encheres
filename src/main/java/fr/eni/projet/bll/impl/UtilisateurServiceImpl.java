@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.DAL.UtilisateurDAO;
 import fr.eni.projet.bll.UtilisateurService;
+import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Utilisateur;
 
 @Service
@@ -14,9 +16,17 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 	@Autowired
 	UtilisateurDAO utilisateurDAO;
-	
+
+	@Autowired
+	private AdresseDAO adresseDAO;
+
 	@Override
 	public void create(Utilisateur utilisateur) {
+		Adresse adresse = utilisateur.getAdresse();
+		if (adresse == null) {
+			throw new IllegalArgumentException("L'adresse est obligatoire pour créer un utilisateur.");
+		}
+		adresseDAO.create(adresse);
 		utilisateurDAO.create(utilisateur);
 	}
 

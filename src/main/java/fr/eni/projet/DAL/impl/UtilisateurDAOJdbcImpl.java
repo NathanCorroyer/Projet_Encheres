@@ -12,6 +12,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.DAL.UtilisateurDAO;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Utilisateur;
@@ -30,20 +31,28 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+	@Autowired
+	private AdresseDAO adresseDAO;
+
 	@Override
 	public void create(Utilisateur utilisateur) {
+		Adresse adresse = utilisateur.getAdresse();
+		if (adresse != null) {
+			adresseDAO.create(adresse);
+		}
+
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
 		namedParameters.addValue("pseudo", utilisateur.getPseudo()).addValue("nom", utilisateur.getNom())
 				.addValue("prenom", utilisateur.getPrenom()).addValue("email", utilisateur.getEmail())
-				.addValue("telephone", utilisateur.getTelephone()).addValue("rue", utilisateur.getAdresse().getRue())
-				.addValue("code_postal", utilisateur.getAdresse().getCode_postal())
-				.addValue("ville", utilisateur.getAdresse().getVille())
+				.addValue("telephone", utilisateur.getTelephone()).addValue("rue", adresse.getRue())
+				.addValue("code_postal", adresse.getCode_postal()).addValue("ville", adresse.getVille())
 				.addValue("mot_de_passe", utilisateur.getPassword()).addValue("credit", utilisateur.getCredit())
 				.addValue("code_role", 1);
 
 		namedParameterJdbcTemplate.update(INSERT, namedParameters, keyHolder);
+
 		if (keyHolder != null && keyHolder.getKey() != null) {
 			utilisateur.setId(keyHolder.getKey().intValue());
 		}
