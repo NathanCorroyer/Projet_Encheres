@@ -11,10 +11,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import fr.eni.projet.DAL.UtilisateurDAO;
-import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Utilisateur;
 
@@ -27,19 +25,21 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	private final static String FIND_ALL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS";
 	private final static String UPDATE = "UPDATE UTILISATEURS SET pseudo = :pseudo, nom = :nom, prenom = :prenom, email = :email, telephone = :telephone, no_adresse = :no_adresse, mot_de_passe = :mot_de_passe, credit = :credit WHERE no_utilisateur = :no_utilisateur";
 	private final static String MODIFIER_ACTIVATION = "UPDATE UTILISATEURS SET actif = :actif WHERE no_utilisateur = :no_utilisateur";
+	private final static String FIND_BY_EMAIL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE email = :email";
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Override
 	public void create(Utilisateur utilisateur) {
-		
+
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
 		namedParameters.addValue("pseudo", utilisateur.getPseudo()).addValue("nom", utilisateur.getNom())
 				.addValue("prenom", utilisateur.getPrenom()).addValue("email", utilisateur.getEmail())
-				.addValue("telephone", utilisateur.getTelephone()).addValue("no_adresse", utilisateur.getAdresse().getId())
+				.addValue("telephone", utilisateur.getTelephone())
+				.addValue("no_adresse", utilisateur.getAdresse().getId())
 				.addValue("mot_de_passe", utilisateur.getPassword()).addValue("credit", utilisateur.getCredit())
 				.addValue("code_role", 1);
 
@@ -62,6 +62,13 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("pseudo", pseudo);
 		return namedParameterJdbcTemplate.queryForObject(FIND_BY_PSEUDO, namedParameters, new UtilisateurRowMapper());
+	}
+
+	@Override
+	public Utilisateur findByEmail(String email) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("email", email);
+		return namedParameterJdbcTemplate.queryForObject(FIND_BY_EMAIL, namedParameters, new UtilisateurRowMapper());
 	}
 
 	@Override
@@ -103,11 +110,11 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 			user.setPrenom(rs.getString("prenom"));
 			user.setEmail(rs.getString("email"));
 			user.setTelephone(rs.getString("telephone"));
-			
+
 			Adresse adresse = new Adresse();
 			adresse.setId(rs.getInt("no_adresse"));
 			user.setAdresse(adresse);
-			
+
 			user.setCredit(rs.getInt("credit"));
 			user.setActif(rs.getBoolean("actif"));
 			user.setCode_role(rs.getInt("code_role"));
@@ -115,4 +122,5 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 			return user;
 		}
 	}
+
 }
