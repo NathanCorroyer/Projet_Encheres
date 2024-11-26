@@ -25,6 +25,8 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	private final static String FIND_ALL = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES";
 	private final static String UPDATE = "UPDATE ARTICLES SET nom_article = :nom_article, description = :description, date_debut_encheres = :date_debut_encheres, date_fin_encheres = :date_fin_encheres, prix_initial = :prix_initial, prix_vente = :prix_vente, no_utilisateur = :no_utilisateur, no_categorie = :no_categorie, statut_enchere = :statut_enchere, no_adresse_retrait = :no_adresse_retrait, path_image = :path_image WHERE no_article = :no_article";
 	private final static String DELETE = "DELETE FROM ARTICLES WHERE no_article = :no_article";
+	private final static String FIND_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie";
+	private final static String FIND_BY_UTILISATEUR = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_utilisateur = :no_utilisateur";
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -111,13 +113,15 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 
 	@Override
 	public List<Article> findByCategorie(int categorieId) {
-		// TODO Auto-generated method stub
-		return null;
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_categorie", categorieId);
+		return namedParameterJdbcTemplate.query(FIND_BY_CATEGORIE, namedParameters, new ArticleRowMapper());
 	}
 
 	@Override
 	public List<Article> findByUtilisateur(int utilisateurId) {
-		// TODO Auto-generated method stub
-		return null;
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_utilisateur", utilisateurId);
+		return namedParameterJdbcTemplate.query(FIND_BY_UTILISATEUR, namedParameters, new ArticleRowMapper());
 	}
 }
