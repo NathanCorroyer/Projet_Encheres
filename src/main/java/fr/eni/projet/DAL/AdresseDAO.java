@@ -6,7 +6,7 @@ import fr.eni.projet.bo.Adresse;
 
 public interface AdresseDAO {
 
-	public void create(Adresse adresse);
+	public int create(Adresse adresse);
 
 	public Adresse readByIdArticle(int id);
 

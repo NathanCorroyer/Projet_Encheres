@@ -16,8 +16,8 @@ public class AdresseServiceImpl implements AdresseService {
 	private AdresseDAO adresseDAO;
 
 	@Override
-	public void create(Adresse adresse) {
-		adresseDAO.create(adresse);
+	public int create(Adresse adresse) {
+		return adresseDAO.create(adresse);
 	}
 
 	@Override

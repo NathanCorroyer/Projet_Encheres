@@ -6,27 +6,37 @@ public class Adresse {
 	private String rue;
 	private String code_postal;
 	private String ville;
+	private boolean adresse_eni;
 
 	// ----------------------- CONSTRUCTEURS -----------------------------------
 
 	public Adresse() {
 	}
 
-	public Adresse(int id, String rue, String code_postal, String ville) {
+	
+	
+	public Adresse(int id) {
+		this.id = id;
+	}
+
+
+
+	public Adresse(int id, String rue, String code_postal, String ville, boolean adresse_eni) {
 		this.id = id;
 		this.rue = rue;
 		this.code_postal = code_postal;
 		this.ville = ville;
+		this.adresse_eni = adresse_eni;
 	}
 
 	// ----------------------- GETTERS / SETTERS -----------------------------------
 
-	public int getId_article() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId_article(int id_article) {
-		this.id = id_article;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getRue() {
@@ -53,7 +63,18 @@ public class Adresse {
 		this.ville = ville;
 	}
 
+	
+	public boolean isAdresse_eni() {
+		return adresse_eni;
+	}
+	
+	public void setAdresse_eni(boolean adresse_eni) {
+		this.adresse_eni = adresse_eni;
+	}
+	
+	
 	// ----------------------- METHODES -----------------------------------
+
 
 	@Override
 	public String toString() {

@@ -12,42 +12,41 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.DAL.UtilisateurDAO;
+import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Utilisateur;
+import fr.eni.projet.exceptions.BusinessException;
 
 @Repository
 public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 
-	private final static String INSERT = "INSERT INTO UTILISATEURS(pseudo, nom, prenom, email, telephone, rue, code_postal, ville, mot_de_passe, credit, code_role) VALUES (:pseudo, :nom, :prenom, :email, :telephone, :rue, :code_postal, :ville, :mot_de_passe, :credit, :code_role)";
-	private final static String FIND_BY_ID = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, rue, code_postal, ville, credit, actif, code_role FROM UTILISATEURS WHERE no_utilisateur = :no_utilisateur";
-	private final static String FIND_BY_PSEUDO = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, rue, code_postal, ville, credit, actif, code_role FROM UTILISATEURS WHERE pseudo = :pseudo";
-	private final static String FIND_ALL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, rue, code_postal, ville, credit, actif, code_role FROM UTILISATEURS";
-	private final static String UPDATE = "UPDATE UTILISATEURS SET pseudo = :pseudo, nom = :nom, prenom = :prenom, email = :email, telephone = :telephone, rue = :rue, "
-			+ "code_postal = :code_postal, ville = :ville, mot_de_passe = :mot_de_passe, credit = :credit WHERE no_utilisateur = :no_utilisateur";
+	private final static String INSERT = "INSERT INTO UTILISATEURS(pseudo, nom, prenom, email, telephone, no_adresse, mot_de_passe, credit, code_role) VALUES (:pseudo, :nom, :prenom, :email, :telephone, no_adresse, :mot_de_passe, :credit, :code_role)";
+	private final static String FIND_BY_ID = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE no_utilisateur = :no_utilisateur";
+	private final static String FIND_BY_PSEUDO = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE pseudo = :pseudo";
+	private final static String FIND_ALL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS";
+	private final static String UPDATE = "UPDATE UTILISATEURS SET pseudo = :pseudo, nom = :nom, prenom = :prenom, email = :email, telephone = :telephone, no_adresse = :no_adresse, mot_de_passe = :mot_de_passe, credit = :credit WHERE no_utilisateur = :no_utilisateur";
 	private final static String MODIFIER_ACTIVATION = "UPDATE UTILISATEURS SET actif = :actif WHERE no_utilisateur = :no_utilisateur";
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Autowired
-	private AdresseDAO adresseDAO;
+	private AdresseService adresseService;
 
 	@Override
 	public void create(Utilisateur utilisateur) {
 		Adresse adresse = utilisateur.getAdresse();
+		int adresseKey = 0;
 		if (adresse != null) {
-			adresseDAO.create(adresse);
+			adresseKey = adresseService.create(adresse);
 		}
-
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
 		namedParameters.addValue("pseudo", utilisateur.getPseudo()).addValue("nom", utilisateur.getNom())
 				.addValue("prenom", utilisateur.getPrenom()).addValue("email", utilisateur.getEmail())
-				.addValue("telephone", utilisateur.getTelephone()).addValue("rue", adresse.getRue())
-				.addValue("code_postal", adresse.getCode_postal()).addValue("ville", adresse.getVille())
+				.addValue("telephone", utilisateur.getTelephone()).addValue("no_adresse", adresseKey)
 				.addValue("mot_de_passe", utilisateur.getPassword()).addValue("credit", utilisateur.getCredit())
 				.addValue("code_role", 1);
 
@@ -83,9 +82,8 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 
 		namedParameters.addValue("pseudo", utilisateur.getPseudo()).addValue("nom", utilisateur.getNom())
 				.addValue("prenom", utilisateur.getPrenom()).addValue("email", utilisateur.getEmail())
-				.addValue("telephone", utilisateur.getTelephone()).addValue("rue", utilisateur.getAdresse().getRue())
-				.addValue("code_postal", utilisateur.getAdresse().getCode_postal())
-				.addValue("ville", utilisateur.getAdresse().getVille())
+				.addValue("telephone", utilisateur.getTelephone())
+				.addValue("no_adresse", utilisateur.getAdresse().getId())
 				.addValue("mot_de_passe", utilisateur.getPassword()).addValue("credit", utilisateur.getCredit())
 				.addValue("no_utilisateur", utilisateur.getId());
 
@@ -112,8 +110,11 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 			user.setPrenom(rs.getString("prenom"));
 			user.setEmail(rs.getString("email"));
 			user.setTelephone(rs.getString("telephone"));
-			user.setAdresse(new Adresse(rs.getInt("no_utilisateur"), rs.getString("rue"), rs.getString("code_postal"),
-					rs.getString("ville")));
+			
+			Adresse adresse = new Adresse();
+			adresse.setId(rs.getInt("no_adresse"));
+			user.setAdresse(adresse);
+			
 			user.setCredit(rs.getInt("credit"));
 			user.setActif(rs.getBoolean("actif"));
 			user.setCode_role(rs.getInt("code_role"));
