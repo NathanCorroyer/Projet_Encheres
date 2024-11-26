@@ -30,7 +30,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		}
 		int adresseKey = 0;
 		if (adresse != null) {
-			adresseDAO.create(adresse);
+			adresseKey = adresseDAO.create(adresse);
 		}
 		utilisateur.getAdresse().setId(adresseKey);
 		utilisateurDAO.create(utilisateur);
