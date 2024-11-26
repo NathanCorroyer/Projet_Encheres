@@ -55,7 +55,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 				.addValue("no_utilisateur", article.getProprietaire().getId())
 				.addValue("no_categorie", article.getCategorie().getId())
 				.addValue("statut_enchere", article.getStatut_enchere().ordinal())
-				.addValue("no_adresse_retrait", article.getAdresse().getId_article())
+				.addValue("no_adresse_retrait", article.getAdresse().getId())
 				.addValue("path_image", article.getPath_image());
 
 		namedParameterJdbcTemplate.update(INSERT, namedParameters, keyHolder);
@@ -75,7 +75,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 				.addValue("no_utilisateur", article.getProprietaire().getId())
 				.addValue("no_categorie", article.getCategorie().getId())
 				.addValue("statut_enchere", article.getStatut_enchere().ordinal())
-				.addValue("no_adresse_retrait", article.getAdresse().getId_article())
+				.addValue("no_adresse_retrait", article.getAdresse().getId())
 				.addValue("path_image", article.getPath_image()).addValue("no_article", article.getId());
 
 		namedParameterJdbcTemplate.update(UPDATE, namedParameters);
@@ -102,8 +102,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 			article.setDate_fin(rs.getTimestamp("date_fin_encheres").toLocalDateTime());
 			article.setPrix_initial(rs.getInt("prix_initial"));
 			article.setPrix_vente(rs.getInt("prix_vente"));
-			article.setAdresse(new Adresse(rs.getInt("no_adresse_retrait"), rs.getString("rue"),
-					rs.getString("code_postal"), rs.getString("ville")));
+			article.setAdresse(new Adresse(rs.getInt("no_adresse_retrait")));
 			article.setStatut_enchere(StatutEnchere.values()[rs.getInt("statut_enchere")]);
 			article.setPath_image(rs.getString("path_image"));
 

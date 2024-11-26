@@ -26,10 +26,6 @@ public class UtilisateurController {
 
 	
 
-//	public UtilisateurController(UtilisateurService userService, PasswordEncoder passwordEncoder) {
-//		this.userService = userService;
-//		this.passwordEncoder = passwordEncoder;
-//	}
 
 	@GetMapping("/creer")
 	private String creer(@ModelAttribute("user") Utilisateur user) {

@@ -5,7 +5,7 @@ import java.util.List;
 import fr.eni.projet.bo.Adresse;
 
 public interface AdresseService {
-	public void create(Adresse adresse);
+	public int create(Adresse adresse);
 
 	public Adresse readByIdArticle(int id);
 
