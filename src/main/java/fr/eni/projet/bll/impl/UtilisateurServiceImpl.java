@@ -57,10 +57,14 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 	@Override
 	public Utilisateur findById(int id) {
+
 		if (id <= 0) {
 			throw new IllegalArgumentException("L'ID doit être supérieur à 0.");
 		}
-		return utilisateurDAO.findById(id);
+		Utilisateur user = utilisateurDAO.findById(id);
+		Adresse adresse = adresseDAO.findById(user.getAdresse().getId());
+		user.setAdresse(adresse);
+		return user;
 	}
 
 	@Override
@@ -76,7 +80,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		if (pseudo == null || pseudo.isBlank()) {
 			throw new IllegalArgumentException("Le pseudo ne peut pas être vide.");
 		}
-		return utilisateurDAO.findByPseudo(pseudo);
+		Utilisateur user =  utilisateurDAO.findByPseudo(pseudo);
+		Adresse adresse = adresseDAO.findById(user.getAdresse().getId());
+		user.setAdresse(adresse);
+		return user;
+
 	}
 
 	@Override

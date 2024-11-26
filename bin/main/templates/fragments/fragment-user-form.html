@@ -1,47 +1,42 @@
 <form xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-user-form(action)" data-th-action="${action}" method="post" data-th-object="${user}">
-	<h1 data-th-text="#{view-user-form.h1}"></h1>		
-	
-	<div class="mb-3">
-	    <label class="form-label" data-th-text="#{view-user-form.pseudo}"></label>
-	    <input type="text" class="form-control" data-th-field="*{pseudo}" required/>
-  	</div>
-  	<div class="mb-3">
-	    <label class="form-label" data-th-text="#{view-user-form.nom}"></label>
-	    <input type="text" class="form-control" data-th-field="*{nom}" required/>
-  	</div>
-  	<div class="mb-3">
-	    <label class="form-label" data-th-text="#{view-user-form.prenom}"></label>
-	    <input type="text" class="form-control" data-th-field="*{prenom}" required/>
-  	</div>
-  	<div class="mb-3">
-	    <label class="form-label" data-th-text="#{view-user-form.email}"></label>
-	    <input type="email" class="form-control" data-th-field="*{email}" required/>
-  	</div>
-  	<div class="mb-3">
-	    <label class="form-label" data-th-text="#{view-user-form.telephone}"></label>
-	    <input type="tel" class="form-control" data-th-field="*{telephone}" />
-  	</div> 
-  	<div class="mb-3">
-	    <label class="form-label" data-th-text="#{view-user-form.rue}"></label>
-	    <input type="text" class="form-control" data-th-field="*{adresse.rue}" required/>
-  	</div> 
-  	<div class="mb-3">
-	    <label class="form-label" data-th-text="#{view-user-form.ville}"></label>
-	    <input type="text" class="form-control" data-th-field="*{adresse.ville}" required/>
-  	</div>   
-  	<div class="mb-3">
-	    <label class="form-label" data-th-text="#{view-user-form.code.postal}"></label>
-	    <input type="text" class="form-control" data-th-field="*{adresse.code_postal}" required/>
-  	</div>   
-  	<div class="mb-3">
-	    <label class="form-label" data-th-text="#{view-user-form.pwd}"></label>
-	    <input type="password" class="form-control" data-th-field="*{password}" required/>
-  	</div>  	
-  	<div class="mb-3">
-	    <label class="form-label" data-th-text="#{view-user-form.credit}"></label>
-	    <input type="number" class="form-control" data-th-field="*{credit}" required/>
-  	</div>  
-  	
-  	<button type="submit" data-th-text="#{view-user-form.btn}"></button>
-  	
+			
+	<fieldset data-th-disabled="${disabled}">
+		<div class="mb-3">
+		    <label class="form-label" data-th-text="#{view-user-form.pseudo}"></label>
+		    <input type="text" class="form-control" data-th-field="*{pseudo}" required/>
+	  	</div>
+	  	<div class="mb-3">
+		    <label class="form-label" data-th-text="#{view-user-form.nom}"></label>
+		    <input type="text" class="form-control" data-th-field="*{nom}" required/>
+	  	</div>
+	  	<div class="mb-3">
+		    <label class="form-label" data-th-text="#{view-user-form.prenom}"></label>
+		    <input type="text" class="form-control" data-th-field="*{prenom}" required/>
+	  	</div>
+	  	<div class="mb-3">
+		    <label class="form-label" data-th-text="#{view-user-form.email}"></label>
+		    <input type="email" class="form-control" data-th-field="*{email}" required/>
+	  	</div>
+	  	<div class="mb-3">
+		    <label class="form-label" data-th-text="#{view-user-form.telephone}"></label>
+		    <input type="tel" class="form-control" data-th-field="*{telephone}" />
+	  	</div> 
+	  	<div class="mb-3">
+		    <label class="form-label" data-th-text="#{view-user-form.rue}"></label>
+		    <input type="text" class="form-control" data-th-field="*{adresse.rue}" required/>
+	  	</div> 
+	  	<div class="mb-3">
+		    <label class="form-label" data-th-text="#{view-user-form.ville}"></label>
+		    <input type="text" class="form-control" data-th-field="*{adresse.ville}" required/>
+	  	</div>   
+	  	<div class="mb-3">
+		    <label class="form-label" data-th-text="#{view-user-form.code.postal}"></label>
+		    <input type="text" class="form-control" data-th-field="*{adresse.code_postal}" required/>
+	  	</div>   
+	  	<div class="mb-3">
+		    <label class="form-label" data-th-text="#{view-user-form.pwd}"></label>
+		    <input type="password" class="form-control" data-th-field="*{password}" required/>
+	  	</div>  	
+	  	<button type="submit" data-th-text="${text_button}"></button>
+  	</fieldset>
 </form>
