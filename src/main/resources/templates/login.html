@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
+<head>
+    <title>Connexion</title>
+</head>
+<body>
+    <main id="contenuPage">
+        <!-- Formulaire de connexion avec un fragment spécifique -->
+        <form data-th-replace="~{fragments/fragment-login-form :: frag-login-form(action = '/login')}">
+        </form>
+    </main>
+</body>
+</html>

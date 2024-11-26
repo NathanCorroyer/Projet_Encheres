@@ -15,6 +15,7 @@
 		<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/creer')}">
 			
 		</form>
+		<p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}"></p>
 	</main>
 </body>
 </html>

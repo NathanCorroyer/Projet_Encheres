@@ -1,6 +1,6 @@
 <form xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-user-form(action)" data-th-action="${action}" method="post" data-th-object="${user}">
 	<h1 data-th-text="#{view-user-form.h1}"></h1>		
-	
+	<div data-th-replace="~{fragments/errors/fragment-errors :: frag-errors}"></div>
 	<div class="mb-3">
 	    <label class="form-label" data-th-text="#{view-user-form.pseudo}"></label>
 	    <input type="text" class="form-control" data-th-field="*{pseudo}" required/>

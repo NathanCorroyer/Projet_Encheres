@@ -149,9 +149,14 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		if (utilisateur.getPassword() == null || utilisateur.getPassword().isBlank()) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_BLANK);
 			isValid = false;
+		} else if (utilisateur.getPassword().startsWith("{bcrypt}")) {
+			// Si c'est déjà un hash bcrypt, on ignore la validation regex.
+			System.out.println("Mot de passe déjà haché avec bcrypt, ignorer la validation regex.");
 		} else if (!utilisateur.getPassword()
-				.matches("^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0-9@$!%*?&]{8,20}$")) {
+				.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[@$!%?&])[A-Za-z\\d@$!%?&]{8,20}$")) {
+			// Validation du format du mot de passe
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_FORMAT);
+			System.out.println("Erreur regex : " + utilisateur.getPassword());
 			isValid = false;
 		}
 

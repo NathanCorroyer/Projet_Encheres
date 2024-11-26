@@ -26,7 +26,7 @@ public class Adresse {
 	private String ville;
 
 	@NotNull
-	private Boolean adresse_eni;
+	private boolean adresse_eni = false;
 
 	// ----------------------- CONSTRUCTEURS -----------------------------------
 
@@ -82,13 +82,12 @@ public class Adresse {
 	public boolean isAdresse_eni() {
 		return adresse_eni;
 	}
-	
+
 	public void setAdresse_eni(boolean adresse_eni) {
 		this.adresse_eni = adresse_eni;
 	}
-	
-	// ----------------------- METHODES -----------------------------------
 
+	// ----------------------- METHODES -----------------------------------
 
 	@Override
 	public int hashCode() {

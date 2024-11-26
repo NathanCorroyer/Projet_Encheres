@@ -16,32 +16,28 @@ import fr.eni.projet.exceptions.BusinessException;
 @Controller
 @RequestMapping("/users")
 public class UtilisateurController {
-	
+
 	private UtilisateurService userService;
-	
-	
+
 	public UtilisateurController(UtilisateurService userService) {
 		this.userService = userService;
 	}
-
-	
-
 
 	@GetMapping("/creer")
 	private String creer(@ModelAttribute("user") Utilisateur user) {
 		return "/utilisateurs/view-creer-user";
 	}
-	
+
 	@PostMapping("/creer")
 	private String creerUser(@ModelAttribute("user") Utilisateur user, BindingResult bindingResult) {
-		if(bindingResult.hasErrors()) {
-			return "view-film-form";
+		if (bindingResult.hasErrors()) {
+			return "/utilisateurs/view-creer-user";
 		} else {
 			try {
 				String password = user.getPassword();
 				password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
 				user.setPassword(password);
-				
+
 				userService.create(user);
 				return "redirect:/";
 			} catch (BusinessException e) {
@@ -51,7 +47,7 @@ public class UtilisateurController {
 					ObjectError error = new ObjectError("globalError", key);
 					bindingResult.addError(error);
 				});
-				return "view-creer-user";
+				return "/utilisateurs/view-creer-user";
 			}
 		}
 	}
