@@ -85,11 +85,6 @@ public class AdresseServiceImpl implements AdresseService {
 		isValid &= validerCodePostal(adresse.getCode_postal(), be);
 		isValid &= validerVille(adresse.getVille(), be);
 
-		// Validation du nouveau champ adresse_eni
-		if (adresse.getAdresseEni() == null) {
-			be.add(BusinessCode.VALIDATION_ADRESSE_ENI_NULL);
-			isValid = false;
-		}
 
 		return isValid;
 	}

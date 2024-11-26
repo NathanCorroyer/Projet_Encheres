@@ -24,7 +24,6 @@ public class Adresse {
 	@NotBlank
 	@Size(max = 50)
 	private String ville;
-	private boolean adresse_eni;
 
 	@NotNull
 	private Boolean adresse_eni;
