@@ -11,10 +11,10 @@
 <body>
 	<main id="contenuPage">
 		<!-- AJOUTER LE LISTING DES USERS -->
-		
-		<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/modifier')}">
-			
-		</form>
+			<h1 data-th-text="#{view-profil-form.h1}"></h1>
+			<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/modifier', text_button = #{view-profil-form.btn}, disabled = ${#authentication.name != '' && #authentication.name != user.pseudo } )}">
+				
+			</form>
 	</main>
 </body>
 </html>

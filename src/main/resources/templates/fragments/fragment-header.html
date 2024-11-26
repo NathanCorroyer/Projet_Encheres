@@ -24,7 +24,7 @@
 			</li>
 			
 			<li class="nav-item" data-th-if="${#authorization.expression('isAuthenticated()')}">
-				<a data-th-href="@{/users/profil(id = 2)}" data-th-text="#{frag-header.profil}" class="nav-link text-white"></a>
+				<a data-th-href="@{/users/profil(pseudo = ${#authentication.name})}" data-th-text="#{frag-header.profil}" class="nav-link text-white"></a>
 			</li>
 			<!-- TODO Ajouter un contrôle sur la connexion de l'utilisateur	 -->
 			<li class="nav-item" data-th-if="${#authorization.expression('isAuthenticated()')}"> 

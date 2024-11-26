@@ -1,5 +1,7 @@
 package fr.eni.projet.controller;
 
+import java.security.Principal;
+
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,15 +61,13 @@ public class UtilisateurController {
 	}
 	
 	@GetMapping("/profil")
-	private String afficher(@RequestParam (name="id" , required=true) int id, Model model) {
-		model.addAttribute("user", userService.findById(id));
-		
+	private String afficher(@RequestParam (name="pseudo" , required=true) String pseudo, Model model) {
+		model.addAttribute("user", userService.findByPseudo(pseudo));
 		return "/utilisateurs/view-profil-user";
 	}
 	
 	@PostMapping("/modifier")
 	private String modifier() {
-		
 		return "/utilisateurs/view-profil-user";
 	}
 	
