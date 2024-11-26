@@ -3,6 +3,19 @@ package fr.eni.projet.exceptions;
 public class BusinessCode {
 
 //Clefs de validation des utilisateurs
+	public static final String VALIDATION_UTILISATEUR_NULL = "L'utilisateur ne peut pas être null.";
+	public static final String VALIDATION_UTILISATEUR_PSEUDO_BLANK = "Le pseudo est obligatoire.";
+	public static final String VALIDATION_UTILISATEUR_PSEUDO_FORMAT = "Le pseudo doit contenir uniquement des caractères alphanumériques ou '_'.";
+	public static final String VALIDATION_UTILISATEUR_PSEUDO_LONGUEUR = "Le pseudo ne peut pas dépasser 30 caractères.";
+	public static final String VALIDATION_UTILISATEUR_PSEUDO_EXISTANT = "Ce pseudo est déjà utilisé.";
+	public static final String VALIDATION_UTILISATEUR_PASSWORD_BLANK = "Le mot de passe est obligatoire.";
+	public static final String VALIDATION_UTILISATEUR_PASSWORD_FORMAT = "Le mot de passe doit contenir entre 8 et 20 caractères, une majuscule, un chiffre et un caractère spécial.";
+	public static final String VALIDATION_UTILISATEUR_EMAIL_BLANK = "L'email est obligatoire.";
+	public static final String VALIDATION_UTILISATEUR_EMAIL_FORMAT = "L'email est dans un format invalide.";
+	public static final String VALIDATION_UTILISATEUR_EMAIL_EXISTANT = "Cet email est déjà utilisé.";
+	public static final String VALIDATION_UTILISATEUR_CREDIT_NEGATIF = "Le crédit ne peut pas être négatif.";
+	public static final String VALIDATION_UTILISATEUR_ADRESSE_NULL = "L'adresse est obligatoire.";
+
 //Clefs de validation des Catégories
 //Clefs de validation des articles
 	public static final String VALIDATION_ARTICLE_NULL = "L'article ne peut pas être null.";

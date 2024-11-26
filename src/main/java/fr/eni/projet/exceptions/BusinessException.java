@@ -40,4 +40,5 @@ public class BusinessException extends RuntimeException {
 	public boolean isValid() {
 		return clefsExternalisations == null || clefsExternalisations.isEmpty();
 	}
+
 }
