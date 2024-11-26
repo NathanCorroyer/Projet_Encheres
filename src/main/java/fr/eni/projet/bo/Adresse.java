@@ -26,7 +26,7 @@ public class Adresse {
 	private String ville;
 
 	@NotNull
-	private Boolean adresse_eni;
+	private boolean adresse_eni = false;
 
 	// ----------------------- CONSTRUCTEURS -----------------------------------
 
