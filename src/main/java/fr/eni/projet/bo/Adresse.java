@@ -24,6 +24,7 @@ public class Adresse {
 	@NotBlank
 	@Size(max = 50)
 	private String ville;
+	private boolean adresse_eni;
 
 	@NotNull
 	private Boolean adresse_eni;
@@ -31,6 +32,10 @@ public class Adresse {
 	// ----------------------- CONSTRUCTEURS -----------------------------------
 
 	public Adresse() {
+	}
+
+	public Adresse(int id) {
+		this.id = id;
 	}
 
 	public Adresse(int id, String rue, String code_postal, String ville, boolean adresse_eni) {
@@ -43,12 +48,12 @@ public class Adresse {
 
 	// ----------------------- GETTERS / SETTERS -----------------------------------
 
-	public int getId_article() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId_article(int id_article) {
-		this.id = id_article;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getRue() {
@@ -75,15 +80,16 @@ public class Adresse {
 		this.ville = ville;
 	}
 
-	public Boolean getAdresseEni() {
+	public boolean isAdresse_eni() {
 		return adresse_eni;
 	}
-
-	public void setAdresseEni(Boolean adresseEni) {
-		this.adresse_eni = adresseEni;
+	
+	public void setAdresse_eni(boolean adresse_eni) {
+		this.adresse_eni = adresse_eni;
 	}
-
+	
 	// ----------------------- METHODES -----------------------------------
+
 
 	@Override
 	public int hashCode() {
