@@ -41,7 +41,7 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 				.addValue("prenom", utilisateur.getPrenom()).addValue("email", utilisateur.getEmail())
 				.addValue("telephone", utilisateur.getTelephone()).addValue("no_adresse", utilisateur.getAdresse().getId())
 				.addValue("mot_de_passe", utilisateur.getPassword()).addValue("credit", utilisateur.getCredit())
-				.addValue("code_role", false);
+				.addValue("code_role", 1);
 
 		namedParameterJdbcTemplate.update(INSERT, namedParameters, keyHolder);
 
