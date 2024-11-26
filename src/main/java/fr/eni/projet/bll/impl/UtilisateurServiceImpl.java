@@ -38,7 +38,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 	@Override
 	public Utilisateur findById(int id) {
-		return utilisateurDAO.findById(id);
+		Utilisateur user = utilisateurDAO.findById(id);
+		Adresse adresse = adresseDAO.findById(user.getAdresse().getId());
+		user.setAdresse(adresse);
+		return user;
 	}
 
 	@Override
