@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.bo.Adresse;
@@ -27,6 +28,7 @@ public class AdresseDAOJdbcImpl implements AdresseDAO {
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+	@Transactional
 	@Override
 	public int create(Adresse adresse) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();

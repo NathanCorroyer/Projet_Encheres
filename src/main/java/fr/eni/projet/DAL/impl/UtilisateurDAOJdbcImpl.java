@@ -11,17 +11,17 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.eni.projet.DAL.UtilisateurDAO;
 import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Utilisateur;
-import fr.eni.projet.exceptions.BusinessException;
 
 @Repository
 public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 
-	private final static String INSERT = "INSERT INTO UTILISATEURS(pseudo, nom, prenom, email, telephone, no_adresse, mot_de_passe, credit, code_role) VALUES (:pseudo, :nom, :prenom, :email, :telephone, no_adresse, :mot_de_passe, :credit, :code_role)";
+	private final static String INSERT = "INSERT INTO UTILISATEURS(pseudo, nom, prenom, email, telephone, no_adresse, mot_de_passe, credit, code_role) VALUES (:pseudo, :nom, :prenom, :email, :telephone, :no_adresse, :mot_de_passe, :credit, :code_role)";
 	private final static String FIND_BY_ID = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE no_utilisateur = :no_utilisateur";
 	private final static String FIND_BY_PSEUDO = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE pseudo = :pseudo";
 	private final static String FIND_ALL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS";
@@ -31,24 +31,17 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	@Autowired
-	private AdresseService adresseService;
-
 	@Override
 	public void create(Utilisateur utilisateur) {
-		Adresse adresse = utilisateur.getAdresse();
-		int adresseKey = 0;
-		if (adresse != null) {
-			adresseKey = adresseService.create(adresse);
-		}
+		
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
 		namedParameters.addValue("pseudo", utilisateur.getPseudo()).addValue("nom", utilisateur.getNom())
 				.addValue("prenom", utilisateur.getPrenom()).addValue("email", utilisateur.getEmail())
-				.addValue("telephone", utilisateur.getTelephone()).addValue("no_adresse", adresseKey)
+				.addValue("telephone", utilisateur.getTelephone()).addValue("no_adresse", utilisateur.getAdresse().getId())
 				.addValue("mot_de_passe", utilisateur.getPassword()).addValue("credit", utilisateur.getCredit())
-				.addValue("code_role", 1);
+				.addValue("code_role", false);
 
 		namedParameterJdbcTemplate.update(INSERT, namedParameters, keyHolder);
 
