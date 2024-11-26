@@ -7,8 +7,6 @@ import fr.eni.projet.bo.Article;
 public interface ArticleService {
 	public void create(Article article);
 
-	public Article findArticleById(int id);
-
 	public List<Article> findAll();
 
 	public void delete(int id);
