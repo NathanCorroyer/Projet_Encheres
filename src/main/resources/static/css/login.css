@@ -1,0 +1,24 @@
+.card {
+    margin-top: 50px;
+    border-radius: 10px;
+}
+
+.card-header {
+    background-color: #007bff;
+    color: white;
+}
+
+.card-body {
+    background-color: #f8f9fa;
+}
+
+.alert-danger {
+    border-radius: 5px;
+}
+
+#login-container {
+    display: flex;
+    justify-content: center; /* Centre horizontalement */
+    align-items: center;     /* Centre verticalement */
+    min-height: calc(100vh - 50px); /* Prend toute la hauteur de la fenêtre moins l'espace pour le header */
+}
