@@ -28,7 +28,7 @@ replay_pid*
 /.project
 /.settings/
 bin/
-
+/bin/
 # Maven specific files
 /target/
 
