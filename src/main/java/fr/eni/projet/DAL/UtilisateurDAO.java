@@ -16,6 +16,7 @@ public interface UtilisateurDAO {
 	public List<Utilisateur> findAll();
 
 	public void update(Utilisateur utilisateur);
+	public void updatePassword(Utilisateur utilisateur);
 
 	public void modifierActivation(Utilisateur utilisateur);
 

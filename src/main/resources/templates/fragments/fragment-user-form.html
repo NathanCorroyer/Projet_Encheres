@@ -23,7 +23,7 @@
 		    <input type="tel" class="form-control" data-th-field="*{telephone}" />
 	  	</div> 
 	  	<div data-th-if="${visible}">
-	  		<input type = "hidden" data-th-field="*{adresse.id}"> 
+	  		<input type = "hidden" data-th-field="*{adresse.id}" disabled> 
 		  	<div class="mb-3">
 			    <label class="form-label" data-th-text="#{view-user-form.rue}"></label>
 			    <input type="text" class="form-control" data-th-field="*{adresse.rue}" required/>
@@ -48,7 +48,7 @@
 		  	<button type="submit" data-th-text="${text_button}" data-th-if="${visible}"></button>		
   		</div>
   		<div class="" data-th-if="${!creation}">
-		  	<a href="/users/modifiermdp" class="btn btn-secondary">Modifier mot de passe</a>		
+		  	<a data-th-href="@{/users/modifiermdp(pseudo=*{pseudo})}" class="btn btn-secondary">Modifier mot de passe</a>		
   		</div>
   	</div>
   	

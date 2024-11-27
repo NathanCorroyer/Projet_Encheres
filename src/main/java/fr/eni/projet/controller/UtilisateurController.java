@@ -1,5 +1,6 @@
 package fr.eni.projet.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,7 @@ import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.exceptions.BusinessException;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
@@ -36,10 +38,11 @@ public class UtilisateurController {
 	}
 
 	@PostMapping("/creer")
-	private String creerUser(@ModelAttribute("user") Utilisateur user, BindingResult bindingResult) {
+	private String creerUser(@Valid @ModelAttribute("user") Utilisateur user, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			// Trace les erreurs pour le debug
 			bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+			
 			return "/utilisateurs/view-creer-user";
 		}
 
@@ -70,29 +73,32 @@ public class UtilisateurController {
 	}
 
 	@PostMapping("/profil")
-	private String modifier(@ModelAttribute("user") Utilisateur user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+	private String modifier(@ModelAttribute("user") Utilisateur user, BindingResult bindingResult, RedirectAttributes redirectAttributes, Authentication auth) {
+		Utilisateur origine = userService.findById(user.getId());
+		String pseudoUserConnected = auth.getName();
+		if(!pseudoUserConnected.equals(origine.getPseudo())) {
+			redirectAttributes.addAttribute("pseudo", auth.getName());
+			redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas modifier le profil d'un autre utilisateur.");
+
+			return "redirect:/users/profil";
+		}
+		redirectAttributes.addAttribute("pseudo", origine.getPseudo());
 		if (bindingResult.hasErrors()) {
 			// Trace les erreurs pour le debug
 			bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
-			return "/utilisateurs/view-profil-user";
+			return "redirect:/users/profil";
 		}
-
-		Utilisateur origine = userService.findById(user.getId());
+		
 		try {
 			// Sauvegarde l'utilisateur
-			System.out.println("user.getadresse.getrue : " + user.getAdresse().getRue());
 			boolean emailModifie = !origine.getEmail().equals(user.getEmail());
-			redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
 			userService.update(user,  emailModifie);
-			
 			// Ajouter le paramètre "pseudo" à l'URL de redirection
-	        redirectAttributes.addAttribute("pseudo", origine.getPseudo());
 	        redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
 	        // Rediriger vers le profil de l'utilisateur avec le paramètre "pseudo"
 	        return "redirect:/users/profil";
 		} catch (BusinessException e) {
 			// Ajoute les messages d'erreur métier au BindingResult
-			redirectAttributes.addAttribute("pseudo", origine.getPseudo());
 			e.getClefsExternalisations().forEach(key -> {
 				ObjectError error = new ObjectError("globalError", key);
 				bindingResult.addError(error);
@@ -103,6 +109,12 @@ public class UtilisateurController {
 	
 	@GetMapping("/modifiermdp")
 	private String modifierMdp() {
+		return "/utilisateurs/view-modifier-password";
+	}
+	
+	@PostMapping("/modifiermdp")
+	private String updateMdp() {
+		
 		return "/utilisateurs/view-modifier-password";
 	}
 }

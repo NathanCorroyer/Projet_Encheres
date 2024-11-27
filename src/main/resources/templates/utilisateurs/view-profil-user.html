@@ -15,6 +15,10 @@
 			<div th:if="${message}">
 			    <div class="alert alert-success" th:text="${message}"></div>
 			</div>
+			
+			<div th:if="${error}">
+				<div class="alert alert-danger" th:text="${error}"></div>
+			</div>
 			<p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}"></p>
 			<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/profil', text_button = #{view-profil-form.btn}, 
 				disabled = ${#authentication.name != '' && #authentication.name != user.pseudo }, visible = ${#authentication.name != '' && #authentication.name == user.pseudo }, creation = false )}">

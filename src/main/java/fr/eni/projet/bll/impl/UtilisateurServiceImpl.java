@@ -78,7 +78,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 	@Override
 	public Optional<Utilisateur> findByPseudo(String pseudo) {
-		System.out.println("Pseudo : " + pseudo);
 		if (pseudo == null || pseudo.isBlank()) {
 			throw new IllegalArgumentException("Le pseudo ne peut pas être vide.");
 		}
@@ -119,6 +118,20 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		adresseDAO.update(utilisateur.getAdresse());
 		// Mise à jour de l'utilisateur
 		utilisateurDAO.update(utilisateur);
+	}
+	
+	
+	@Override
+	public void updatePassword(Utilisateur utilisateur) {
+		// Validation complète avant mise à jour
+		BusinessException be = new BusinessException();
+		validerPassword(utilisateur.getPassword(), be);
+		
+		if (!be.isValid()) {
+			throw be;
+		}
+		
+		utilisateurDAO.updatePassword(utilisateur);
 	}
 
 	@Override
@@ -209,7 +222,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 //				.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[@$!%?&])[A-Za-z\\d@$!%?&]{8,20}$")) {
 //			// Validation du format du mot de passe
 //			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_FORMAT);
-//			System.out.println("Erreur regex : " + utilisateur.getPassword());
 //			isValid = false;
 		}
 		return isValid;
