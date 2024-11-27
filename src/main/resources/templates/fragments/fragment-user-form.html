@@ -34,7 +34,7 @@
 			    <label class="form-label" data-th-text="#{view-user-form.code.postal}"></label>
 			    <input type="text" class="form-control" data-th-field="*{adresse.code_postal}" required/>
 		  	</div>   
-		  	<div class="mb-3">
+		  	<div class="mb-3" data-th-if="${creation}">
 			    <label class="form-label" data-th-text="#{view-user-form.pwd}"></label>
 			    <input type="password" class="form-control" data-th-field="*{password}" required/>
 		  	</div>

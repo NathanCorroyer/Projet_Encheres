@@ -69,7 +69,12 @@ public class UtilisateurController {
 
 	@PostMapping("/modifier")
 	private String modifier() {
+		
 		return "/utilisateurs/view-profil-user";
 	}
-
+	
+	@GetMapping("/modifiermdp")
+	private String modifierMdp() {
+		return "/utilisateurs/view-modifier-password";
+	}
 }
