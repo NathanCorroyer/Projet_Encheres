@@ -11,8 +11,8 @@
 <body>
 	<main id="contenuPage">
 		<!-- AJOUTER LE LISTING DES USERS -->
-		
-		<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/creer')}">
+		<h1 data-th-text="#{view-user-form.h1}"></h1>
+		<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/creer',text_button = #{view-user-form.btn}, disabled = false )}">
 			
 		</form>
 		<p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}"></p>
