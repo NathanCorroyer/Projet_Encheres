@@ -28,6 +28,12 @@ replay_pid*
 /.project
 /.settings/
 bin/
+build/
+gradle/
+gradle/*
+.gradle/
+.gradle/*
+
 
 # Maven specific files
 /target/
@@ -58,8 +64,10 @@ Thumbs.db
 # Spring Boot specific
 # Exclude Spring Boot devtools configuration
 spring-boot-devtools.properties
+application.properties
 
 # Exclude application.properties and application.yml if you don’t want to share your environment-specific configuration (optional)
 # Uncomment the lines below if you want to avoid pushing config files.
+application.properties
 /src/main/resources/application.properties
 /src/main/resources/application.yml

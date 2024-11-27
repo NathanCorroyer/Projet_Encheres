@@ -68,9 +68,25 @@ public class UtilisateurController {
 	}
 
 	@PostMapping("/modifier")
-	private String modifier() {
-		
-		return "/utilisateurs/view-profil-user";
+	private String modifier(@ModelAttribute("user") Utilisateur user, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			// Trace les erreurs pour le debug
+			bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+			return "/utilisateurs/view-profil-user";
+		}
+
+		try {
+			// Sauvegarde l'utilisateur
+			userService.update(user);
+			return "utilisateurs/view-profil-user"; // Redirige vers le profil de l'utilisateur
+		} catch (BusinessException e) {
+			// Ajoute les messages d'erreur métier au BindingResult
+			e.getClefsExternalisations().forEach(key -> {
+				ObjectError error = new ObjectError("globalError", key);
+				bindingResult.addError(error);
+			});
+			return "/utilisateurs/view-profil-user";
+		}
 	}
 	
 	@GetMapping("/modifiermdp")
