@@ -113,7 +113,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 			article.setProprietaire(proprietaire);
 			
 			Categorie categorie = new Categorie();
-			categorie.setId(rs.getInt("id_categorie"));
+			categorie.setId(rs.getInt("no_categorie"));
 			article.setCategorie(categorie);
 			
 			Adresse adresse = new Adresse();
