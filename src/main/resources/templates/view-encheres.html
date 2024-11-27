@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!-- Mise en place du layout -->
+<html xmlns:th="http://www.thymeleaf.org"
+		data-th-replace="~{layouts/layout :: layout-projet( 
+					titrePage=~{:: title},
+					contenuPage=~{:: #contenuPage},
+					ressourcesSupp=~{:: #ressources-css})}">
+<head>
+	<title>Enchères</title>
+	<th:block id="ressources-css">
+		<link rel="stylesheet" data-th-href="@{/css/encheres-tables.css}" />
+	</th:block>
+</head>
+
+<body>
+	<main id="contenuPage">
+		<h1>Enchères en cours</h1>
+		<table>
+			<thead>
+				<tr>
+					<th>Date de vente</th>
+					<th>Prix</th>
+					<th>Article</th>
+					<th>Vendeur</th>
+				</tr>
+			</thead>
+			<tbody>
+			<!-- TODO : Date format, relations -->
+				<tr data-th-each="enchere : ${encheres}">
+					<td data-th-text="${#temporals.format(enchere.date, 'dd MMM yyyy HH:mm')}"></td>
+					<td data-th-text="${enchere.montant}"></td>
+					<td data-th-text="${enchere.article.nom}"></td>
+					<td data-th-text="${enchere.article.proprietaire.pseudo}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</main>
+</body>
+</html>
