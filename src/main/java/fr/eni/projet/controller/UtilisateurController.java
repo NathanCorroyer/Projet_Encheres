@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Adresse;
@@ -62,30 +63,41 @@ public class UtilisateurController {
 	}
 
 	@GetMapping("/profil")
-	private String afficher(@RequestParam(name = "pseudo", required = true) String pseudo, Model model) {
+	private String afficher(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, RedirectAttributes redirectAttributes) {
 		model.addAttribute("user", userService.findByPseudo(pseudo).get());
+		redirectAttributes.addAttribute("pseudo", pseudo);
 		return "/utilisateurs/view-profil-user";
 	}
 
-	@PostMapping("/modifier")
-	private String modifier(@ModelAttribute("user") Utilisateur user, BindingResult bindingResult) {
+	@PostMapping("/profil")
+	private String modifier(@ModelAttribute("user") Utilisateur user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
 			// Trace les erreurs pour le debug
 			bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
 			return "/utilisateurs/view-profil-user";
 		}
 
+		Utilisateur origine = userService.findById(user.getId());
 		try {
 			// Sauvegarde l'utilisateur
-			userService.update(user);
-			return "utilisateurs/view-profil-user"; // Redirige vers le profil de l'utilisateur
+			System.out.println("user.getadresse.getrue : " + user.getAdresse().getRue());
+			boolean emailModifie = !origine.getEmail().equals(user.getEmail());
+			redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
+			userService.update(user,  emailModifie);
+			
+			// Ajouter le paramètre "pseudo" à l'URL de redirection
+	        redirectAttributes.addAttribute("pseudo", origine.getPseudo());
+	        redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
+	        // Rediriger vers le profil de l'utilisateur avec le paramètre "pseudo"
+	        return "redirect:/users/profil";
 		} catch (BusinessException e) {
 			// Ajoute les messages d'erreur métier au BindingResult
+			redirectAttributes.addAttribute("pseudo", origine.getPseudo());
 			e.getClefsExternalisations().forEach(key -> {
 				ObjectError error = new ObjectError("globalError", key);
 				bindingResult.addError(error);
 			});
-			return "/utilisateurs/view-profil-user";
+			return "redirect:/users/profil";
 		}
 	}
 	

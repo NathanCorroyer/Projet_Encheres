@@ -1,9 +1,10 @@
 <form xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-user-form(action)" data-th-action="${action}" method="post" data-th-object="${user}">
 
 	<fieldset data-th-disabled="${disabled}">
+		<input type = "hidden" data-th-field="*{id}"> 
 		<div class="mb-3">
 		    <label class="form-label" data-th-text="#{view-user-form.pseudo}"></label>
-		    <input type="text" class="form-control" data-th-field="*{pseudo}" required/>
+		    <input type="text" class="form-control" data-th-field="*{pseudo}" th:disabled="${!creation}" required/>
 	  	</div>
 	  	<div class="mb-3">
 		    <label class="form-label" data-th-text="#{view-user-form.nom}"></label>
@@ -22,6 +23,7 @@
 		    <input type="tel" class="form-control" data-th-field="*{telephone}" />
 	  	</div> 
 	  	<div data-th-if="${visible}">
+	  		<input type = "hidden" data-th-field="*{adresse.id}"> 
 		  	<div class="mb-3">
 			    <label class="form-label" data-th-text="#{view-user-form.rue}"></label>
 			    <input type="text" class="form-control" data-th-field="*{adresse.rue}" required/>
@@ -38,7 +40,16 @@
 			    <label class="form-label" data-th-text="#{view-user-form.pwd}"></label>
 			    <input type="password" class="form-control" data-th-field="*{password}" required/>
 		  	</div>
-		  	<button type="submit" data-th-text="${text_button}"></button>
 	  	</div>  	
   	</fieldset>
+ 	
+  	<div class="row">
+  		<div class="">
+		  	<button type="submit" data-th-text="${text_button}" data-th-if="${visible}"></button>		
+  		</div>
+  		<div class="" data-th-if="${!creation}">
+		  	<a href="/users/modifiermdp" class="btn btn-secondary">Modifier mot de passe</a>		
+  		</div>
+  	</div>
+  	
 </form>
