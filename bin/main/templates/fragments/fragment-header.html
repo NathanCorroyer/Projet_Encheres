@@ -1,19 +1,24 @@
 <header xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-header" class=" bg-dark">
 		
 	<nav class="navbar navbar-expand-lg">
-		<div>
-			<a href="/" >
-				<img data-th-src="@{/img/logo.png}" alt="Logo du site" class="mb-2"/>
-			</a>
-			<div>
-				<a href="/?language=fr" class="text-decoration-none">
-					<img alt="Français" src="/img/French.webp" width="50px" height="30px">
-				</a>
-				<a href="/?language=en" class="text-decoration-none">
-					<img alt="English" src="/img/English.webp" width="50px" height="30px">
-				</a>
-			</div>
-		</div>
+		<div class="d-flex justify-content-center align-items-center">
+    <!-- Logo du site -->
+    <div class="me-4"> <!-- me-3 pour un espace à droite du logo -->
+        <a href="/">
+            <img data-th-src="@{/img/logo.png}" alt="Logo du site" class="align-middle"/>
+        </a>
+    </div>
+
+    <!-- Logos des langues -->
+    <div class="d-flex align-items-center">
+        <a href="/?language=fr" class="text-decoration-none me-2">
+            <img alt="Français" src="/img/French.webp" width="25px" height="15px" class="align-middle">
+        </a>
+        <a href="/?language=en" class="text-decoration-none">
+            <img alt="English" src="/img/English.webp" width="25px" height="15px" class="align-middle">
+        </a>
+    </div>
+</div>
 		
 		<ul class="navbar-nav me-auto mb-2 mb-lg-0" style="position:absolute; right:0;">
 			<li class="nav-item">
