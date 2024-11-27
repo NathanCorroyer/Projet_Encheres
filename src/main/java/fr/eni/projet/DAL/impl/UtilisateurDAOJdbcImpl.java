@@ -3,6 +3,7 @@ package fr.eni.projet.DAL.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -58,17 +59,28 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	}
 
 	@Override
-	public Utilisateur findByPseudo(String pseudo) {
+	public Optional<Utilisateur> findByPseudo(String pseudo) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("pseudo", pseudo);
-		return namedParameterJdbcTemplate.queryForObject(FIND_BY_PSEUDO, namedParameters, new UtilisateurRowMapper());
+
+		List<Utilisateur> results = namedParameterJdbcTemplate.query(FIND_BY_PSEUDO, namedParameters,
+				new UtilisateurRowMapper());
+		if (results.isEmpty()) {
+			return Optional.empty();
+		}
+		return Optional.of(results.get(0));
 	}
 
 	@Override
-	public Utilisateur findByEmail(String email) {
+	public Optional<Utilisateur> findByEmail(String email) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("email", email);
-		return namedParameterJdbcTemplate.queryForObject(FIND_BY_EMAIL, namedParameters, new UtilisateurRowMapper());
+		List<Utilisateur> results = namedParameterJdbcTemplate.query(FIND_BY_EMAIL, namedParameters,
+				new UtilisateurRowMapper());
+		if (results.isEmpty()) {
+			return Optional.empty();
+		}
+		return Optional.of(results.get(0));
 	}
 
 	@Override

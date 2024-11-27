@@ -1,6 +1,7 @@
 package fr.eni.projet.bll.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		if (be.isValid()) {
 			throw be;
 		}
-
+		utilisateur.setCredit(10);
 		utilisateurDAO.create(utilisateur); // Création de l'utilisateur
 	}
 
@@ -68,7 +69,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 
 	@Override
-	public Utilisateur findByEmail(String email) {
+	public Optional<Utilisateur> findByEmail(String email) {
 		if (email == null || email.isBlank()) {
 			throw new IllegalArgumentException("L'Email ne peut pas être vide.");
 		}
@@ -76,15 +77,27 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 
 	@Override
-	public Utilisateur findByPseudo(String pseudo) {
+	public Optional<Utilisateur> findByPseudo(String pseudo) {
 		if (pseudo == null || pseudo.isBlank()) {
 			throw new IllegalArgumentException("Le pseudo ne peut pas être vide.");
 		}
-		Utilisateur user =  utilisateurDAO.findByPseudo(pseudo);
-		Adresse adresse = adresseDAO.findById(user.getAdresse().getId());
-		user.setAdresse(adresse);
-		return user;
 
+		Optional<Utilisateur> user = utilisateurDAO.findByPseudo(pseudo);
+		if (user.isEmpty()) { // Vérifie si l'Optional est vide
+			return Optional.empty(); // Retourne un Optional vide si aucun utilisateur n'est trouvé
+		}
+
+		// Récupère l'utilisateur contenu dans l'Optional
+		Utilisateur utilisateur = user.get();
+
+		// Récupère l'adresse associée à l'utilisateur
+		Adresse adresse = adresseDAO.findById(utilisateur.getAdresse().getId());
+
+		// Assigne l'adresse à l'utilisateur
+		utilisateur.setAdresse(adresse);
+
+		// Retourne l'utilisateur avec son adresse
+		return Optional.of(utilisateur);
 	}
 
 	@Override
@@ -101,21 +114,23 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		}
 
 		// Vérification des contraintes pour pseudo et email uniques
-		Utilisateur existingUserByPseudo = utilisateurDAO.findByPseudo(utilisateur.getPseudo());
-		if (existingUserByPseudo != null && existingUserByPseudo.getId() != utilisateur.getId()) {
+		Optional<Utilisateur> existingUserByPseudo = utilisateurDAO.findByPseudo(utilisateur.getPseudo());
+		if (existingUserByPseudo.isPresent() && existingUserByPseudo.get().getId() != utilisateur.getId()) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PSEUDO_EXISTANT);
 		}
 
-		Utilisateur existingUserByEmail = utilisateurDAO.findByEmail(utilisateur.getEmail());
-		if (existingUserByEmail != null && existingUserByEmail.getId() != utilisateur.getId()) {
+		Optional<Utilisateur> existingUserByEmail = utilisateurDAO.findByEmail(utilisateur.getEmail());
+		if (existingUserByEmail != null && existingUserByEmail.get().getId() != utilisateur.getId()) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_EMAIL_EXISTANT);
 		}
 
-		if (be.isValid()) {
+		// Si des erreurs sont trouvées, les lancer
+		if (!be.isValid()) {
 			throw be;
 		}
 
-		utilisateurDAO.update(utilisateur); // Mise à jour de l'utilisateur
+		// Mise à jour de l'utilisateur
+		utilisateurDAO.update(utilisateur);
 	}
 
 	@Override

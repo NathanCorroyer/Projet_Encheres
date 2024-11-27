@@ -2,6 +2,7 @@ package fr.eni.projet.bo;
 
 import java.util.Objects;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -39,7 +40,7 @@ public class Utilisateur {
 	@Size(min = 10, max = 15)
 	private String telephone;
 
-	@NotBlank
+	@Valid
 	@NotNull
 	private Adresse adresse;
 

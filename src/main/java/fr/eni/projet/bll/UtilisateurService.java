@@ -1,6 +1,7 @@
 package fr.eni.projet.bll;
 
 import java.util.List;
+import java.util.Optional;
 
 import fr.eni.projet.bo.Utilisateur;
 
@@ -9,7 +10,7 @@ public interface UtilisateurService {
 
 	public Utilisateur findById(int id);
 
-	public Utilisateur findByPseudo(String pseudo);
+	public Optional<Utilisateur> findByPseudo(String pseudo);
 
 	public List<Utilisateur> findAll();
 
@@ -17,5 +18,5 @@ public interface UtilisateurService {
 
 	public void modifierActivation(Utilisateur utilisateur);
 
-	public Utilisateur findByEmail(String email);
+	public Optional<Utilisateur> findByEmail(String email);
 }
