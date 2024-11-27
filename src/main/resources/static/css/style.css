@@ -1,0 +1,61 @@
+/* style.css */
+
+/* Body-specific styles */
+body {
+    display: flex;
+    flex-direction: column; /* Stack header, login container, and footer */
+    justify-content: flex-start; /* Align content at the top */
+    align-items: center;
+    min-height: 100vh; /* Ensure body occupies the full height of the viewport */
+    background-color: #f4f4f4;
+    margin: 0;
+}
+
+/* Login container styles */
+.login-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+    flex-grow: 1; /* Allow container to grow to fill the remaining space */
+}
+
+/* Other styles (input, button, etc.) */
+h2 {
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+a {
+    display: block;
+    margin-top: 10px;
+    text-decoration: none;
+    color: #4CAF50;
+}
+
+a:hover {
+    text-decoration: underline;
+}

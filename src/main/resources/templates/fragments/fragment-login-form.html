@@ -1,0 +1,27 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="frag-login-form">
+    <!-- Contenu du formulaire avec Bootstrap -->
+    <div class="card" style="width: 20rem;">
+        <div class="card-header text-center">
+            <h3>Connexion</h3>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+            </form>
+            <div th:if="${param.error}" class="alert alert-danger mt-3">
+                <p>Nom d'utilisateur ou mot de passe incorrect.</p>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <a href="/users/creer" class="btn btn-link">Créer un compte</a>
+        </div>
+    </div>
+</div>
