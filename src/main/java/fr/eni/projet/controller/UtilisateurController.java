@@ -63,7 +63,7 @@ public class UtilisateurController {
 
 	@GetMapping("/profil")
 	private String afficher(@RequestParam(name = "pseudo", required = true) String pseudo, Model model) {
-		model.addAttribute("user", userService.findByPseudo(pseudo));
+		model.addAttribute("user", userService.findByPseudo(pseudo).get());
 		return "/utilisateurs/view-profil-user";
 	}
 
