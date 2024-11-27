@@ -13,13 +13,9 @@ import fr.eni.projet.bo.Enchere;
 @Service
 public class EnchereServiceImpl implements EnchereService {
 	private EnchereDAO enchereDAO;
-	private UtilisateurDAO acheteurDAO;
-	private ArticleDAO articleVenduDAO;
 	
-	public EnchereServiceImpl(EnchereDAO enchereDAO, UtilisateurDAO acheteurDAO, ArticleDAO articleVenduDAO) {
+	public EnchereServiceImpl(EnchereDAO enchereDAO) {
 		this.enchereDAO = enchereDAO;
-		this.acheteurDAO = acheteurDAO;
-		this.articleVenduDAO = articleVenduDAO;
 	}
 
 	@Override

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import fr.eni.projet.bll.EnchereService;
-import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Enchere;
-import fr.eni.projet.bo.Utilisateur;
+
+// First test of logout home page, useless for now
 
 @Controller
 @RequestMapping("/encheres")
@@ -27,7 +27,6 @@ public class EnchereController {
 		
 		model.addAttribute("encheres", lstEncheres);
 		
-		return "view-encheres";
+		return null;
 	}
-
 }

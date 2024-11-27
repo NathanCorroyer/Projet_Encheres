@@ -19,5 +19,4 @@ public interface ArticleDAO {
 	public List<Article> findByUtilisateur(int utilisateurId);
 
 	public void delete(int id);
-
 }
