@@ -24,10 +24,11 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	private final static String FIND_BY_ID = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE no_utilisateur = :no_utilisateur";
 	private final static String FIND_BY_PSEUDO = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE pseudo = :pseudo";
 	private final static String FIND_ALL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS";
-	private final static String UPDATE = "UPDATE UTILISATEURS SET pseudo = :pseudo, nom = :nom, prenom = :prenom, email = :email, telephone = :telephone, no_adresse = :no_adresse, mot_de_passe = :mot_de_passe, credit = :credit WHERE no_utilisateur = :no_utilisateur";
+	private final static String UPDATE = "UPDATE UTILISATEURS SET nom = :nom, prenom = :prenom, email = :email, telephone = :telephone WHERE no_utilisateur = :no_utilisateur";
+	private final static String UPDATE_PASSWORD = "UPDATE UTILISATEURS SET password = :password WHERE no_utilisateur = :no_utilisateur";
 	private final static String MODIFIER_ACTIVATION = "UPDATE UTILISATEURS SET actif = :actif WHERE no_utilisateur = :no_utilisateur";
 	private final static String FIND_BY_EMAIL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE email = :email";
-
+	
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -91,17 +92,15 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	@Override
 	public void update(Utilisateur utilisateur) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-
-		namedParameters.addValue("pseudo", utilisateur.getPseudo()).addValue("nom", utilisateur.getNom())
+		namedParameters.addValue("nom", utilisateur.getNom())
 				.addValue("prenom", utilisateur.getPrenom()).addValue("email", utilisateur.getEmail())
 				.addValue("telephone", utilisateur.getTelephone())
-				.addValue("no_adresse", utilisateur.getAdresse().getId())
-				.addValue("mot_de_passe", utilisateur.getPassword()).addValue("credit", utilisateur.getCredit())
 				.addValue("no_utilisateur", utilisateur.getId());
 
 		namedParameterJdbcTemplate.update(UPDATE, namedParameters);
 	}
 
+	
 	@Override
 	public void modifierActivation(Utilisateur utilisateur) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
@@ -133,6 +132,16 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 
 			return user;
 		}
+	}
+
+	@Override
+	public void updatePassword(Utilisateur utilisateur) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("password", utilisateur.getPassword())
+				.addValue("no_utilisateur", utilisateur.getId());
+
+		namedParameterJdbcTemplate.update(UPDATE_PASSWORD, namedParameters);
+		
 	}
 
 }

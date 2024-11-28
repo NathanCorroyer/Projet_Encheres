@@ -18,12 +18,11 @@
         			<p id="current-date"></p>
     			</div>
 			</div>
-		<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/creer',text_button = #{view-user-form.btn}, disabled = false, visible = true)}">
+		<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/creer',text_button = #{view-user-form.btn}, disabled = false, visible = true, creation=true)}">
 			
 		</form>
 		<p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}"></p>
 		<script>
-	console.log("Le script JS est chargé !");
 	function updateDate() {
         const dateElement = document.getElementById("current-date");
         const now = new Date();

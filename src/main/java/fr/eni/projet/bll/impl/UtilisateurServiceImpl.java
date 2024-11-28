@@ -106,31 +106,32 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 
 	@Override
-	public void update(Utilisateur utilisateur) {
+	public void update(Utilisateur utilisateur, boolean isEmailModifie) {
 		// Validation complète avant mise à jour
 		BusinessException be = new BusinessException();
-		if (!validerUtilisateur(utilisateur, be)) {
-			throw be;
-		}
-
-		// Vérification des contraintes pour pseudo et email uniques
-		Optional<Utilisateur> existingUserByPseudo = utilisateurDAO.findByPseudo(utilisateur.getPseudo());
-		if (existingUserByPseudo.isPresent() && existingUserByPseudo.get().getId() != utilisateur.getId()) {
-			be.add(BusinessCode.VALIDATION_UTILISATEUR_PSEUDO_EXISTANT);
-		}
-
-		Optional<Utilisateur> existingUserByEmail = utilisateurDAO.findByEmail(utilisateur.getEmail());
-		if (existingUserByEmail != null && existingUserByEmail.get().getId() != utilisateur.getId()) {
-			be.add(BusinessCode.VALIDATION_UTILISATEUR_EMAIL_EXISTANT);
-		}
-
-		// Si des erreurs sont trouvées, les lancer
+		validerUtilisateurUpdate(utilisateur, isEmailModifie, be);
+		
 		if (!be.isValid()) {
 			throw be;
 		}
-
+		
+		adresseDAO.update(utilisateur.getAdresse());
 		// Mise à jour de l'utilisateur
 		utilisateurDAO.update(utilisateur);
+	}
+	
+	
+	@Override
+	public void updatePassword(Utilisateur utilisateur) {
+		// Validation complète avant mise à jour
+		BusinessException be = new BusinessException();
+		validerPassword(utilisateur.getPassword(), be);
+		
+		if (!be.isValid()) {
+			throw be;
+		}
+		
+		utilisateurDAO.updatePassword(utilisateur);
 	}
 
 	@Override
@@ -155,55 +156,114 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_NULL);
 			return false;
 		}
+		
+		isValid &= validerPseudo(utilisateur.getPseudo(), be);
+		isValid &= validerPseudoUnique(utilisateur.getPseudo(), be);
+		isValid &= validerPassword(utilisateur.getPassword(), be);
+		isValid &= validerEmail(utilisateur.getEmail(), be);
+		isValid &= validerEmailUnique(utilisateur.getPseudo(), be);
+		isValid &= validerCredit(utilisateur.getCredit(), be);
+		isValid &= validerAdresse(utilisateur.getAdresse(), be);
+		
+		return isValid;
+	}
+	
+	
+	private boolean validerUtilisateurUpdate(Utilisateur utilisateur, boolean isEmailModifie, BusinessException be) {
+		boolean isValid = true;
+		
+		isValid &= validerEmail(utilisateur.getEmail(), be);
+		if(isEmailModifie) {
+			isValid &= validerEmailUnique(utilisateur.getPseudo(), be);
+		}
+		isValid &= validerCredit(utilisateur.getCredit(), be);
+		isValid &= validerAdresse(utilisateur.getAdresse(), be);
+		return isValid;
+	}
 
-		// Validation du pseudo
-		if (utilisateur.getPseudo() == null || utilisateur.getPseudo().isBlank()) {
+
+
+	
+
+	public boolean validerPseudo(String pseudo, BusinessException be) {
+		boolean isValid = true;
+		if (pseudo == null || pseudo.isBlank()) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PSEUDO_BLANK);
 			isValid = false;
-		} else if (!utilisateur.getPseudo().matches("^[a-zA-Z0-9_]+$")) {
+		} else if (!pseudo.matches("^[a-zA-Z0-9_]+$")) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PSEUDO_FORMAT);
 			isValid = false;
-		} else if (utilisateur.getPseudo().length() > 30) {
+		} else if (pseudo.length() > 30) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PSEUDO_LONGUEUR);
 			isValid = false;
 		}
-
-		// Validation du mot de passe
-		if (utilisateur.getPassword() == null || utilisateur.getPassword().isBlank()) {
+		
+		return isValid;
+	}
+	
+	public boolean validerPseudoUnique(String pseudo, BusinessException be) {
+		boolean isValid = true;
+		Optional<Utilisateur> existingUserByPseudo = utilisateurDAO.findByPseudo(pseudo);
+		if (existingUserByPseudo.isPresent()) {
+			isValid = false;
+			be.add(BusinessCode.VALIDATION_UTILISATEUR_PSEUDO_EXISTANT);
+		}
+		return isValid;
+	}
+	private boolean validerPassword(String password, BusinessException be) {
+		boolean isValid = true;
+		if (password == null || password.isBlank()) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_BLANK);
 			isValid = false;
-		} else if (utilisateur.getPassword().startsWith("{bcrypt}")) {
-			// Si c'est déjà un hash bcrypt, on ignore la validation regex.
-			System.out.println("Mot de passe déjà haché avec bcrypt, ignorer la validation regex.");
-		} else if (!utilisateur.getPassword()
-				.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[@$!%?&])[A-Za-z\\d@$!%?&]{8,20}$")) {
-			// Validation du format du mot de passe
-			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_FORMAT);
-			System.out.println("Erreur regex : " + utilisateur.getPassword());
-			isValid = false;
+//		} else if (password.startsWith("{bcrypt}")) {
+//			// Si c'est déjà un hash bcrypt, on ignore la validation regex.
+//			System.out.println("Mot de passe déjà haché avec bcrypt, ignorer la validation regex.");
+//		} else if (!password
+//				.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[@$!%?&])[A-Za-z\\d@$!%?&]{8,20}$")) {
+//			// Validation du format du mot de passe
+//			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_FORMAT);
+//			isValid = false;
 		}
-
-		// Validation de l'email
-		if (utilisateur.getEmail() == null || utilisateur.getEmail().isBlank()) {
+		return isValid;
+	}
+	
+	private boolean validerEmail(String email, BusinessException be) {
+		boolean isValid = true;
+		if (email == null || email.isBlank()) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_EMAIL_BLANK);
 			isValid = false;
-		} else if (!utilisateur.getEmail().matches("^[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+		} else if (!email.matches("^[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_EMAIL_FORMAT);
 			isValid = false;
 		}
-
-		// Validation du crédit
-		if (utilisateur.getCredit() < 0) {
-			be.add(BusinessCode.VALIDATION_UTILISATEUR_CREDIT_NEGATIF);
+		return isValid;
+	}
+	
+	
+	private boolean validerEmailUnique(String email, BusinessException be) {
+		boolean isValid = true;
+		Optional<Utilisateur> existingUserByEmail = utilisateurDAO.findByEmail(email);
+		if (existingUserByEmail.isPresent()) {
 			isValid = false;
+			be.add(BusinessCode.VALIDATION_UTILISATEUR_EMAIL_EXISTANT);
 		}
-
-		// Validation de l'adresse
-		if (utilisateur.getAdresse() == null) {
+		return isValid;
+	}
+	private boolean validerAdresse(Adresse adresse, BusinessException be) {
+		boolean isValid = true;
+		if (adresse == null) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_ADRESSE_NULL);
 			isValid = false;
 		}
+		return isValid;
+	}
 
+	private boolean validerCredit(int credit, BusinessException be) {
+		boolean isValid = true;
+		if (credit < 0) {
+			be.add(BusinessCode.VALIDATION_UTILISATEUR_CREDIT_NEGATIF);
+			isValid = false;
+		}
 		return isValid;
 	}
 }

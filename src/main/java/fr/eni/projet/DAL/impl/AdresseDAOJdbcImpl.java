@@ -22,7 +22,7 @@ public class AdresseDAOJdbcImpl implements AdresseDAO {
 	private final static String INSERT = "INSERT INTO ADRESSES(rue, code_postal, ville, adresse_eni) VALUES (:rue, :code_postal, :ville, :adresse_eni)";
 	private final static String FIND_BY_ID = "SELECT no_adresse, rue, code_postal, ville, adresse_eni FROM ADRESSES WHERE no_adresse = :id";
 	private final static String FIND_ALL = "SELECT no_adresse, rue, code_postal, ville, adresse_eni FROM ADRESSES";
-	private final static String UPDATE = "UPDATE ADRESSES SET rue = :rue, code_postal = :code_postal, ville = :ville, adresse_eni = :adresse_eni WHERE id = :id";
+	private final static String UPDATE = "UPDATE ADRESSES SET rue = :rue, code_postal = :code_postal, ville = :ville, adresse_eni = :adresse_eni WHERE no_adresse = :id";
 	private final static String DELETE = "DELETE FROM ADRESSES WHERE no_adresse = :id";
 
 	@Autowired
