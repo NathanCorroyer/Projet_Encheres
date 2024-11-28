@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,17 +42,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		int adresseKey = adresseDAO.create(adresse); // Création de l'adresse
 		utilisateur.getAdresse().setId(adresseKey);
 
-		// Vérification des contraintes de pseudo et email uniques
-		if (utilisateurDAO.findByPseudo(utilisateur.getPseudo()) != null) {
-			be.add(BusinessCode.VALIDATION_UTILISATEUR_PSEUDO_EXISTANT);
-		}
-		if (utilisateurDAO.findByEmail(utilisateur.getEmail()) != null) {
-			be.add(BusinessCode.VALIDATION_UTILISATEUR_EMAIL_EXISTANT);
-		}
-
 		if (be.isValid()) {
 			throw be;
 		}
+		String password = utilisateur.getPassword();
+		password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
+		utilisateur.setPassword(password);
 		utilisateur.setCredit(10);
 		utilisateurDAO.create(utilisateur); // Création de l'utilisateur
 	}
@@ -122,16 +118,40 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	
 	
 	@Override
-	public void updatePassword(Utilisateur utilisateur) {
+	public void updatePassword(Utilisateur utilisateur, String currentPassword, String newPassword, String confirmPassword) {
 		// Validation complète avant mise à jour
 		BusinessException be = new BusinessException();
-		validerPassword(utilisateur.getPassword(), be);
+		validerConfirmPassword(newPassword, confirmPassword, be);
+		isSameAsCurrentPassword(currentPassword, utilisateur.getPassword(), be);
+		validerPassword(newPassword, be);
 		
 		if (!be.isValid()) {
 			throw be;
 		}
-		
+		newPassword = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(newPassword);
+		utilisateur.setPassword(newPassword);
 		utilisateurDAO.updatePassword(utilisateur);
+	}
+
+	private boolean validerConfirmPassword(String newPassword, String confirmPassword, BusinessException be) {
+		boolean isValid = true;
+		
+		if(!newPassword.equals(confirmPassword)) {
+			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_NON_IDENTIQUES);
+			isValid = false;
+		}
+		return isValid;
+	}
+
+	private boolean isSameAsCurrentPassword(String password, String currentPassword, BusinessException be) {
+		boolean isValid = true;
+		password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
+		
+		if(!password.equals(currentPassword)) {
+			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_INCORRECT);
+			isValid = false;
+		}
+		return isValid;
 	}
 
 	@Override
@@ -215,14 +235,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		if (password == null || password.isBlank()) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_BLANK);
 			isValid = false;
-//		} else if (password.startsWith("{bcrypt}")) {
-//			// Si c'est déjà un hash bcrypt, on ignore la validation regex.
-//			System.out.println("Mot de passe déjà haché avec bcrypt, ignorer la validation regex.");
-//		} else if (!password
-//				.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[@$!%?&])[A-Za-z\\d@$!%?&]{8,20}$")) {
-//			// Validation du format du mot de passe
-//			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_FORMAT);
-//			isValid = false;
+		} else if (!password
+				.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[\\W_])[A-Za-z\\d\\W_]{8,20}$")) {
+			// Validation du format du mot de passe
+			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_FORMAT);
+			isValid = false;
 		}
 		return isValid;
 	}

@@ -7,35 +7,40 @@
             <div class="card-body">
                 <fieldset data-th-disabled="${disabled}">
                   	<input type = "hidden" data-th-field="*{id}"> 
-                    <div class="row">
+                    <div class="row mb-3">
                         <!-- Première colonne -->
                         <div class="col-md-6">
-                            <div class="mb-3">
+                            <div>
                                 <label class="form-label"
                                     data-th-text="#{view-user-form.pseudo}"></label> 
                                 <input type="text" class="form-control" data-th-field="*{pseudo}" th:disabled="${!creation}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('pseudo')}"></div>
                             </div>
-                            <div class="mb-3">
+                            <div>
                                 <label class="form-label"
                                     data-th-text="#{view-user-form.prenom}"></label> 
                                 <input type="text" class="form-control" data-th-field="*{prenom}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('prenom')}"></div>
                             </div>
-                            <div class="mb-3">
+                            <div>
                                 <label class="form-label"
                                     data-th-text="#{view-user-form.telephone}"></label> 
                                 <input type="tel" class="form-control" data-th-field="*{telephone}" />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('telephone')}"></div>
                             </div>
                         </div>
 
                         <!-- Deuxième colonne -->
                         <div class="col-md-6">
-                            <div class="mb-3">
+                            <div>
                                 <label class="form-label" data-th-text="#{view-user-form.nom}"></label>
                                 <input type="text" class="form-control" data-th-field="*{nom}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('nom')}"></div>
                             </div>
-                            <div class="mb-3">
+                            <div>
                                 <label class="form-label" data-th-text="#{view-user-form.email}"></label>
                                 <input type="email" class="form-control" data-th-field="*{email}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('email')}"></div>
                             </div>
                         </div>
                     </div>
@@ -52,14 +57,17 @@
                         <div class="col-md-4">
                             <input type="text" class="form-control"
                                 data-th-field="*{adresse.rue}" required placeholder="Rue" />
+                            <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.rue')}"></div>    
                         </div>
                         <div class="col-md-4">
                             <input type="text" class="form-control"
                                 data-th-field="*{adresse.code_postal}" required placeholder="Code Postal" />
+							<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.code_postal')}"></div>
                         </div>
                         <div class="col-md-4">
                             <input type="text" class="form-control"
                                 data-th-field="*{adresse.ville}" required placeholder="Ville" />
+                            <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.ville')}"></div>    
                         </div>
                     </div>
 
@@ -70,6 +78,7 @@
         <div class="mb-3">
             <label class="form-label">Mot de passe</label>
             <input type="password" id="password" class="form-control" data-th-field="*{password}" required />
+            <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('password')}"></div>
         </div>
     </div>
 

@@ -46,8 +46,8 @@ public class Utilisateur {
 
 	@NotBlank
 	@NotNull
-	@Size(min = 8, max = 20)
-	@Pattern(regexp = "^(?=.[a-z])(?=.[A-Z])(?=.\\d)(?=.[@$!%?&])[A-Za-z\\d@$!%?&]{8,20}$")
+	@Size(min = 8, max = 20, message = "{validation.utilisateur.password.format}")
+	@Pattern(regexp = "^(?=.[a-z])(?=.[A-Z])(?=.\\d)(?=.[@$!%?&])[A-Za-z\\d@$!%?&]{8,20}$", message = "{validation.utilisateur.password.format}" )
 	private String password;
 
 	@NotNull
@@ -197,5 +197,8 @@ public class Utilisateur {
 				+ email + ", telephone=" + telephone + ", adresse =  " + adresse + " password=" + password + ", credit="
 				+ credit + ", actif=" + actif + ", code_role=" + code_role + "]";
 	}
+
+		
+	
 
 }

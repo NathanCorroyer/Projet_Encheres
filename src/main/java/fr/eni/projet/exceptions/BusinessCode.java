@@ -10,6 +10,8 @@ public class BusinessCode {
 	public static final String VALIDATION_UTILISATEUR_PSEUDO_EXISTANT = "validation.utilisateur.pseudo.existant";
 	public static final String VALIDATION_UTILISATEUR_PASSWORD_BLANK = "validation.utilisateur.password.blank";
 	public static final String VALIDATION_UTILISATEUR_PASSWORD_FORMAT = "validation.utilisateur.password.format";
+	public static final String VALIDATION_UTILISATEUR_PASSWORD_NON_IDENTIQUES = "validation.utilisateur.password.non.identiques";
+	public static final String VALIDATION_UTILISATEUR_PASSWORD_INCORRECT = "validation.utilisateur.password.incorrect";
 	public static final String VALIDATION_UTILISATEUR_EMAIL_BLANK = "validation.utilisateur.email.blank";
 	public static final String VALIDATION_UTILISATEUR_EMAIL_FORMAT = "validation.utilisateur.email.format";
 	public static final String VALIDATION_UTILISATEUR_EMAIL_EXISTANT = "validation.utilisateur.email.existant";
