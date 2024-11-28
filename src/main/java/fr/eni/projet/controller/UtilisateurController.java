@@ -1,9 +1,12 @@
 package fr.eni.projet.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Utilisateur;
-import fr.eni.projet.exceptions.BusinessCode;
 import fr.eni.projet.exceptions.BusinessException;
 import jakarta.validation.Valid;
 
@@ -127,22 +129,26 @@ public class UtilisateurController {
             @RequestParam(name = "newPassword", required = true) String newPassword,
             @RequestParam(name = "confirmPassword", required = true) String confirmPassword, 
             RedirectAttributes redirectAttributes, Authentication auth) {
+		
+		Locale locale = LocaleContextHolder.getLocale();
 		String pseudoUserConnected = auth.getName();
 		Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
 		if(!pseudoUserConnected.equals(pseudo)) {
-			redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas modifier le mot de passe de quelqu'un d'autre que vous.");
-			return "/utilisateurs/view-modifier-password";
+			redirectAttributes.addFlashAttribute("error", messageSource.getMessage("modification.mdp.acces.interdit", null, locale));
+			return "redirect:/users/profil?pseudo=" + pseudo ;
 		}
 		try {
-			userService.updatePassword(user, currentPassword, newPassword);	
-			redirectAttributes.addFlashAttribute("message", "Mot de passe mis à jour avec succès.");
-			return "/utilisateurs/view-profil-password";
+			userService.updatePassword(user, currentPassword, newPassword, confirmPassword);	
+			redirectAttributes.addFlashAttribute("message", messageSource.getMessage("modification.mdp.reussite", null, locale));
+			return "redirect:/users/profil?pseudo=" + pseudo;
 		} catch (BusinessException e) {
+			List<String> errorMessages = new ArrayList<>();
 			e.getClefsExternalisations().forEach(key -> {
-				String errorMessage = messageSource.getMessage(BusinessCode.VALIDATION_UTILISATEUR_PSEUDO_BLANK, null, Locale.getDefault());
-				ObjectError error = new ObjectError("globalError", key);
+			    String errorMessage = messageSource.getMessage(key, null, locale);
+			    errorMessages.add(errorMessage);
 			});
-			return "/utilisateurs/view-modifier-password";
+			redirectAttributes.addFlashAttribute("errorMessages", errorMessages);
+			return "redirect:/users/modifiermdp?pseudo=" + pseudo ;
 		}
 	}
 }

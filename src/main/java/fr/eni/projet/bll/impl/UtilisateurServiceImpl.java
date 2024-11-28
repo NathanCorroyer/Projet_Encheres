@@ -118,9 +118,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	
 	
 	@Override
-	public void updatePassword(Utilisateur utilisateur, String currentPassword, String newPassword) {
+	public void updatePassword(Utilisateur utilisateur, String currentPassword, String newPassword, String confirmPassword) {
 		// Validation complète avant mise à jour
 		BusinessException be = new BusinessException();
+		validerConfirmPassword(newPassword, confirmPassword, be);
 		isSameAsCurrentPassword(currentPassword, utilisateur.getPassword(), be);
 		validerPassword(newPassword, be);
 		
@@ -132,11 +133,22 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		utilisateurDAO.updatePassword(utilisateur);
 	}
 
+	private boolean validerConfirmPassword(String newPassword, String confirmPassword, BusinessException be) {
+		boolean isValid = true;
+		
+		if(!newPassword.equals(confirmPassword)) {
+			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_NON_IDENTIQUES);
+			isValid = false;
+		}
+		return isValid;
+	}
+
 	private boolean isSameAsCurrentPassword(String password, String currentPassword, BusinessException be) {
 		boolean isValid = true;
 		password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
 		
 		if(!password.equals(currentPassword)) {
+			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_INCORRECT);
 			isValid = false;
 		}
 		return isValid;
@@ -224,7 +236,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_BLANK);
 			isValid = false;
 		} else if (!password
-				.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[@$!%?&])[A-Za-z\\d@$!%?&]{8,20}$")) {
+				.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[\\W_])[A-Za-z\\d\\W_]{8,20}$")) {
 			// Validation du format du mot de passe
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_FORMAT);
 			isValid = false;

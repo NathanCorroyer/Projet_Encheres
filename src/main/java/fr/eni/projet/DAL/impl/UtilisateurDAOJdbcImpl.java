@@ -25,7 +25,7 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	private final static String FIND_BY_PSEUDO = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE pseudo = :pseudo";
 	private final static String FIND_ALL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS";
 	private final static String UPDATE = "UPDATE UTILISATEURS SET nom = :nom, prenom = :prenom, email = :email, telephone = :telephone WHERE no_utilisateur = :no_utilisateur";
-	private final static String UPDATE_PASSWORD = "UPDATE UTILISATEURS SET password = :password WHERE no_utilisateur = :no_utilisateur";
+	private final static String UPDATE_PASSWORD = "UPDATE UTILISATEURS SET mot_de_passe = :password WHERE no_utilisateur = :no_utilisateur";
 	private final static String MODIFIER_ACTIVATION = "UPDATE UTILISATEURS SET actif = :actif WHERE no_utilisateur = :no_utilisateur";
 	private final static String FIND_BY_EMAIL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE email = :email";
 	
