@@ -54,7 +54,7 @@ public class UtilisateurController {
 
 			// Sauvegarde l'utilisateur
 			userService.create(user);
-			return "redirect:/"; // Redirige vers la page d'accueil ou une autre vue
+			return "redirect:/login";
 		} catch (BusinessException e) {
 			// Ajoute les messages d'erreur métier au BindingResult
 			e.getClefsExternalisations().forEach(key -> {

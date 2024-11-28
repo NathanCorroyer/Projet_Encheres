@@ -33,7 +33,7 @@ gradle/
 gradle/*
 .gradle/
 .gradle/*
-
+/bin/
 
 # Maven specific files
 /target/
