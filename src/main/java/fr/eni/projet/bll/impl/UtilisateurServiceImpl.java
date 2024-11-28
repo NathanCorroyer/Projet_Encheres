@@ -74,6 +74,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 	@Override
 	public Optional<Utilisateur> findByPseudo(String pseudo) {
+		System.out.println("Pseudo : " +pseudo);
 		if (pseudo == null || pseudo.isBlank()) {
 			throw new IllegalArgumentException("Le pseudo ne peut pas être vide.");
 		}
@@ -86,6 +87,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		// Récupère l'utilisateur contenu dans l'Optional
 		Utilisateur utilisateur = user.get();
 
+		System.out.println("utilisateur.getpassword :" + utilisateur.getPseudo());
 		// Récupère l'adresse associée à l'utilisateur
 		Adresse adresse = adresseDAO.findById(utilisateur.getAdresse().getId());
 
@@ -99,6 +101,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	@Override
 	public List<Utilisateur> findAll() {
 		return utilisateurDAO.findAll();
+	}
+	
+	@Override
+	public String findPassword(String pseudo) {
+		return utilisateurDAO.findPassword(pseudo);
 	}
 
 	@Override
@@ -121,9 +128,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	public void updatePassword(Utilisateur utilisateur, String currentPassword, String newPassword, String confirmPassword) {
 		// Validation complète avant mise à jour
 		BusinessException be = new BusinessException();
+		utilisateur.setPassword(findPassword(utilisateur.getPseudo()));
+		validerPassword(newPassword, be);
 		validerConfirmPassword(newPassword, confirmPassword, be);
 		isSameAsCurrentPassword(currentPassword, utilisateur.getPassword(), be);
-		validerPassword(newPassword, be);
 		
 		if (!be.isValid()) {
 			throw be;
@@ -144,12 +152,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 
 	private boolean isSameAsCurrentPassword(String password, String currentPassword, BusinessException be) {
-		boolean isValid = true;
-		password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
-		
-		if(!password.equals(currentPassword)) {
+		boolean isValid = PasswordEncoderFactories.createDelegatingPasswordEncoder().matches(password, currentPassword);
+		if(!isValid) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_INCORRECT);
-			isValid = false;
 		}
 		return isValid;
 	}

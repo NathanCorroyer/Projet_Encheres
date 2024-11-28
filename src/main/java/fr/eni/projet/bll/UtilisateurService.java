@@ -13,7 +13,7 @@ public interface UtilisateurService {
 	public Optional<Utilisateur> findByPseudo(String pseudo);
 
 	public List<Utilisateur> findAll();
-
+	public String findPassword(String pseudo);
 	public void update(Utilisateur utilisateur, boolean isEmail);
 	public void updatePassword(Utilisateur utilisateur, String currentPassword, String newPassword, String confirmPassword);
 

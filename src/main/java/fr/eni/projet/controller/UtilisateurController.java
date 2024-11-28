@@ -133,6 +133,7 @@ public class UtilisateurController {
 		Locale locale = LocaleContextHolder.getLocale();
 		String pseudoUserConnected = auth.getName();
 		Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
+		
 		if(!pseudoUserConnected.equals(pseudo)) {
 			redirectAttributes.addFlashAttribute("error", messageSource.getMessage("modification.mdp.acces.interdit", null, locale));
 			return "redirect:/users/profil?pseudo=" + pseudo ;
