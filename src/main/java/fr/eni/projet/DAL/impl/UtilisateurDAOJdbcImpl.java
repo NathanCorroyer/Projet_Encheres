@@ -100,6 +100,16 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 		namedParameterJdbcTemplate.update(UPDATE, namedParameters);
 	}
 
+	@Override
+	public void updatePassword(Utilisateur utilisateur) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("password", utilisateur.getPassword())
+				.addValue("no_utilisateur", utilisateur.getId());
+
+		namedParameterJdbcTemplate.update(UPDATE_PASSWORD, namedParameters);
+		
+	}
+	
 	
 	@Override
 	public void modifierActivation(Utilisateur utilisateur) {
@@ -134,14 +144,6 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 		}
 	}
 
-	@Override
-	public void updatePassword(Utilisateur utilisateur) {
-		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("password", utilisateur.getPassword())
-				.addValue("no_utilisateur", utilisateur.getId());
 
-		namedParameterJdbcTemplate.update(UPDATE_PASSWORD, namedParameters);
-		
-	}
 
 }

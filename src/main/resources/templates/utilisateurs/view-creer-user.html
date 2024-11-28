@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
+<html xmlns:th="http://www.thymeleaf.org" data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{::#ressourcesSupp})}">
 
 <head>
 <meta charset="UTF-8">
 <title data-th-text="#{index.title}"></title>
 <link rel="stylesheet" th:href="@{/css/layout.css}" />
-
+<th:block id="ressourcesSupp">
+	<link rel="stylesheet" data-th-href="@{/css/errors.css}">	
+</th:block>
 </head>
 
 

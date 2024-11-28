@@ -15,7 +15,7 @@ public interface UtilisateurService {
 	public List<Utilisateur> findAll();
 
 	public void update(Utilisateur utilisateur, boolean isEmail);
-	public void updatePassword(Utilisateur utilisateur);
+	public void updatePassword(Utilisateur utilisateur, String currentPassword, String newPassword);
 
 	public void modifierActivation(Utilisateur utilisateur);
 

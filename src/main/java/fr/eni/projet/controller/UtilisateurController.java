@@ -1,7 +1,10 @@
 package fr.eni.projet.controller;
 
+import java.util.Locale;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,19 +19,29 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Utilisateur;
+import fr.eni.projet.exceptions.BusinessCode;
 import fr.eni.projet.exceptions.BusinessException;
 import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
+//@SessionAttributes({ "userSession" })
 public class UtilisateurController {
 
 	private UtilisateurService userService;
+	@Autowired
+	private MessageSource messageSource;
 
 	public UtilisateurController(UtilisateurService userService) {
 		this.userService = userService;
 	}
 
+//	// Méthode pour charger l'utilisateur en session
+//		@ModelAttribute("userSession")
+//		public Utilisateur chargerUserSession() {
+//			return userService.findByPseudo(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
+//		}
+//	
 	@GetMapping("/creer")
 	private String creer(@ModelAttribute("user") Utilisateur user) {
 		if (user.getAdresse() == null) {
@@ -47,11 +60,6 @@ public class UtilisateurController {
 		}
 
 		try {
-			// Encode le mot de passe
-			String password = user.getPassword();
-			password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
-			user.setPassword(password);
-
 			// Sauvegarde l'utilisateur
 			userService.create(user);
 			return "redirect:/login";
@@ -108,13 +116,33 @@ public class UtilisateurController {
 	}
 	
 	@GetMapping("/modifiermdp")
-	private String modifierMdp() {
+	private String modifierMdp(@RequestParam("pseudo") String pseudo, Model model) {
+		 model.addAttribute("pseudo", pseudo);
 		return "/utilisateurs/view-modifier-password";
 	}
 	
 	@PostMapping("/modifiermdp")
-	private String updateMdp() {
-		
-		return "/utilisateurs/view-modifier-password";
+	private String updateMdp(@RequestParam(name = "pseudo", required = true) String pseudo, 
+			@RequestParam(name = "currentPassword", required = true) String currentPassword,
+            @RequestParam(name = "newPassword", required = true) String newPassword,
+            @RequestParam(name = "confirmPassword", required = true) String confirmPassword, 
+            RedirectAttributes redirectAttributes, Authentication auth) {
+		String pseudoUserConnected = auth.getName();
+		Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
+		if(!pseudoUserConnected.equals(pseudo)) {
+			redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas modifier le mot de passe de quelqu'un d'autre que vous.");
+			return "/utilisateurs/view-modifier-password";
+		}
+		try {
+			userService.updatePassword(user, currentPassword, newPassword);	
+			redirectAttributes.addFlashAttribute("message", "Mot de passe mis à jour avec succès.");
+			return "/utilisateurs/view-profil-password";
+		} catch (BusinessException e) {
+			e.getClefsExternalisations().forEach(key -> {
+				String errorMessage = messageSource.getMessage(BusinessCode.VALIDATION_UTILISATEUR_PSEUDO_BLANK, null, Locale.getDefault());
+				ObjectError error = new ObjectError("globalError", key);
+			});
+			return "/utilisateurs/view-modifier-password";
+		}
 	}
 }
