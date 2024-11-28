@@ -88,13 +88,13 @@
 
                     <!-- Bouton submit -->
                     <div class="row mt-4">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <button type="submit" class="btn btn-primary w-100" data-th-text="${text_button}" data-th-if="${visible}"></button>
                         </div>
-                        <div class="" data-th-if="${!creation}">
-                          <a data-th-href="@{/users/modifiermdp(pseudo=*{pseudo})}" class="btn btn-secondary">Modifier mot de passe</a>		
+                        <div class="col-md-4" data-th-if="${!creation}">
+                          <a data-th-href="@{/users/modifiermdp(pseudo=*{pseudo})}" class="btn btn-secondary w-100">Modifier le mot de passe</a>		
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <a href="/" class="btn btn-danger w-100">Annuler</a>
                         </div>
                         
