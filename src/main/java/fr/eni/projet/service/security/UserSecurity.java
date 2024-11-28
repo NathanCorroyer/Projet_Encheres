@@ -12,9 +12,6 @@ public class UserSecurity {
     public static AuthorizationDecision hasAccessToUser(Authentication auth, HttpServletRequest request) {
         String requestedPseudo = request.getParameter("pseudo");
         String loggedInUser = auth.getName();  // Retrieve the logged-in username
-        
-        System.out.println("requestedPseudo : " + requestedPseudo);
-        System.out.println("loggedInUser : " + loggedInUser);
         return new AuthorizationDecision(loggedInUser.equals(requestedPseudo));
     }
 }
