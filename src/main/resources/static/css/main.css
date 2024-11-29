@@ -1,7 +1,4 @@
-body *:not(header, footer){
-	
-}
-
 main{
+	margin : 10px;
 	height: 100%;
 }
