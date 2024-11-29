@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.bo.Adresse;
+import fr.eni.projet.bo.Utilisateur;
 
 @Repository
 public class AdresseDAOJdbcImpl implements AdresseDAO {
@@ -24,6 +25,10 @@ public class AdresseDAOJdbcImpl implements AdresseDAO {
 	private final static String FIND_ALL = "SELECT no_adresse, rue, code_postal, ville, adresse_eni FROM ADRESSES";
 	private final static String UPDATE = "UPDATE ADRESSES SET rue = :rue, code_postal = :code_postal, ville = :ville, adresse_eni = :adresse_eni WHERE id = :id";
 	private final static String DELETE = "DELETE FROM ADRESSES WHERE no_adresse = :id";
+	private final static String FIND_BY_USER = "SELECT a.no_adresse, a.rue, a.code_postal, a.ville, a.adresse_eni "
+			+ "FROM ADRESSES a " + "INNER JOIN UTILISATEURS u ON u.no_adresse = a.no_adresse "
+			+ "WHERE u.no_utilisateur = :utilisateur_id";
+	private final static String FIND_BY_ENI = "SELECT * FROM ADRESSES WHERE adresse_eni = :adresse_eni";
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -79,6 +84,22 @@ public class AdresseDAOJdbcImpl implements AdresseDAO {
 		namedParameterJdbcTemplate.update(DELETE, namedParameters);
 	}
 
+	@Override
+	public List<Adresse> findByUtilisateur(Utilisateur utilisateur) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("utilisateur_id", utilisateur.getId());
+
+		return namedParameterJdbcTemplate.query(FIND_BY_USER, namedParameters, new AdresseRowMapper());
+	}
+
+	@Override
+	public List<Adresse> findByAdresseENI(boolean isENI) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("adresse_eni", isENI);
+
+		return namedParameterJdbcTemplate.query(FIND_BY_ENI, namedParameters, new AdresseRowMapper());
+	}
+
 	class AdresseRowMapper implements RowMapper<Adresse> {
 		@Override
 		public Adresse mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -88,6 +109,7 @@ public class AdresseDAOJdbcImpl implements AdresseDAO {
 			adresse.setCode_postal(rs.getString("code_postal"));
 			adresse.setVille(rs.getString("ville"));
 			adresse.setAdresse_eni(rs.getBoolean("adresse_eni"));
+
 			return adresse;
 		}
 	}
@@ -97,4 +119,5 @@ public class AdresseDAOJdbcImpl implements AdresseDAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

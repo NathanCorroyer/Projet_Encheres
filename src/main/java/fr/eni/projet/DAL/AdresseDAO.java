@@ -3,6 +3,7 @@ package fr.eni.projet.DAL;
 import java.util.List;
 
 import fr.eni.projet.bo.Adresse;
+import fr.eni.projet.bo.Utilisateur;
 
 public interface AdresseDAO {
 
@@ -17,4 +18,8 @@ public interface AdresseDAO {
 	public void update(Adresse adresse);
 
 	public void delete(int id);
+
+	List<Adresse> findByUtilisateur(Utilisateur utilisateur);
+
+	List<Adresse> findByAdresseENI(boolean isENI);
 }

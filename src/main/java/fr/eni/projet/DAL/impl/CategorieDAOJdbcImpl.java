@@ -13,26 +13,26 @@ import fr.eni.projet.DAL.CategorieDAO;
 import fr.eni.projet.bo.Categorie;
 
 @Repository
-public class CategorieDAOJdbcImpl implements CategorieDAO{
+public class CategorieDAOJdbcImpl implements CategorieDAO {
 
-	
+	private final static String FIND_ALL = "SELECT no_categorie, libelle FROM CATEGORIES";
+
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+
 	@Override
 	public void create(Categorie categorie) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public List<Categorie> findAll() {
 		// TODO Auto-generated method stub
-		return null;
+		return namedParameterJdbcTemplate.query(FIND_ALL, new CategorieRowMapper());
 	}
 
-	
-	class CategorieRowMapper implements RowMapper<Categorie>{
+	class CategorieRowMapper implements RowMapper<Categorie> {
 
 		@Override
 		public Categorie mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -41,6 +41,6 @@ public class CategorieDAOJdbcImpl implements CategorieDAO{
 			categorie.setLibelle(rs.getString("libelle"));
 			return categorie;
 		}
-		
+
 	}
 }

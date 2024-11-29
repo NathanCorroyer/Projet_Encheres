@@ -22,12 +22,23 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public void create(Article article) {
-		// Validation avant la création
 		BusinessException be = new BusinessException();
+
 		if (!validerArticle(article, be)) {
-			throw be; // Lève une exception si la validation échoue
+			System.err.println("Erreur de validation pour l'article: " + article);
+			throw be;
 		}
-		articleDAO.create(article);
+
+		try {
+			System.out.println("L'article est valide. Tentative de création dans la base de données.");
+			articleDAO.create(article);
+			System.out.println("L'article a été créé avec succès: " + article);
+		} catch (Exception e) {
+
+			System.err.println("Erreur lors de la création de l'article: " + article);
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Override
@@ -89,10 +100,10 @@ public class ArticleServiceImpl implements ArticleService {
 		isValid &= validerNom(article.getNom(), be);
 		isValid &= validerDescription(article.getDescription(), be);
 		isValid &= validerDateDebut(article.getDate_debut(), be);
-		isValid &= validerPrix(article.getPrix_vente(), be);
+		isValid &= validerPrix(article.getPrix_initial(), be);
 		isValid &= validerAdresse(article.getAdresse(), be);
 		isValid &= validerStatutEnchere(article.getStatut_enchere(), be);
-		isValid &= validerPathImage(article.getPath_image(), be);
+//		isValid &= validerPathImage(article.getPath_image(), be);
 
 		return isValid;
 	}

@@ -46,6 +46,7 @@ public class SecurityConfig {
 			auth.requestMatchers("/users/creer").permitAll();
 			auth.requestMatchers("/css/*").permitAll();
 			auth.requestMatchers("/img/*").permitAll();
+			auth.requestMatchers("/vendre").permitAll();
 
 			auth.anyRequest().authenticated();
 		});

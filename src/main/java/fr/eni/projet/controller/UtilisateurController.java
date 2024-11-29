@@ -37,22 +37,17 @@ public class UtilisateurController {
 	@PostMapping("/creer")
 	private String creerUser(@ModelAttribute("user") Utilisateur user, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
-			// Trace les erreurs pour le debug
 			bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
 			return "/utilisateurs/view-creer-user";
 		}
 
 		try {
-			// Encode le mot de passe
 			String password = user.getPassword();
 			password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
 			user.setPassword(password);
-
-			// Sauvegarde l'utilisateur
 			userService.create(user);
 			return "redirect:/login";
 		} catch (BusinessException e) {
-			// Ajoute les messages d'erreur métier au BindingResult
 			e.getClefsExternalisations().forEach(key -> {
 				ObjectError error = new ObjectError("globalError", key);
 				bindingResult.addError(error);

@@ -1,6 +1,8 @@
 package fr.eni.projet.bll.impl;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bo.Adresse;
+import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.exceptions.BusinessCode;
 import fr.eni.projet.exceptions.BusinessException;
 
@@ -85,7 +88,6 @@ public class AdresseServiceImpl implements AdresseService {
 		isValid &= validerCodePostal(adresse.getCode_postal(), be);
 		isValid &= validerVille(adresse.getVille(), be);
 
-
 		return isValid;
 	}
 
@@ -123,5 +125,20 @@ public class AdresseServiceImpl implements AdresseService {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public List<Adresse> findByUtilisateur(Optional<Utilisateur> utilisateur) {
+		if (utilisateur.isPresent()) {
+			return adresseDAO.findByUtilisateur(utilisateur.get());
+		} else {
+
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public List<Adresse> findByAdresseENI(boolean isENI) {
+		return adresseDAO.findByAdresseENI(isENI);
 	}
 }
