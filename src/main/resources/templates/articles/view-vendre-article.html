@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
+
+<head>
+<meta charset="UTF-8">
+<title data-th-text="#{index.title}"></title>
+<link rel="stylesheet" th:href="@{/css/layout.css}" />
+</head>
+
+<body>
+	<main id="contenuPage">
+		<div class="header-container">
+			<h1 data-th-text="#{view-article-form.h1}"></h1>
+			<div class="date-card">
+				<p id="current-date"></p>
+				<!-- Affichage du pseudo si l'utilisateur est connecté -->
+				<div th:if="${pseudo != null}">
+					<p>
+						Participant <span th:text="${pseudo}"></span>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<form
+			data-th-replace="~{fragments/fragment-article-form :: frag-article-form(action = '/articles/vendre', text_button = #{view-article-form.btn}, disabled = false, visible = true)}">
+		</form>
+
+		<p data-th-each="err : ${#fields.errors('global')}"
+			data-th-text="#{${err}}"></p>
+
+		<script>
+			function updateDate() {
+				const dateElement = document.getElementById("current-date");
+				const now = new Date();
+				const options = {
+					weekday : 'long',
+					year : 'numeric',
+					month : 'long',
+					day : 'numeric'
+				};
+
+				// Génération de la date au format local
+				const formattedDate = now.toLocaleDateString('fr-FR', options);
+				console.log("Date générée :", formattedDate);
+
+				dateElement.textContent = formattedDate;
+			}
+
+			// Mettre à jour la date au chargement de la page
+			updateDate();
+
+			// Optionnel : Actualiser la date chaque minute
+			setInterval(updateDate, 60000);
+		</script>
+	</main>
+</body>
+
+</html>

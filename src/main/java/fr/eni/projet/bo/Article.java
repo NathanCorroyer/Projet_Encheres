@@ -39,8 +39,6 @@ public class Article {
 	@NotNull
 	private StatutEnchere statut_enchere;
 
-	@NotNull
-	@NotBlank
 	@Size(max = 300)
 	private String path_image;
 	// ----------------------- CONSTRUCTEURS -----------------------------------

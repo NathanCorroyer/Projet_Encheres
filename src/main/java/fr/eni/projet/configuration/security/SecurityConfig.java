@@ -48,6 +48,7 @@ public class SecurityConfig {
 			auth.requestMatchers("/").permitAll();
 			auth.requestMatchers("/css/*").permitAll();
 			auth.requestMatchers("/img/*").permitAll();
+			auth.requestMatchers("/articles/vendre").authenticated();
 			auth.requestMatchers("/users/creer").permitAll();
 			auth.requestMatchers("/users/modifiermdp/**").access((authentication, context) -> UserSecurity.hasAccessToUser(authentication.get(), context.getRequest()));
 			auth.anyRequest().authenticated();
