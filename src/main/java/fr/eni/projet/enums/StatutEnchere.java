@@ -18,4 +18,13 @@ public enum StatutEnchere {
     public int getValue() {
         return value;
     }
+        
+    public static StatutEnchere fromValue(int value) {
+        for (StatutEnchere statut : StatutEnchere.values()) {
+            if (statut.value == value) {
+                return statut;
+            }
+        }
+        throw new IllegalArgumentException("Valeur inconnue : " + value);
+    }
 }

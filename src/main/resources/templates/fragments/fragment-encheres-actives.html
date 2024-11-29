@@ -8,16 +8,10 @@
 				<h5 class="card-title" data-th-text="${article.nom}"></h5>
 				</div>
 					<div class="card-body">
-					<p class="card-text">Prix : <span data-th-text="${article.prix_vente > 0 ? article.prix_vente : article.prix_initial}"></span> point(s)</p>
+					<p class="card-text">Prix : <span data-th-text="${article.prix_vente > article.prix_initial ? article.prix_vente : article.prix_initial}"></span> point(s)</p>
 					<p class="card-text">Fin de l'enchère : <span data-th-text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span></p>
 					<!-- TODO : Link to vendeur profile -->
-					<p class="card-text">Vendeur : <a href="#"><span data-th-text="${article.proprietaire.pseudo}"></span></a></p>
-				</div>
-			</div>
-		</div>
-		<div class="col-sm-4 mb-4">
-			<div class="card ">
-				<div class="card-header">
+					<p class="card-text">Vendeur : <a data-th-href="${'/users/profil?pseudo=' + article.proprietaire.pseudo}"><span data-th-text="${article.proprietaire.pseudo}"></span></a></p>
 				</div>
 			</div>
 		</div>

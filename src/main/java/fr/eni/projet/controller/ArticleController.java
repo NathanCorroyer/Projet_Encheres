@@ -27,7 +27,6 @@ import fr.eni.projet.enums.StatutEnchere;
 import fr.eni.projet.exceptions.BusinessException;
 
 @Controller
-@RequestMapping("/articles")
 public class ArticleController {
 
 	private ArticleService articleService;
@@ -52,7 +51,7 @@ public class ArticleController {
 		return categorieService.findAll();
 	}
 
-	@GetMapping("/vendre")
+	@GetMapping("/articles/vendre")
 	public String vendreArticleForm(@ModelAttribute("article") Article article, Authentication auth, Model model) {
 		String pseudoUserConnected = auth != null ? auth.getName() : null;
 		if (pseudoUserConnected != null) {
@@ -75,7 +74,7 @@ public class ArticleController {
 		return "articles/view-vendre-article";
 	}
 
-	@PostMapping("/vendre")
+	@PostMapping("/articles/vendre")
 	public String vendreArticle(@ModelAttribute("article") Article article, BindingResult bindingResult, Model model,
 			Authentication auth) {
 		// Vérifier si des erreurs de validation existent
@@ -134,13 +133,12 @@ public class ArticleController {
 	}
 	
 	
-	@GetMapping
+	@GetMapping("/")
 	public String afficherActiveEncheres(Model model) {
-		List<Article> lstArticles = articleService.findAll();
+		List<Article> lstArticles = articleService.findAllActive();
 		model.addAttribute("articles", lstArticles);
 		
-		return "fragment_encheres_actives";
+		return "index";
 	}
-
 
 }

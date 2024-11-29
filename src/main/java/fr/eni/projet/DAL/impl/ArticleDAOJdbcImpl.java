@@ -29,7 +29,8 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	private final static String DELETE = "DELETE FROM ARTICLES WHERE no_article = :no_article";
 	private final static String FIND_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie";
 	private final static String FIND_BY_UTILISATEUR = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_utilisateur = :no_utilisateur";
-
+	private final static String FIND_ALL_ACTIVE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE statut_enchere = 1";
+	//	private final static String FIND_ALL_ACTIVE ="SELECT a.no_article, a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres, a.prix_initial, a.prix_vente, a.no_utilisateur, a.no_categorie, a.statut_enchere, a.no_adresse_retrait, a.path_image, u.pseudo AS pseudo_proprietaire FROM ARTICLES a JOIN UTILISATEURS u ON a.no_utilisateur = u.no_utilisateur" + " WHERE a.statut_enchere = 1";
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -43,6 +44,10 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	@Override
 	public List<Article> findAll() {
 		return namedParameterJdbcTemplate.query(FIND_ALL, new ArticleRowMapper());
+	}
+	@Override
+	public List<Article> findAllActive() {
+		return namedParameterJdbcTemplate.query(FIND_ALL_ACTIVE, new ArticleRowMapper());
 	}
 
 	@Override
@@ -104,12 +109,12 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 			article.setDate_fin(rs.getTimestamp("date_fin_encheres").toLocalDateTime());
 			article.setPrix_initial(rs.getInt("prix_initial"));
 			article.setPrix_vente(rs.getInt("prix_vente"));
-			article.setStatut_enchere(StatutEnchere.values()[rs.getInt("statut_enchere")]);
+			article.setStatut_enchere(StatutEnchere.fromValue(rs.getInt("statut_enchere")));
 			article.setPath_image(rs.getString("path_image"));
 			
 			//Relations
 			Utilisateur proprietaire = new Utilisateur();
-			proprietaire.setId(rs.getInt("no_utilisateur"));;
+			proprietaire.setId(rs.getInt("no_utilisateur"));
 			article.setProprietaire(proprietaire);
 			
 			Categorie categorie = new Categorie();

@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.eni.projet.DAL.ArticleDAO;
+import fr.eni.projet.DAL.EnchereDAO;
+import fr.eni.projet.DAL.UtilisateurDAO;
 import fr.eni.projet.bll.ArticleService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Article;
+import fr.eni.projet.bo.Enchere;
+import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.enums.StatutEnchere;
 import fr.eni.projet.exceptions.BusinessCode;
 import fr.eni.projet.exceptions.BusinessException;
@@ -19,6 +23,10 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Autowired
 	private ArticleDAO articleDAO;
+	@Autowired
+	private UtilisateurDAO userDAO;
+	@Autowired
+	private EnchereDAO enchereDAO;
 
 	@Override
 	public void create(Article article) {
@@ -52,6 +60,19 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public List<Article> findAll() {
 		return articleDAO.findAll();
+	}
+	@Override
+	public List<Article> findAllActive() {
+		List<Article> articles = articleDAO.findAllActive();
+		articles.forEach(article -> {
+			Utilisateur user = userDAO.findById(article.getProprietaire().getId());
+			article.setProprietaire(user);
+			Enchere enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
+			if(enchere != null) {
+				article.setPrix_vente(enchere.getMontant());
+			}
+		});
+		return articles;
 	}
 
 	@Override
