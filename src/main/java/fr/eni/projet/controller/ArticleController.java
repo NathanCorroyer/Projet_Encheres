@@ -1,5 +1,6 @@
 package fr.eni.projet.controller;
 
+<<<<<<< Upstream, based on origin/main
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -131,6 +132,33 @@ public class ArticleController {
 			model.addAttribute("pseudo", "Erreur lors de la vente de l'article");
 			return "/articles/view-vendre-article";
 		}
+=======
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import fr.eni.projet.bll.ArticleService;
+import fr.eni.projet.bo.Article;
+
+@Controller
+@RequestMapping("/articles")
+public class ArticleController {
+	private ArticleService articleService;
+
+	public ArticleController(ArticleService articleService){
+		this.articleService = articleService;
+	}
+	
+	@GetMapping
+	public String afficherActiveEncheres(Model model) {
+		List<Article> lstArticles = articleService.findAll();
+		model.addAttribute("articles", lstArticles);
+		
+		return "fragment_encheres_actives";
+>>>>>>> 5c12167 FEAT : 1800 Home page logout
 	}
 
 }

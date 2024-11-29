@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 import fr.eni.projet.DAL.ArticleDAO;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Article;
+import fr.eni.projet.bo.Categorie;
+import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.enums.StatutEnchere;
 
 @Repository
@@ -102,9 +104,21 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 			article.setDate_fin(rs.getTimestamp("date_fin_encheres").toLocalDateTime());
 			article.setPrix_initial(rs.getInt("prix_initial"));
 			article.setPrix_vente(rs.getInt("prix_vente"));
-			article.setAdresse(new Adresse(rs.getInt("no_adresse_retrait")));
 			article.setStatut_enchere(StatutEnchere.values()[rs.getInt("statut_enchere")]);
 			article.setPath_image(rs.getString("path_image"));
+			
+			//Relations
+			Utilisateur proprietaire = new Utilisateur();
+			proprietaire.setId(rs.getInt("no_utilisateur"));;
+			article.setProprietaire(proprietaire);
+			
+			Categorie categorie = new Categorie();
+			categorie.setId(rs.getInt("no_categorie"));
+			article.setCategorie(categorie);
+			
+			Adresse adresse = new Adresse();
+			adresse.setId(rs.getInt("no_adresse_retrait"));
+			article.setAdresse(adresse);
 
 			return article;
 		}
