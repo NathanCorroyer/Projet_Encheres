@@ -13,7 +13,6 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 public class WebConfiguration implements WebMvcConfigurer {
 	@Bean
 	LocaleResolver localeResolver() {
-		System.out.println("localeResolver");
 		SessionLocaleResolver slr = new SessionLocaleResolver();
 		slr.setDefaultLocale(new Locale("fr"));
 		return slr;

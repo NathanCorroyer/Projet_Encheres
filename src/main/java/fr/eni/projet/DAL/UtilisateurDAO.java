@@ -14,8 +14,10 @@ public interface UtilisateurDAO {
 	public Optional<Utilisateur> findByPseudo(String pseudo);
 
 	public List<Utilisateur> findAll();
+	public String findPassword(String pseudo);
 
 	public void update(Utilisateur utilisateur);
+	public void updatePassword(Utilisateur utilisateur);
 
 	public void modifierActivation(Utilisateur utilisateur);
 

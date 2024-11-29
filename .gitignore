@@ -28,7 +28,13 @@ replay_pid*
 /.project
 /.settings/
 bin/
+build/
+gradle/
+gradle/*
+.gradle/
+.gradle/*
 /bin/
+
 # Maven specific files
 /target/
 
@@ -61,5 +67,6 @@ spring-boot-devtools.properties
 
 # Exclude application.properties and application.yml if you don’t want to share your environment-specific configuration (optional)
 # Uncomment the lines below if you want to avoid pushing config files.
+application.properties
 /src/main/resources/application.properties
 /src/main/resources/application.yml

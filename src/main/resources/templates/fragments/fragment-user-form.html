@@ -6,35 +6,41 @@
         <div class="card mx-auto" style="max-width: 800px;">
             <div class="card-body">
                 <fieldset data-th-disabled="${disabled}">
-                    <div class="row">
+                  	<input type = "hidden" data-th-field="*{id}"> 
+                    <div class="row mb-3">
                         <!-- Première colonne -->
                         <div class="col-md-6">
-                            <div class="mb-3">
+                            <div>
                                 <label class="form-label"
                                     data-th-text="#{view-user-form.pseudo}"></label> 
-                                <input type="text" class="form-control" data-th-field="*{pseudo}" required />
+                                <input type="text" class="form-control" data-th-field="*{pseudo}" th:disabled="${!creation}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('pseudo')}"></div>
                             </div>
-                            <div class="mb-3">
+                            <div>
                                 <label class="form-label"
                                     data-th-text="#{view-user-form.prenom}"></label> 
                                 <input type="text" class="form-control" data-th-field="*{prenom}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('prenom')}"></div>
                             </div>
-                            <div class="mb-3">
+                            <div>
                                 <label class="form-label"
                                     data-th-text="#{view-user-form.telephone}"></label> 
                                 <input type="tel" class="form-control" data-th-field="*{telephone}" />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('telephone')}"></div>
                             </div>
                         </div>
 
                         <!-- Deuxième colonne -->
                         <div class="col-md-6">
-                            <div class="mb-3">
+                            <div>
                                 <label class="form-label" data-th-text="#{view-user-form.nom}"></label>
                                 <input type="text" class="form-control" data-th-field="*{nom}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('nom')}"></div>
                             </div>
-                            <div class="mb-3">
+                            <div>
                                 <label class="form-label" data-th-text="#{view-user-form.email}"></label>
                                 <input type="email" class="form-control" data-th-field="*{email}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('email')}"></div>
                             </div>
                         </div>
                     </div>
@@ -46,53 +52,61 @@
                             <h4 data-th-text="#{view-user-form.adresse}"></h4>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" data-th-if="${visible}">
                         <!-- Champs rue, ville et code postal alignés horizontalement -->
                         <div class="col-md-4">
                             <input type="text" class="form-control"
                                 data-th-field="*{adresse.rue}" required placeholder="Rue" />
+                            <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.rue')}"></div>    
                         </div>
                         <div class="col-md-4">
                             <input type="text" class="form-control"
                                 data-th-field="*{adresse.code_postal}" required placeholder="Code Postal" />
+							<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.code_postal')}"></div>
                         </div>
                         <div class="col-md-4">
                             <input type="text" class="form-control"
                                 data-th-field="*{adresse.ville}" required placeholder="Ville" />
+                            <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.ville')}"></div>    
                         </div>
                     </div>
 
 <!-- Section des mots de passe avec confirmation -->
-<div class="row mt-4">
+<div class="row mt-4" data-th-if="${creation}">
     <!-- Champ mot de passe -->
     <div class="col-md-6">
         <div class="mb-3">
-            <label class="form-label">Mot de passe</label>
+            <label class="form-label" data-th-text="#{view-user-form.pwd}"></label>
             <input type="password" id="password" class="form-control" data-th-field="*{password}" required />
+            <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('password')}"></div>
         </div>
     </div>
 
     <!-- Champ confirmation mot de passe -->
-    <div class="col-md-6">
+    <div class="col-md-6" >
         <div class="mb-3">
-            <label class="form-label">Confirmer le mot de passe</label>
+            <label class="form-label" data-th-text = "#{view-user-form-confirmer.pwd}"></label>
             <input type="password" id="confirmPassword" class="form-control" required />
             <!-- Message d'erreur si les mots de passe ne correspondent pas -->
-            <small id="passwordError" class="form-text text-danger" style="display: none;">Les mots de passe ne correspondent pas.</small>
+            <small id="passwordError" class="form-text text-danger" style="display: none;" data-th-text="#{validation.utilisateur.password.erreur.corresp}"></small>
             <!-- Message de confirmation si les mots de passe correspondent -->
-            <small id="passwordMatch" class="form-text text-success" style="display: none;">Les mots de passe correspondent.</small>
+            <small id="passwordMatch" class="form-text text-success" style="display: none;" data-th-text="#{validation.utilisateur.password.corresp}"></small>
         </div>
     </div>
 </div>
 
                     <!-- Bouton submit -->
                     <div class="row mt-4">
-                        <div class="col-md-6">
-                            <button type="submit" class="btn btn-primary w-100" data-th-text="${text_button}"></button>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100" data-th-text="${text_button}" data-th-if="${visible}"></button>
                         </div>
-                        <div class="col-md-6">
-                            <a href="/" class="btn btn-danger w-100">Annuler</a>
+                        <div class="col-md-4" data-th-if="${!creation}">
+                          <a data-th-href="@{/users/modifiermdp(pseudo=*{pseudo})}" class="btn btn-secondary w-100" data-th-text="#{view-user-form-modifier.pwd}">Modifier le mot de passe</a>		
                         </div>
+                        <div class="col-md-4">
+                            <a href="/" class="btn btn-danger w-100" data-th-text="#{view-user-form-annuler.btn}"></a>
+                        </div>
+                        
                     </div>
                 </fieldset>
             </div>
