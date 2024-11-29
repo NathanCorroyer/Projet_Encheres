@@ -76,7 +76,7 @@
     <!-- Champ mot de passe -->
     <div class="col-md-6">
         <div class="mb-3">
-            <label class="form-label">Mot de passe</label>
+            <label class="form-label" data-th-text="#{view-user-form.pwd}"></label>
             <input type="password" id="password" class="form-control" data-th-field="*{password}" required />
             <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('password')}"></div>
         </div>
@@ -85,12 +85,12 @@
     <!-- Champ confirmation mot de passe -->
     <div class="col-md-6" >
         <div class="mb-3">
-            <label class="form-label">Confirmer le mot de passe</label>
+            <label class="form-label" data-th-text = "#{view-user-form-confirmer.pwd}"></label>
             <input type="password" id="confirmPassword" class="form-control" required />
             <!-- Message d'erreur si les mots de passe ne correspondent pas -->
-            <small id="passwordError" class="form-text text-danger" style="display: none;">Les mots de passe ne correspondent pas.</small>
+            <small id="passwordError" class="form-text text-danger" style="display: none;" data-th-text="#{validation.utilisateur.password.erreur.corresp}"></small>
             <!-- Message de confirmation si les mots de passe correspondent -->
-            <small id="passwordMatch" class="form-text text-success" style="display: none;">Les mots de passe correspondent.</small>
+            <small id="passwordMatch" class="form-text text-success" style="display: none;" data-th-text="#{validation.utilisateur.password.corresp}"></small>
         </div>
     </div>
 </div>
@@ -101,10 +101,10 @@
                             <button type="submit" class="btn btn-primary w-100" data-th-text="${text_button}" data-th-if="${visible}"></button>
                         </div>
                         <div class="col-md-4" data-th-if="${!creation}">
-                          <a data-th-href="@{/users/modifiermdp(pseudo=*{pseudo})}" class="btn btn-secondary w-100">Modifier le mot de passe</a>		
+                          <a data-th-href="@{/users/modifiermdp(pseudo=*{pseudo})}" class="btn btn-secondary w-100" data-th-text="#{view-user-form-modifier.pwd}">Modifier le mot de passe</a>		
                         </div>
                         <div class="col-md-4">
-                            <a href="/" class="btn btn-danger w-100">Annuler</a>
+                            <a href="/" class="btn btn-danger w-100" data-th-text="#{view-user-form-annuler.btn}"></a>
                         </div>
                         
                     </div>

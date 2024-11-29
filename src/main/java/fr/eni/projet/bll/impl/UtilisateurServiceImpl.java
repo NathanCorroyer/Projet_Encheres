@@ -87,7 +87,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		// Récupère l'utilisateur contenu dans l'Optional
 		Utilisateur utilisateur = user.get();
 
-		System.out.println("utilisateur.getpassword :" + utilisateur.getPseudo());
 		// Récupère l'adresse associée à l'utilisateur
 		Adresse adresse = adresseDAO.findById(utilisateur.getAdresse().getId());
 
