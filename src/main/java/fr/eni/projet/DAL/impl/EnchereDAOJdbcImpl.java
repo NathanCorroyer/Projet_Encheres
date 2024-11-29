@@ -11,7 +11,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import fr.eni.projet.DAL.EnchereDAO;
+import fr.eni.projet.bo.Article;
 import fr.eni.projet.bo.Enchere;
+import fr.eni.projet.bo.Utilisateur;
 
 @Repository
 public class EnchereDAOJdbcImpl implements EnchereDAO {

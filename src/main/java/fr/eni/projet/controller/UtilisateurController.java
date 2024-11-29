@@ -1,6 +1,5 @@
 package fr.eni.projet.controller;
 
-<<<<<<< Upstream, based on origin/main
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -9,9 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.Authentication;
-=======
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
->>>>>>> b425349 FEAT : 1800 Gestion Encheres => 1800 HomePage Logout
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
