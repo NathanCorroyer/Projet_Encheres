@@ -1,147 +1,118 @@
 <form xmlns:th="http://www.thymeleaf.org"
-	data-th-fragment="frag-article-form(action)" data-th-action="${action}"
-	method="post" data-th-object="${article}">
+      data-th-fragment="frag-article-form(action)"
+      data-th-action="${action}"
+      method="post" 
+      data-th-object="${article}">
+      
+      <!-- Messages globaux de succès et d'erreur -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <p th:text="${successMessage}"></p>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <p th:text="${errorMessage}"></p>
+    </div>
 
-	<div class="container mt-5">
-		<div class="card mx-auto" style="max-width: 800px;">
-			<div class="card-body">
-				<fieldset>
-					<div class="row">
-						<!-- Première colonne -->
-						<div class="col-md-6">
-							<!-- Nom de l'article -->
-							<div class="mb-3">
-								<label for="nom_article" class="form-label">Nom de
-									l'article :</label> <input type="text" id="nom_article" name="nom"
-									class="form-control" data-th-value="${article.nom}" required />
-									<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('nom')}"></div>
-							</div>
-							
+    <div class="container mt-5">
+        <div class="card mx-auto" style="max-width: 800px;">
+            <div class="card-body">
+                <fieldset>
+                    <div class="row">
+                        <!-- Première colonne -->
+                        <div class="col-md-6">
+                            <!-- Nom de l'article -->
+                            <div class="mb-3">
+                                <label for="nom_article" class="form-label">Nom de l'article :</label>
+                                <input type="text" id="nom_article" name="nom" class="form-control" data-th-value="${article.nom}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('nom')}"></div>
+                            </div>
 
-							<!-- Catégorie -->
-							<div class="mb-3">
-								<label for="categorie" class="form-label">Catégorie :</label> <select
-									id="categorie" name="categorie" class="form-control"
-									th:field="*{categorie.id}" required>
-									<option th:each="categorie : ${categories}"
-										th:value="${categorie.id}" th:text="${categorie.libelle}"></option>
-								</select>
-								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('categorie')}"></div>
-							</div>
+                            <!-- Catégorie -->
+                            <div class="mb-3">
+                                <label for="categorie" class="form-label">Catégorie :</label>
+                                <select id="categorie" name="categorie" class="form-control" th:field="*{categorie.id}" required>
+                                    <option th:each="categorie : ${categories}" th:value="${categorie.id}" th:text="${categorie.libelle}"></option>
+                                </select>
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('categorie')}"></div>
+                            </div>
 
-							<!-- Description -->
-							<div class="mb-3">
-								<label for="description" class="form-label">Description
-									:</label>
-								<textarea id="description" name="description"
-									class="form-control" required
-									data-th-text="${article.description}"></textarea>
-									<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('description')}"></div>
-							</div>
+                            <!-- Description -->
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description :</label>
+                                <textarea id="description" name="description" class="form-control" required data-th-text="${article.description}"></textarea>
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('description')}"></div>
+                            </div>
 
-							<!-- Adresse de retrait -->
-							<div class="mb-3">
-								<label for="retrait" class="form-label">Adresse de
-									retrait :</label> <select id="retrait" name="retrait"
-									class="form-control" th:field="*{adresse.id}" required>
-									<optgroup label="Adresses personnelles">
-										<option th:each="adresse : ${adressesUtilisateur}"
-											th:value="${adresse.id}" th:text="${adresse.rue}" selected></option>
-									</optgroup>
-									<optgroup label="Adresses ENI">
-										<option th:each="adresse : ${adressesENI}"
-											th:value="${adresse.id}" th:text="${adresse.rue}"></option>
-									</optgroup>
-								</select>
-								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse')}"></div>
-							</div>
-						</div>
+                            <!-- Adresse de retrait -->
+                            <div class="mb-3">
+                                <label for="retrait" class="form-label">Adresse de retrait :</label>
+                                <select id="retrait" name="retrait" class="form-control" th:field="*{adresse.id}" required>
+                                    <optgroup label="Adresses personnelles">
+                                        <option th:each="adresse : ${adressesUtilisateur}" th:value="${adresse.id}" th:text="${adresse.rue}" selected></option>
+                                    </optgroup>
+                                    <optgroup label="Adresses ENI">
+                                        <option th:each="adresse : ${adressesENI}" th:value="${adresse.id}" th:text="${adresse.rue}"></option>
+                                    </optgroup>
+                                </select>
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse')}"></div>
+                            </div>
+                        </div>
 
-						<!-- Deuxième colonne -->
-						<div class="col-md-6">
-							<!-- Mise à prix -->
-							<div class="mb-3">
-								<label for="prix_initial" class="form-label">Mise à prix
-									:</label> <input type="number" id="prix_initial" name="prix_initial"
-									class="form-control" data-th-value="${article.prix_initial}"
-									required />
-									<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('prix_initial')}"></div>
-							</div>
+                        <!-- Deuxième colonne -->
+                        <div class="col-md-6">
+                            <!-- Mise à prix -->
+                            <div class="mb-3">
+                                <label for="prix_initial" class="form-label">Mise à prix :</label>
+                                <input type="number" id="prix_initial" name="prix_initial" class="form-control" data-th-value="${article.prix_initial}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('prix_initial')}"></div>
+                            </div>
 
-							<!-- Date de début d'enchère -->
-							<div class="mb-3">
-								<label for="date_debut_enchere" class="form-label">Date
-									de début de l'enchère :</label> <input type="datetime-local"
-									id="date_debut_enchere" name="date_debut" class="form-control"
-									data-th-value="${article.date_debut}" required />
-									<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('date_debut')}"></div>
-							</div>
+                            <!-- Date de début d'enchère -->
+                            <div class="mb-3">
+                                <label for="date_debut_enchere" class="form-label">Date de début de l'enchère :</label>
+                                <input type="datetime-local" id="date_debut_enchere" name="date_debut" class="form-control" data-th-value="${article.date_debut}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('date_debut')}"></div>
+                            </div>
 
-							<!-- Date de fin d'enchère -->
-							<div class="mb-3">
-								<label for="date_fin_enchere" class="form-label">Date de
-									fin de l'enchère :</label> <input type="datetime-local"
-									id="date_fin_enchere" name="date_fin" class="form-control"
-									data-th-value="${article.date_fin}" required />
-									<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('date_fin')}"></div>
-							</div>
-						</div>
-					</div>
+                            <!-- Date de fin d'enchère -->
+                            <div class="mb-3">
+                                <label for="date_fin_enchere" class="form-label">Date de fin de l'enchère :</label>
+                                <input type="datetime-local" id="date_fin_enchere" name="date_fin" class="form-control" data-th-value="${article.date_fin}" required />
+                                <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('nom')}"></div>
+                            </div>
+                        </div>
+                    </div>
 
-					<!-- Section des boutons -->
-					<div class="row mt-4">
-						<div class="col-md-4">
-							<!-- Bouton Suivant -->
-							<button type="submit" class="btn btn-primary w-100">
-								<!-- Affiche 'Modifier' si la date de début est après maintenant -->
-								<span
-									th:if="${article.date_debut != null and article.date_debut.isAfter(T(java.time.LocalDateTime).now())}">Modifier</span>
+                    <!-- Section des boutons -->
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <span th:if="${article.date_debut != null and article.date_debut.isAfter(T(java.time.LocalDateTime).now())}">Modifier</span>
+                                <span th:if="${article.date_debut == null or article.date_debut.isBefore(T(java.time.LocalDateTime).now())}">Suivant</span>
+                            </button>
+                        </div>
 
-								<!-- Affiche 'Suivant' si la date de début est avant maintenant ou si elle est absente -->
-								<span
-									th:if="${article.date_debut == null or article.date_debut.isBefore(T(java.time.LocalDateTime).now())}">Suivant</span>
-							</button>
-						</div>
-						<div class="col-md-4">
-							<!-- Bouton Annuler la vente (ne fait rien pour l'instant) -->
-							<button type="button" class="btn btn-warning w-100">Annuler
-								la vente</button>
-						</div>
+                        <div class="col-md-4">
+<a th:href="@{'/delete/' + ${article.id}}" 
+   class="btn btn-warning w-100" 
+   role="button" 
+   id="btn-supprimer"
+   onclick="return confirmerSuppression();"
+   >Annuler la vente</a>
+                        </div>
 
-						<div class="col-md-4">
-							<!-- Bouton Annuler (redirige vers la page d'accueil) -->
-							<a href="/" class="btn btn-danger w-100">Annuler</a>
-						</div>
-					</div>
-				</fieldset>
-			</div>
-		</div>
-	</div>
+                        <div class="col-md-4">
+                            <a href="/" class="btn btn-danger w-100">Annuler</a>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
 </form>
 
+
 <script>
-	document
-			.addEventListener(
-					'DOMContentLoaded',
-					function() {
-						// Fonction de validation des dates
-						function validateDates() {
-							var startDate = document
-									.getElementById("date_debut_enchere").value;
-							var endDate = document
-									.getElementById("date_fin_enchere").value;
-
-							if (startDate && endDate
-									&& new Date(startDate) > new Date(endDate)) {
-								alert("La date de fin de l'enchère doit être après la date de début.");
-								return false;
-							}
-							return true;
-						}
-
-						// Associe la fonction de validation au formulaire
-						document.querySelector("form").onsubmit = function() {
-							return validateDates(); // Appelle la fonction lors de la soumission du formulaire
-						};
-					});
+function confirmerSuppression() {
+    return confirm("Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible.");
+}
 </script>

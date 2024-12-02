@@ -39,8 +39,13 @@
                     </div>
 
                     <!-- Bouton Modifier -->
-                    <div class="text-center mt-4">
-                        <a class="btn btn-primary" th:href="@{/articles/editer/{id}(id=${article.id})}">Modifier</a>
+                      <div class="d-flex justify-content-center mt-4">
+                        <div class="w-50">
+                            <a class="btn btn-primary w-100" th:href="@{/articles/editer/{id}(id=${article.id})}">Modifier</a>
+                        </div>
+                        <div class="w-50 ms-2">
+                            <a href="/" class="btn btn-secondary w-100">Retour à l'accueil</a>
+                        </div>
                     </div>
                 </div>
             </div>

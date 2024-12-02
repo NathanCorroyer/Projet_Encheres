@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -43,27 +43,43 @@ public class SecurityConfig {
 	 */
 	@SuppressWarnings("removal")
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**"))
-				.authorizeHttpRequests(auth -> {
-				auth.requestMatchers("/articles/editer/**").authenticated();
-				auth.requestMatchers("/").permitAll();
-				auth.requestMatchers("/css/*").permitAll();
-				auth.requestMatchers("/img/*").permitAll();
-				auth.requestMatchers("/articles/vendre").authenticated();
-				auth.requestMatchers("/users/creer").permitAll();
-				auth.requestMatchers("/users/modifiermdp/**").access((authentication, context) -> UserSecurity.hasAccessToUser(authentication.get(), context.getRequest()));
-				auth.anyRequest().authenticated();
-
+	public SecurityFilterChain filterChain(HttpSecurity http, UserSecurity userSecurity) throws Exception {
+		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**")).authorizeHttpRequests(auth -> {
+			// Configurer les règles de sécurité pour des routes spécifiques avant
+			// 'anyRequest'
+			auth.requestMatchers("/articles/editer/**").access((authentication, context) -> {
+				AuthorizationDecision decision = userSecurity.hasAccessToArticle(authentication.get(),
+						context.getRequest());
+				return decision;
 			});
-						
-				http.formLogin(form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/")
-						.failureUrl("/login?error=true"))
+			auth.requestMatchers("/articles/delete/**").access((authentication, context) -> {
+				AuthorizationDecision decision = userSecurity.hasAccessToArticle(authentication.get(),
+						context.getRequest());
+				return decision;
+			});
+			auth.requestMatchers("/users/modifiermdp/**").access((authentication, context) -> UserSecurity
+					.hasAccessToUser(authentication.get(), context.getRequest()));
+
+			// Autres règles de sécurité pour des URL spécifiques
+			auth.requestMatchers("/").permitAll();
+			auth.requestMatchers("/css/*").permitAll();
+			auth.requestMatchers("/img/*").permitAll();
+			auth.requestMatchers("/articles/vendre").authenticated();
+			auth.requestMatchers("/users/creer").permitAll();
+
+			// Maintenant, vous pouvez sécuriser toutes les autres routes
+			auth.anyRequest().authenticated(); // Cette ligne doit être après toutes les autres règles
+		});
+
+		// Configurer la gestion de la session et de la déconnexion
+		http.formLogin(
+				form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/").failureUrl("/login?error=true"))
 				.logout(logout -> logout.invalidateHttpSession(true).clearAuthentication(true)
 						.deleteCookies("JSESSIONID").logoutSuccessUrl("/")
 						.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 						.maximumSessions(1).expiredUrl("/login").and().invalidSessionUrl("/login"));
+
 		return http.build();
 	}
 

@@ -70,6 +70,8 @@ public class ArticleServiceImpl implements ArticleService {
 			if (categorieOptional.isPresent()) {
 				article.setCategorie(categorieOptional.get());
 			}
+			Utilisateur utilisateur = userDAO.findById(article.getProprietaire().getId());
+			article.setProprietaire(utilisateur);
 			Adresse adresse = adresseDAO.findById(article.getAdresse().getId());
 			article.setAdresse(adresse);
 		}
@@ -110,6 +112,20 @@ public class ArticleServiceImpl implements ArticleService {
 		if (id <= 0) {
 			throw new IllegalArgumentException("L'ID de l'article doit être supérieur à 0.");
 		}
+
+		// Récupération de l'article
+		Article article = articleDAO.findArticleById(id);
+		if (article == null) {
+			throw new IllegalArgumentException("L'article avec cet ID n'existe pas.");
+		}
+
+		// Validation de la date de début
+		BusinessException be = new BusinessException();
+		if (!validerDateDebut(article.getDate_debut(), be)) {
+			throw be; // Lancer une exception avec les messages de validation
+		}
+
+		// Suppression si toutes les validations passent
 		articleDAO.delete(id);
 	}
 

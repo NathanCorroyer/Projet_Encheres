@@ -101,6 +101,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("no_article", id);
 		namedParameterJdbcTemplate.update(DELETE, namedParameters);
+
 	}
 
 	// RowMapper to map SQL result to Article object

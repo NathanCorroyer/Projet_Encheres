@@ -193,7 +193,7 @@ public class ArticleController {
 	}
 
 	@GetMapping("/articles/details/{id}")
-	public String afficherDetailsArticle(@PathVariable("id") int id, Model model, Authentication auth) {
+	public String afficherDetailsArticle(@PathVariable("id") int id, Model model) {
 
 		Article article = articleService.findById(id);
 
@@ -215,9 +215,8 @@ public class ArticleController {
 			model.addAttribute("adresse", "Adresse non définie");
 		}
 
-		// Récupérer le pseudo de l'utilisateur connecté
-		if (auth != null) {
-			String pseudoUserConnected = auth.getName();
+		if (article.getProprietaire() != null) {
+			String pseudoUserConnected = article.getProprietaire().getPseudo();
 			model.addAttribute("pseudo", pseudoUserConnected);
 		} else {
 			model.addAttribute("pseudo", "Utilisateur anonyme");
@@ -227,6 +226,21 @@ public class ArticleController {
 		model.addAttribute("article", article);
 
 		return "articles/details-article";
+	}
+
+	@GetMapping("/delete/{id}")
+	public String supprimerArticle(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+		try {
+			articleService.delete(id);
+			redirectAttributes.addFlashAttribute("successMessage", "L'article a été supprimé avec succès.");
+		} catch (BusinessException be) {
+			// Gestion des erreurs métier
+			redirectAttributes.addFlashAttribute("errorMessage", "Impossible de supprimer l'article : " + be.isValid());
+		} catch (IllegalArgumentException iae) {
+			// Gestion des erreurs générales
+			redirectAttributes.addFlashAttribute("errorMessage", "Erreur : " + iae.getMessage());
+		}
+		return "redirect:/";
 	}
 
 }
