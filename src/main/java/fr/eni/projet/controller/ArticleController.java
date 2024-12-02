@@ -1,10 +1,12 @@
 package fr.eni.projet.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,8 +14,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bll.ArticleService;
@@ -51,6 +55,11 @@ public class ArticleController {
 		return categorieService.findAll();
 	}
 
+	@ModelAttribute("adressesENI")
+	public List<Adresse> chargerAdresses() {
+		return adresseService.findByAdresseENI(true);
+	}
+
 	@GetMapping("/articles/vendre")
 	public String vendreArticleForm(@ModelAttribute("article") Article article, Authentication auth, Model model) {
 		String pseudoUserConnected = auth != null ? auth.getName() : null;
@@ -77,50 +86,41 @@ public class ArticleController {
 	@PostMapping("/articles/vendre")
 	public String vendreArticle(@ModelAttribute("article") Article article, BindingResult bindingResult, Model model,
 			Authentication auth) {
-		// Vérifier si des erreurs de validation existent
 		if (bindingResult.hasErrors()) {
 			bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
-			return "/articles/view-vendre-article"; // Retourner à la page de formulaire si des erreurs
+			return "/articles/view-vendre-article";
 		}
 		System.out.println(article.getAdresse().getId());
 		try {
-			// Récupérer le nom d'utilisateur de l'authentification
 			String pseudoUserConnected = auth != null ? auth.getName() : null;
-
-			// Si l'utilisateur est connecté, récupérer ses informations
 			if (pseudoUserConnected != null) {
 				Optional<Utilisateur> optionalUtilisateur = userService.findByPseudo(pseudoUserConnected);
 				if (optionalUtilisateur.isPresent()) {
 					Utilisateur principal = optionalUtilisateur.get();
-					article.setProprietaire(principal); // Associer l'utilisateur comme propriétaire de l'article
+					article.setProprietaire(principal);
 				} else {
 					model.addAttribute("pseudo", "Utilisateur non trouvé");
-					return "/articles/view-vendre-article"; // Si l'utilisateur n'est pas trouvé
+					return "/articles/view-vendre-article";
 				}
 			} else {
 				model.addAttribute("pseudo", "Utilisateur anonyme");
 				return "/articles/view-vendre-article";
 			}
 
-			// Si les dates ne sont pas nulles, on les parse et les assigne
 			if (article.getDate_debut() != null) {
-				// Exemple de format de date : 2024-11-28T16:15 (pour datetime-local)
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 				LocalDateTime dateDebut = LocalDateTime.parse(article.getDate_debut().toString(), formatter);
-				article.setDate_debut(dateDebut); // Assigner la date correctement
+				article.setDate_debut(dateDebut);
 			}
 
 			if (article.getDate_fin() != null) {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 				LocalDateTime dateFin = LocalDateTime.parse(article.getDate_fin().toString(), formatter);
-				article.setDate_fin(dateFin); // Assigner la date correctement
+				article.setDate_fin(dateFin);
 			}
 			article.setStatut_enchere(StatutEnchere.PAS_COMMENCEE);
 
-			// Créer l'article si tout est valide
-			articleService.create(article);
-
-			return "redirect:/"; // Rediriger vers la page d'accueil après la création de l'article
+			return "redirect:/articles/details/" + articleService.create(article);
 
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -141,4 +141,103 @@ public class ArticleController {
 		return "index";
 	}
 
+	
+	@GetMapping("/editer/{id}")
+	public String editerArticle(@PathVariable("id") int id, Model model, Authentication auth) {
+		Article article = articleService.findById(id);
+
+		// Vérification que l'enchère n'a pas déjà commencé
+		if (article.getDate_debut() != null && article.getDate_debut().isBefore(LocalDateTime.now())) {
+			model.addAttribute("errorMessage",
+					"Vous ne pouvez pas modifier un article dont l'enchère a déjà commencé.");
+			return "redirect:/articles"; // Rediriger si l'enchère a déjà commencé
+		}
+
+		model.addAttribute("article", article);
+		// Récupérer l'utilisateur connecté
+		if (auth != null) {
+			String pseudoUserConnected = auth.getName();
+			Optional<Utilisateur> optionalUtilisateur = userService.findByPseudo(pseudoUserConnected);
+
+			if (optionalUtilisateur.isPresent()) {
+				Utilisateur utilisateur = optionalUtilisateur.get();
+				// Ajouter les adresses personnelles au modèle
+				List<Adresse> adressesUtilisateur = adresseService.findByUtilisateur(optionalUtilisateur);
+				model.addAttribute("adressesUtilisateur", adressesUtilisateur);
+			}
+		}
+		return "articles/view-edit-article";
+	}
+
+	@PostMapping("articles/editer/{id}")
+	public String enregistrerModifications(@PathVariable("id") int id, @ModelAttribute Article article,
+			RedirectAttributes redirectAttributes) {
+
+		try {
+			// Récupérer l'article existant
+			Article existingArticle = articleService.findById(id);
+
+			if (existingArticle == null) {
+				throw new IllegalArgumentException("L'article n'existe pas.");
+			}
+
+			// Vérifier si l'enchère a déjà commencé
+			if (existingArticle.getDate_debut().toLocalDate().isBefore(LocalDate.now())) {
+				redirectAttributes.addFlashAttribute("errorMessage",
+						"Vous ne pouvez pas modifier un article dont l'enchère a déjà commencé.");
+				return "redirect:/articles/editer/" + id; // Rester sur la page d'édition
+			}
+
+			// Mettre à jour l'article avec les nouvelles informations
+			article.setProprietaire(existingArticle.getProprietaire());
+			articleService.update(article);
+
+			// Message de succès et redirection vers la page de détails de l'article
+			redirectAttributes.addFlashAttribute("successMessage", "Article modifié avec succès.");
+			return "redirect:/articles/details/" + article.getId(); // Redirection vers la page de détails
+		} catch (Exception e) {
+			// En cas d'erreur (ex. problème de base de données, validation échouée, etc.)
+			redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la modification de l'article.");
+			return "redirect:/articles/editer/" + id; // Rester sur la page d'édition
+		}
+	}
+
+	@GetMapping("/details/{id}")
+	public String afficherDetailsArticle(@PathVariable("id") int id, Model model, Authentication auth) {
+
+		Article article = articleService.findById(id);
+
+		if (article == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Article non trouvé");
+		}
+
+		// Vérification de la catégorie
+		if (article.getCategorie() != null) {
+			model.addAttribute("categorie", article.getCategorie().getId());
+		} else {
+			model.addAttribute("categorie", "Catégorie non définie");
+		}
+
+		// Vérification de l'adresse
+		if (article.getAdresse() != null) {
+			model.addAttribute("adresse", article.getAdresse().getId());
+		} else {
+			model.addAttribute("adresse", "Adresse non définie");
+		}
+
+		// Récupérer le pseudo de l'utilisateur connecté
+		if (auth != null) {
+			String pseudoUserConnected = auth.getName();
+			model.addAttribute("pseudo", pseudoUserConnected);
+		} else {
+			model.addAttribute("pseudo", "Utilisateur anonyme");
+		}
+
+		// Ajouter l'article à l'attribut modèle
+		model.addAttribute("article", article);
+
+		return "articles/details-article";
+	}
+
+	
 }

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -40,29 +41,29 @@ public class SecurityConfig {
 	/**
 	 * Restriction des URLs selon la connexion utilisateur et leurs rôles
 	 */
+	@SuppressWarnings("removal")
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests(auth -> {
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**"))
+				.authorizeHttpRequests(auth -> {
+				auth.requestMatchers("/articles/editer/**").authenticated();
+				auth.requestMatchers("/").permitAll();
+				auth.requestMatchers("/css/*").permitAll();
+				auth.requestMatchers("/img/*").permitAll();
+				auth.requestMatchers("/articles/vendre").authenticated();
+				auth.requestMatchers("/users/creer").permitAll();
+				auth.requestMatchers("/users/modifiermdp/**").access((authentication, context) -> UserSecurity.hasAccessToUser(authentication.get(), context.getRequest()));
+				auth.anyRequest().authenticated();
 
-			// Toutes autres url et méthodes HTTP ne sont pas permises
-			auth.requestMatchers("/").permitAll();
-			auth.requestMatchers("/css/*").permitAll();
-			auth.requestMatchers("/img/*").permitAll();
-			auth.requestMatchers("/articles/vendre").authenticated();
-			auth.requestMatchers("/users/creer").permitAll();
-			auth.requestMatchers("/users/modifiermdp/**").access((authentication, context) -> UserSecurity.hasAccessToUser(authentication.get(), context.getRequest()));
-			auth.anyRequest().authenticated();
-
-		});
-
-		http.formLogin(form -> {
-			form.loginPage("/login").permitAll().defaultSuccessUrl("/");
-		}).logout(logout -> {
-			logout.invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID")
-					.logoutSuccessUrl("/") // Rediriger vers la page d'accueil après une déconnexion
-					.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll();
-		});
-
+			});
+						
+				http.formLogin(form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/")
+						.failureUrl("/login?error=true"))
+				.logout(logout -> logout.invalidateHttpSession(true).clearAuthentication(true)
+						.deleteCookies("JSESSIONID").logoutSuccessUrl("/")
+						.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll())
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+						.maximumSessions(1).expiredUrl("/login").and().invalidSessionUrl("/login"));
 		return http.build();
 	}
 

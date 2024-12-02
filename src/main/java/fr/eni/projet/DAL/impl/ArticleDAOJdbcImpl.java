@@ -51,7 +51,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	}
 
 	@Override
-	public void create(Article article) {
+	public int create(Article article) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -66,9 +66,12 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 				.addValue("path_image", article.getPath_image());
 
 		namedParameterJdbcTemplate.update(INSERT, namedParameters, keyHolder);
-		if (keyHolder != null && keyHolder.getKey() != null) {
+		// Récupérer l'ID généré pour l'adresse
+		if (keyHolder.getKey() != null) {
 			article.setId(keyHolder.getKey().intValue());
+			return keyHolder.getKey().intValue();
 		}
+		return 0;
 	}
 
 	@Override
@@ -109,6 +112,9 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 			article.setDate_fin(rs.getTimestamp("date_fin_encheres").toLocalDateTime());
 			article.setPrix_initial(rs.getInt("prix_initial"));
 			article.setPrix_vente(rs.getInt("prix_vente"));
+			Categorie categorie = new Categorie();
+			categorie.setId(rs.getInt("no_categorie"));
+			article.setCategorie(categorie);
 			article.setStatut_enchere(StatutEnchere.fromValue(rs.getInt("statut_enchere")));
 			article.setPath_image(rs.getString("path_image"));
 			
@@ -116,10 +122,6 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 			Utilisateur proprietaire = new Utilisateur();
 			proprietaire.setId(rs.getInt("no_utilisateur"));
 			article.setProprietaire(proprietaire);
-			
-			Categorie categorie = new Categorie();
-			categorie.setId(rs.getInt("no_categorie"));
-			article.setCategorie(categorie);
 			
 			Adresse adresse = new Adresse();
 			adresse.setId(rs.getInt("no_adresse_retrait"));
@@ -142,4 +144,5 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		namedParameters.addValue("no_utilisateur", utilisateurId);
 		return namedParameterJdbcTemplate.query(FIND_BY_UTILISATEUR, namedParameters, new ArticleRowMapper());
 	}
+
 }

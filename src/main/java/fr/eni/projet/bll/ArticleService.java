@@ -5,7 +5,7 @@ import java.util.List;
 import fr.eni.projet.bo.Article;
 
 public interface ArticleService {
-	public void create(Article article);
+	public int create(Article article);
 
 	public List<Article> findAll();
 	

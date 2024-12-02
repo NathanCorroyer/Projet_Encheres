@@ -1,6 +1,7 @@
 package fr.eni.projet.bll.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,5 +19,10 @@ public class CatégorieServiceImpl implements CategorieService {
 	@Override
 	public List<Categorie> findAll() {
 		return categorieDAO.findAll();
+	}
+
+	@Override
+	public Optional<Categorie> findById(int id) {
+		return categorieDAO.findById(id);
 	}
 }

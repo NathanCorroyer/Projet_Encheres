@@ -2,18 +2,22 @@ package fr.eni.projet.bll.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.DAL.ArticleDAO;
 import fr.eni.projet.DAL.EnchereDAO;
 import fr.eni.projet.DAL.UtilisateurDAO;
+import fr.eni.projet.DAL.CategorieDAO;
 import fr.eni.projet.bll.ArticleService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Article;
 import fr.eni.projet.bo.Enchere;
 import fr.eni.projet.bo.Utilisateur;
+import fr.eni.projet.bo.Categorie;
 import fr.eni.projet.enums.StatutEnchere;
 import fr.eni.projet.exceptions.BusinessCode;
 import fr.eni.projet.exceptions.BusinessException;
@@ -28,8 +32,14 @@ public class ArticleServiceImpl implements ArticleService {
 	@Autowired
 	private EnchereDAO enchereDAO;
 
+	@Autowired
+	private CategorieDAO categorieDAO;
+
+	@Autowired
+	private AdresseDAO adresseDAO;
+
 	@Override
-	public void create(Article article) {
+	public int create(Article article) {
 		BusinessException be = new BusinessException();
 
 		if (!validerArticle(article, be)) {
@@ -39,8 +49,8 @@ public class ArticleServiceImpl implements ArticleService {
 
 		try {
 			System.out.println("L'article est valide. Tentative de création dans la base de données.");
-			articleDAO.create(article);
 			System.out.println("L'article a été créé avec succès: " + article);
+			return articleDAO.create(article);
 		} catch (Exception e) {
 
 			System.err.println("Erreur lors de la création de l'article: " + article);
@@ -54,7 +64,17 @@ public class ArticleServiceImpl implements ArticleService {
 		if (id <= 0) {
 			throw new IllegalArgumentException("L'ID de l'article doit être supérieur à 0.");
 		}
-		return articleDAO.findArticleById(id);
+		Article article = articleDAO.findArticleById(id);
+		if (article != null) {
+			Optional<Categorie> categorieOptional = categorieDAO.findById(article.getCategorie().getId());
+			if (categorieOptional.isPresent()) {
+				article.setCategorie(categorieOptional.get());
+			}
+			Adresse adresse = adresseDAO.findById(article.getAdresse().getId());
+			article.setAdresse(adresse);
+		}
+
+		return article;
 	}
 
 	@Override

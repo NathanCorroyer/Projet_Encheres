@@ -11,7 +11,7 @@ public interface ArticleDAO {
 	public List<Article> findAll();
 	public List<Article> findAllActive();
 
-	public void create(Article article);
+	public int create(Article article);
 
 	public void update(Article article);
 

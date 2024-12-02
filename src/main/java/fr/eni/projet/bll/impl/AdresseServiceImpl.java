@@ -141,4 +141,5 @@ public class AdresseServiceImpl implements AdresseService {
 	public List<Adresse> findByAdresseENI(boolean isENI) {
 		return adresseDAO.findByAdresseENI(isENI);
 	}
+
 }
