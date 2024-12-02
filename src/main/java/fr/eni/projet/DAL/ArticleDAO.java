@@ -9,7 +9,8 @@ public interface ArticleDAO {
 	public Article findArticleById(int id);
 
 	public List<Article> findAll();
-	public List<Article> findAllActive();
+	
+	public List<Article> findAllActive(int categorieId, String nom);
 
 	public void create(Article article);
 

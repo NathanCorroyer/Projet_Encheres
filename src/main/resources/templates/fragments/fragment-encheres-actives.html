@@ -1,6 +1,16 @@
 <div xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-encheres-actives">
 	<h1>Enchères en cours</h1>
-	<!--TODO : Get boostrap cards -->
+	<div>
+		    <form action="#" data-th-action="@{/articles}" method="get">
+	        <label for="categorieId">Catégorie :</label>
+	        <input type="number" id="categorieId" name="categorieId" data-th-value="${categorieId}" />
+	
+	        <label for="nom">Nom de l'article :</label>
+	        <input type="text" id="nom" name="nom" data-th-value="${nom}" />
+	
+	        <button type="submit">Filtrer</button>
+    	</form>
+	</div>
 	<div class="row">
 		<div class="col-sm-4 mb-4" data-th-each="article : ${articles}">
 			<div class="card ">

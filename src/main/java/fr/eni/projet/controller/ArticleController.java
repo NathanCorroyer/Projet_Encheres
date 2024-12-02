@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bll.ArticleService;
@@ -133,8 +134,12 @@ public class ArticleController {
 	}
 	
 	@GetMapping("/")
-	public String afficherActiveEncheres(Model model) {
-		List<Article> lstArticles = articleService.findAllActive();
+	public String afficherActiveEncheres(
+			@RequestParam(required = false) int categorieId,
+			@RequestParam(required = false) String nom,
+			Model model) {
+		Integer categorieIdInteger = Integer.valueOf(categorieId);
+		List<Article> lstArticles = articleService.findAllActive(categorieIdInteger, nom);
 		model.addAttribute("articles", lstArticles);
 		
 		return "index";

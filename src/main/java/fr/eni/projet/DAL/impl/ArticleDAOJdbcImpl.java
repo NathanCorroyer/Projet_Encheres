@@ -48,8 +48,23 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	}
 	
 	@Override
-	public List<Article> findAllActive() {
-		return namedParameterJdbcTemplate.query(FIND_ALL_ACTIVE, new ArticleRowMapper());
+	public List<Article> findAllActive(int categorieId, String nom) {
+		
+		MapSqlParameterSource namedParameterMap = new MapSqlParameterSource();
+		
+		StringBuilder sql = new StringBuilder(FIND_ALL_ACTIVE);
+		
+		if(categorieId >= 0) {
+			sql.append(" AND no_categorie = :no_categorie");
+			namedParameterMap.addValue("no_catgeorie", categorieId);
+		}
+		
+		if(nom != null && !nom.isEmpty()) {
+			sql.append(" AND nom = :nom");
+			namedParameterMap.addValue("nom", nom);
+		}
+				
+		return namedParameterJdbcTemplate.query(sql.toString(), namedParameterMap, new ArticleRowMapper());
 	}
 
 	@Override

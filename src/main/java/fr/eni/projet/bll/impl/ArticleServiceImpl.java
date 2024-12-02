@@ -63,8 +63,8 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 	
 	@Override
-	public List<Article> findAllActive() {
-		List<Article> articles = articleDAO.findAllActive();
+	public List<Article> findAllActive(int categorieId, String nom) {
+		List<Article> articles = articleDAO.findAllActive(categorieId, nom);
 		articles.forEach(article -> {
 			Utilisateur user = userDAO.findById(article.getProprietaire().getId());
 			article.setProprietaire(user);
