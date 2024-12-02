@@ -193,7 +193,7 @@ public class ArticleController {
 	}
 
 	@GetMapping("/articles/details/{id}")
-	public String afficherDetailsArticle(@PathVariable("id") int id, Model model) {
+	public String afficherDetailsArticle(@PathVariable("id") int id, Model model, Authentication authentication) {
 
 		Article article = articleService.findById(id);
 
@@ -218,8 +218,13 @@ public class ArticleController {
 		if (article.getProprietaire() != null) {
 			String pseudoUserConnected = article.getProprietaire().getPseudo();
 			model.addAttribute("pseudo", pseudoUserConnected);
+
+			// Vérification si l'utilisateur connecté est le propriétaire
+			boolean isOwner = pseudoUserConnected.equals(authentication.getName());
+			model.addAttribute("isOwner", isOwner); // Passer l'information au modèle
 		} else {
 			model.addAttribute("pseudo", "Utilisateur anonyme");
+			model.addAttribute("isOwner", false); // L'utilisateur anonyme ne peut pas modifier
 		}
 
 		// Ajouter l'article à l'attribut modèle
