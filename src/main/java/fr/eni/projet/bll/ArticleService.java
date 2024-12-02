@@ -18,6 +18,8 @@ public interface ArticleService {
 	Article findById(int id);
 
 	List<Article> findByCategorie(int categorieId);
+	
+	List<Article> findByNom(String nom);
 
 	List<Article> findByUtilisateur(int utilisateurId);
 

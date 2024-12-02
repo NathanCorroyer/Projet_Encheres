@@ -132,7 +132,6 @@ public class ArticleController {
 		}
 	}
 	
-	
 	@GetMapping("/")
 	public String afficherActiveEncheres(Model model) {
 		List<Article> lstArticles = articleService.findAllActive();

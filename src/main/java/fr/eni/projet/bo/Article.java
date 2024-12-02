@@ -4,12 +4,17 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import fr.eni.projet.enums.StatutEnchere;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public class Article {
 	private int id;
+	
+	// TODO : Add validation message
 
 	@NotNull
 	@NotBlank
@@ -22,17 +27,28 @@ public class Article {
 	private String description;
 
 	@NotNull
+	@Future
 	private LocalDateTime date_debut;
+	
+	@NotNull
+	@Future
+	//TODO : Custom annotation for date_debut<date_fin
 	private LocalDateTime date_fin;
+	
+	@NotNull
+	@Positive
 	private int prix_initial;
 	private int prix_vente;
 
+	@Valid
 	@NotNull
 	private Utilisateur proprietaire;
 
+	@Valid
 	@NotNull
 	private Categorie categorie;
 
+	@Valid
 	@NotNull
 	private Adresse adresse;
 
