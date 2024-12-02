@@ -61,6 +61,7 @@ public class ArticleServiceImpl implements ArticleService {
 	public List<Article> findAll() {
 		return articleDAO.findAll();
 	}
+	
 	@Override
 	public List<Article> findAllActive() {
 		List<Article> articles = articleDAO.findAllActive();
@@ -96,6 +97,11 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public List<Article> findByCategorie(int categorieId) {
 		return articleDAO.findByCategorie(categorieId);
+	}
+	
+	@Override
+	public List<Article> findByNom(String nom) {
+		return articleDAO.findByNom(nom);
 	}
 
 	@Override
