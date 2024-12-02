@@ -9,7 +9,7 @@ public interface ArticleService {
 
 	public List<Article> findAll();
 	
-	public List<Article> findAllActive(int categorieId, String nom);
+	public List<Article> findAllActive();
  
 	public void delete(int id);
 

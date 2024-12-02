@@ -20,7 +20,6 @@
 					<div class="card-body">
 					<p class="card-text">Prix : <span data-th-text="${article.prix_vente > article.prix_initial ? article.prix_vente : article.prix_initial}"></span> point(s)</p>
 					<p class="card-text">Fin de l'enchère : <span data-th-text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span></p>
-					<!-- TODO : Link to vendeur profile -->
 					<p class="card-text">Vendeur : <a data-th-href="${'/users/profil?pseudo=' + article.proprietaire.pseudo}"><span data-th-text="${article.proprietaire.pseudo}"></span></a></p>
 				</div>
 			</div>

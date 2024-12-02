@@ -134,12 +134,8 @@ public class ArticleController {
 	}
 	
 	@GetMapping("/")
-	public String afficherActiveEncheres(
-			@RequestParam(required = false) int categorieId,
-			@RequestParam(required = false) String nom,
-			Model model) {
-		Integer categorieIdInteger = Integer.valueOf(categorieId);
-		List<Article> lstArticles = articleService.findAllActive(categorieIdInteger, nom);
+	public String afficherActiveEncheres(Model model) {
+		List<Article> lstArticles = articleService.findAllActive();
 		model.addAttribute("articles", lstArticles);
 		
 		return "index";

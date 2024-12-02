@@ -10,7 +10,7 @@ public interface ArticleDAO {
 
 	public List<Article> findAll();
 	
-	public List<Article> findAllActive(int categorieId, String nom);
+	public List<Article> findAllActive();
 
 	public void create(Article article);
 
