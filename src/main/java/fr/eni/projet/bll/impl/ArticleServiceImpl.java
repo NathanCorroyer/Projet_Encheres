@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
 
 import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.DAL.ArticleDAO;
+import fr.eni.projet.DAL.CategorieDAO;
 import fr.eni.projet.DAL.EnchereDAO;
 import fr.eni.projet.DAL.UtilisateurDAO;
-import fr.eni.projet.DAL.CategorieDAO;
 import fr.eni.projet.bll.ArticleService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Article;
+import fr.eni.projet.bo.Categorie;
 import fr.eni.projet.bo.Enchere;
 import fr.eni.projet.bo.Utilisateur;
-import fr.eni.projet.bo.Categorie;
 import fr.eni.projet.enums.StatutEnchere;
 import fr.eni.projet.exceptions.BusinessCode;
 import fr.eni.projet.exceptions.BusinessException;
@@ -81,6 +81,7 @@ public class ArticleServiceImpl implements ArticleService {
 	public List<Article> findAll() {
 		return articleDAO.findAll();
 	}
+
 	@Override
 	public List<Article> findAllActive() {
 		List<Article> articles = articleDAO.findAllActive();
@@ -88,7 +89,7 @@ public class ArticleServiceImpl implements ArticleService {
 			Utilisateur user = userDAO.findById(article.getProprietaire().getId());
 			article.setProprietaire(user);
 			Enchere enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
-			if(enchere != null) {
+			if (enchere != null) {
 				article.setPrix_vente(enchere.getMontant());
 			}
 		});
@@ -97,10 +98,9 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public void update(Article article) {
-		// Validation avant la mise à jour
 		BusinessException be = new BusinessException();
 		if (!validerArticle(article, be)) {
-			throw be; // Lève une exception si la validation échoue
+			throw be;
 		}
 		articleDAO.update(article);
 	}
@@ -143,7 +143,7 @@ public class ArticleServiceImpl implements ArticleService {
 		isValid &= validerDateDebut(article.getDate_debut(), be);
 		isValid &= validerPrix(article.getPrix_initial(), be);
 		isValid &= validerAdresse(article.getAdresse(), be);
-		isValid &= validerStatutEnchere(article.getStatut_enchere(), be);
+//		isValid &= validerStatutEnchere(article.getStatut_enchere(), be);
 //		isValid &= validerPathImage(article.getPath_image(), be);
 
 		return isValid;
@@ -182,7 +182,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	private boolean validerDateDebut(LocalDateTime dateDebut, BusinessException be) {
-		if (dateDebut == null) {
+		if (dateDebut == null || dateDebut.isBefore(LocalDateTime.now())) {
 			be.add(BusinessCode.VALIDATION_ARTICLE_DATE_DEBUT_NULL);
 			return false;
 		}

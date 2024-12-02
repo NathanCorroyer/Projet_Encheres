@@ -27,9 +27,13 @@
                 </div>
             </div>
         </div>
-
+<div th:if="${errorMessages != null}">
+                    <ul class="alert alert-danger" style="padding-left: 40px;">
+                        <li th:each="errorMessage : ${errorMessages}" th:text="${errorMessage}"></li>
+                    </ul>
+                </div>
         <!-- Fragment du formulaire -->
-        <div th:insert="fragments/fragment-article-form :: frag-article-form(action=${article == null ? '/articles/creer' : '/articles/editer/' + article.id})"></div>
+        <div th:insert="~{fragments/fragment-article-form :: frag-article-form(action=${article == null ? '/articles/creer' : '/articles/editer/' + article.id})}"></div>
     </main>
 
     <script>

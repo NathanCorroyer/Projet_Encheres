@@ -1,6 +1,5 @@
 package fr.eni.projet.controller;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -131,18 +130,16 @@ public class ArticleController {
 			return "/articles/view-vendre-article";
 		}
 	}
-	
-	
+
 	@GetMapping("/")
 	public String afficherActiveEncheres(Model model) {
 		List<Article> lstArticles = articleService.findAllActive();
 		model.addAttribute("articles", lstArticles);
-		
+
 		return "index";
 	}
 
-	
-	@GetMapping("/editer/{id}")
+	@GetMapping("/articles/editer/{id}")
 	public String editerArticle(@PathVariable("id") int id, Model model, Authentication auth) {
 		Article article = articleService.findById(id);
 
@@ -181,28 +178,21 @@ public class ArticleController {
 				throw new IllegalArgumentException("L'article n'existe pas.");
 			}
 
-			// Vérifier si l'enchère a déjà commencé
-			if (existingArticle.getDate_debut().toLocalDate().isBefore(LocalDate.now())) {
-				redirectAttributes.addFlashAttribute("errorMessage",
-						"Vous ne pouvez pas modifier un article dont l'enchère a déjà commencé.");
-				return "redirect:/articles/editer/" + id; // Rester sur la page d'édition
-			}
+			System.out.println(article);
 
-			// Mettre à jour l'article avec les nouvelles informations
-			article.setProprietaire(existingArticle.getProprietaire());
 			articleService.update(article);
 
 			// Message de succès et redirection vers la page de détails de l'article
 			redirectAttributes.addFlashAttribute("successMessage", "Article modifié avec succès.");
 			return "redirect:/articles/details/" + article.getId(); // Redirection vers la page de détails
-		} catch (Exception e) {
+		} catch (BusinessException e) {
 			// En cas d'erreur (ex. problème de base de données, validation échouée, etc.)
 			redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la modification de l'article.");
 			return "redirect:/articles/editer/" + id; // Rester sur la page d'édition
 		}
 	}
 
-	@GetMapping("/details/{id}")
+	@GetMapping("/articles/details/{id}")
 	public String afficherDetailsArticle(@PathVariable("id") int id, Model model, Authentication auth) {
 
 		Article article = articleService.findById(id);
@@ -239,5 +229,4 @@ public class ArticleController {
 		return "articles/details-article";
 	}
 
-	
 }
