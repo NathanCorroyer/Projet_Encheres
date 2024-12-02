@@ -9,7 +9,7 @@
             <!-- Carte pour afficher les détails de l'article -->
             <div class="card mx-auto" style="max-width: 800px;">
                 <div class="card-header">
-                    <h5 class="text-center" >Détails de l'article</h5>
+                    <h5 class="text-center">Détails de l'article</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -38,15 +38,18 @@
                         </div>
                     </div>
 
-                    <!-- Bouton Modifier -->
-                      <div class="d-flex justify-content-center mt-4">
-                        <div class="w-50">
-                            <a class="btn btn-primary w-100" th:href="@{/articles/editer/{id}(id=${article.id})}">Modifier</a>
-                        </div>
-                        <div class="w-50 ms-2">
-                            <a href="/" class="btn btn-secondary w-100">Retour à l'accueil</a>
-                        </div>
-                    </div>
+                    <!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->
+                    <div class="d-flex justify-content-center mt-4">
+    <!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->
+    <div th:if="${isOwner}" class="w-50">
+        <a class="btn btn-primary w-100" th:href="@{/articles/editer/{id}(id=${article.id})}">Modifier</a>
+    </div>
+
+    <!-- Bouton Retour à l'accueil affiché dans tous les cas -->
+    <div class="w-50 ms-2">
+        <a href="/" class="btn btn-secondary w-100">Retour à l'accueil</a>
+    </div>
+</div>
                 </div>
             </div>
         </div>
