@@ -2,16 +2,20 @@ package fr.eni.projet.bll.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.DAL.ArticleDAO;
+import fr.eni.projet.DAL.CategorieDAO;
 import fr.eni.projet.DAL.EnchereDAO;
 import fr.eni.projet.DAL.UtilisateurDAO;
 import fr.eni.projet.bll.ArticleService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Article;
+import fr.eni.projet.bo.Categorie;
 import fr.eni.projet.bo.Enchere;
 import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.enums.StatutEnchere;
@@ -28,8 +32,14 @@ public class ArticleServiceImpl implements ArticleService {
 	@Autowired
 	private EnchereDAO enchereDAO;
 
+	@Autowired
+	private CategorieDAO categorieDAO;
+
+	@Autowired
+	private AdresseDAO adresseDAO;
+
 	@Override
-	public void create(Article article) {
+	public int create(Article article) {
 		BusinessException be = new BusinessException();
 
 		if (!validerArticle(article, be)) {
@@ -39,8 +49,8 @@ public class ArticleServiceImpl implements ArticleService {
 
 		try {
 			System.out.println("L'article est valide. Tentative de création dans la base de données.");
-			articleDAO.create(article);
 			System.out.println("L'article a été créé avec succès: " + article);
+			return articleDAO.create(article);
 		} catch (Exception e) {
 
 			System.err.println("Erreur lors de la création de l'article: " + article);
@@ -54,13 +64,26 @@ public class ArticleServiceImpl implements ArticleService {
 		if (id <= 0) {
 			throw new IllegalArgumentException("L'ID de l'article doit être supérieur à 0.");
 		}
-		return articleDAO.findArticleById(id);
+		Article article = articleDAO.findArticleById(id);
+		if (article != null) {
+			Optional<Categorie> categorieOptional = categorieDAO.findById(article.getCategorie().getId());
+			if (categorieOptional.isPresent()) {
+				article.setCategorie(categorieOptional.get());
+			}
+			Utilisateur utilisateur = userDAO.findById(article.getProprietaire().getId());
+			article.setProprietaire(utilisateur);
+			Adresse adresse = adresseDAO.findById(article.getAdresse().getId());
+			article.setAdresse(adresse);
+		}
+
+		return article;
 	}
 
 	@Override
 	public List<Article> findAll() {
 		return articleDAO.findAll();
 	}
+
 	@Override
 	public List<Article> findAllActive() {
 		List<Article> articles = articleDAO.findAllActive();
@@ -68,7 +91,7 @@ public class ArticleServiceImpl implements ArticleService {
 			Utilisateur user = userDAO.findById(article.getProprietaire().getId());
 			article.setProprietaire(user);
 			Enchere enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
-			if(enchere != null) {
+			if (enchere != null) {
 				article.setPrix_vente(enchere.getMontant());
 			}
 		});
@@ -77,10 +100,9 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public void update(Article article) {
-		// Validation avant la mise à jour
 		BusinessException be = new BusinessException();
 		if (!validerArticle(article, be)) {
-			throw be; // Lève une exception si la validation échoue
+			throw be;
 		}
 		articleDAO.update(article);
 	}
@@ -90,6 +112,20 @@ public class ArticleServiceImpl implements ArticleService {
 		if (id <= 0) {
 			throw new IllegalArgumentException("L'ID de l'article doit être supérieur à 0.");
 		}
+
+		// Récupération de l'article
+		Article article = articleDAO.findArticleById(id);
+		if (article == null) {
+			throw new IllegalArgumentException("L'article avec cet ID n'existe pas.");
+		}
+
+		// Validation de la date de début
+		BusinessException be = new BusinessException();
+		if (!validerDateDebut(article.getDate_debut(), be)) {
+			throw be; // Lancer une exception avec les messages de validation
+		}
+
+		// Suppression si toutes les validations passent
 		articleDAO.delete(id);
 	}
 
@@ -123,7 +159,7 @@ public class ArticleServiceImpl implements ArticleService {
 		isValid &= validerDateDebut(article.getDate_debut(), be);
 		isValid &= validerPrix(article.getPrix_initial(), be);
 		isValid &= validerAdresse(article.getAdresse(), be);
-		isValid &= validerStatutEnchere(article.getStatut_enchere(), be);
+//		isValid &= validerStatutEnchere(article.getStatut_enchere(), be);
 //		isValid &= validerPathImage(article.getPath_image(), be);
 
 		return isValid;
@@ -162,7 +198,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	private boolean validerDateDebut(LocalDateTime dateDebut, BusinessException be) {
-		if (dateDebut == null) {
+		if (dateDebut == null || dateDebut.isBefore(LocalDateTime.now())) {
 			be.add(BusinessCode.VALIDATION_ARTICLE_DATE_DEBUT_NULL);
 			return false;
 		}

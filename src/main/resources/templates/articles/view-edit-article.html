@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
+
+<head>
+    <meta charset="UTF-8">
+    <title data-th-text="#{index.title}"></title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}" />
+</head>
+
+<body>
+    <main id="contenuPage">
+        <div class="header-container">
+            <!-- Titre de la page -->
+            <h1>Modifier mon article</h1>
+            
+            <!-- Titre de l'article -->
+            <h1 th:text="${article.nom}"></h1>
+            
+            <!-- Informations supplémentaires -->
+            <div class="date-card">
+                <p id="current-date"></p>
+                <div th:if="${pseudo != null}">
+                    <p>
+                        Participant : <span th:text="${pseudo}"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+<div th:if="${errorMessages != null}">
+                    <ul class="alert alert-danger" style="padding-left: 40px;">
+                        <li th:each="errorMessage : ${errorMessages}" th:text="${errorMessage}"></li>
+                    </ul>
+                </div>
+        <!-- Fragment du formulaire -->
+        <div th:insert="~{fragments/fragment-article-form :: frag-article-form(action=${article == null ? '/articles/creer' : '/articles/editer/' + article.id})}"></div>
+    </main>
+
+    <script>
+        function updateDate() {
+            const dateElement = document.getElementById("current-date");
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+
+            // Génération de la date au format local
+            const formattedDate = now.toLocaleDateString('fr-FR', options);
+            console.log("Date générée :", formattedDate);
+
+            dateElement.textContent = formattedDate;
+        }
+
+        // Mettre à jour la date au chargement de la page
+        updateDate();
+
+        // Optionnel : Actualiser la date chaque minute
+        setInterval(updateDate, 60000);
+    </script>
+</body>
+</html>
