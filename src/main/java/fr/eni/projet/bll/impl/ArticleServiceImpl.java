@@ -139,6 +139,12 @@ public class ArticleServiceImpl implements ArticleService {
 		return articleDAO.findByUtilisateur(utilisateurId);
 	}
 
+	
+	@Override
+	public void uploadImage(String fileName, int idArticle) {
+		articleDAO.uploadImage(fileName,idArticle);
+	}
+	
 	/**
 	 * Validation de l'objet Article.
 	 * 

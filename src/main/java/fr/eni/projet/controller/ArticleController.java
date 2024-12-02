@@ -1,7 +1,9 @@
 package fr.eni.projet.controller;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bll.ArticleService;
@@ -28,6 +32,7 @@ import fr.eni.projet.bo.Categorie;
 import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.enums.StatutEnchere;
 import fr.eni.projet.exceptions.BusinessException;
+import fr.eni.projet.service.FileUploadService;
 
 @Controller
 public class ArticleController {
@@ -36,13 +41,15 @@ public class ArticleController {
 	private CategorieService categorieService;
 	private UtilisateurService userService;
 	private AdresseService adresseService;
+	private FileUploadService fileUploadService;
 
 	public ArticleController(ArticleService articleService, CategorieService categorieService,
-			UtilisateurService utilisateurService, AdresseService adresseService) {
+			UtilisateurService utilisateurService, AdresseService adresseService, FileUploadService fileUploadService) {
 		this.articleService = articleService;
 		this.categorieService = categorieService;
 		this.userService = utilisateurService;
 		this.adresseService = adresseService;
+		this.fileUploadService = fileUploadService;
 	}
 
 	/**
@@ -131,9 +138,28 @@ public class ArticleController {
 		}
 	}
 
+	@GetMapping("/articles/picture/{id}")
+	public String redirectToUploadImageArticle(@PathVariable("id") int id, Model model) {
+		model.addAttribute("id", id);
+		fileUploadService.showDirectory();
+		return "/upload/view-image-upload-article";
+	}
+	
+	@PostMapping("/articles/picture/{id}")
+	public String uploadImageArticle(@PathVariable("id") int id, Model model, @RequestParam("file") MultipartFile image ) {
+		try {
+			String fileName = fileUploadService.uploadFile(image);
+			articleService.uploadImage(fileName, id);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		model.addAttribute("id", id);
+		return "redirect:/";
+	}
 	@GetMapping("/")
 	public String afficherActiveEncheres(Model model) {
 		List<Article> lstArticles = articleService.findAllActive();
+		lstArticles.sort(Comparator.comparing(Article::getDate_fin));
 		model.addAttribute("articles", lstArticles);
 
 		return "index";

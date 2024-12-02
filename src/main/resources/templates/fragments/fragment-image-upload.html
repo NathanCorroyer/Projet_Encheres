@@ -1,0 +1,9 @@
+<form xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-image-upload(action)" data-th-action="${action}" method="post" enctype="multipart/form-data">
+
+	<div class="row mb-3">
+		<input type="file" name="file" id="file" accept="image/*" class="form-control" required>
+	</div>
+	<div class="">
+		<button type="submit" class="btn btn-primary">Valider</button>
+	</div>
+</form>

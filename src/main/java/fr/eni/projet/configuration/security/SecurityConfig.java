@@ -66,6 +66,7 @@ public class SecurityConfig {
 			auth.requestMatchers("/img/*").permitAll();
 			auth.requestMatchers("/articles/vendre").authenticated();
 			auth.requestMatchers("/users/creer").permitAll();
+			auth.requestMatchers("/uploads/**").permitAll();
 
 			// Maintenant, vous pouvez sécuriser toutes les autres routes
 			auth.anyRequest().authenticated(); // Cette ligne doit être après toutes les autres règles

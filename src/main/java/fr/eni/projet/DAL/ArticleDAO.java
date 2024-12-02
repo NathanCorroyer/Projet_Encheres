@@ -20,4 +20,6 @@ public interface ArticleDAO {
 	public List<Article> findByUtilisateur(int utilisateurId);
 
 	public void delete(int id);
+
+	public void uploadImage(String fileName, int idArticle);
 }

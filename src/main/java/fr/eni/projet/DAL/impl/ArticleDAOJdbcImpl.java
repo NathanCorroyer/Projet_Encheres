@@ -22,7 +22,7 @@ import fr.eni.projet.enums.StatutEnchere;
 @Repository
 public class ArticleDAOJdbcImpl implements ArticleDAO {
 
-	private final static String INSERT = "INSERT INTO ARTICLES(nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image) VALUES (:nom_article, :description, :date_debut_encheres, :date_fin_encheres, :prix_initial, :prix_vente, :no_utilisateur, :no_categorie, :statut_enchere, :no_adresse_retrait, :path_image)";
+	private final static String INSERT = "INSERT INTO ARTICLES(nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial,  no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait) VALUES (:nom_article, :description, :date_debut_encheres, :date_fin_encheres, :prix_initial, :no_utilisateur, :no_categorie, :statut_enchere, :no_adresse_retrait)";
 	private final static String FIND_BY_ID = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_article = :no_article";
 	private final static String FIND_ALL = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES";
 	private final static String UPDATE = "UPDATE ARTICLES SET nom_article = :nom_article, description = :description, date_debut_encheres = :date_debut_encheres, date_fin_encheres = :date_fin_encheres, prix_initial = :prix_initial, no_categorie = :no_categorie, no_adresse_retrait = :no_adresse_retrait WHERE no_article = :no_article";
@@ -30,6 +30,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	private final static String FIND_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie";
 	private final static String FIND_BY_UTILISATEUR = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_utilisateur = :no_utilisateur";
 	private final static String FIND_ALL_ACTIVE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE statut_enchere = 1";
+	private final static String UPLOAD_IMAGE = "UPDATE ARTICLES SET path_image = :path_image WHERE no_article = :no_article";
 	// private final static String FIND_ALL_ACTIVE ="SELECT a.no_article,
 	// a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres,
 	// a.prix_initial, a.prix_vente, a.no_utilisateur, a.no_categorie,
@@ -151,4 +152,12 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		return namedParameterJdbcTemplate.query(FIND_BY_UTILISATEUR, namedParameters, new ArticleRowMapper());
 	}
 
+	
+	@Override
+	public void uploadImage(String fileName, int idArticle) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_article", idArticle);
+		namedParameters.addValue("path_image", fileName);
+		namedParameterJdbcTemplate.update(UPLOAD_IMAGE, namedParameters);
+	}
 }
