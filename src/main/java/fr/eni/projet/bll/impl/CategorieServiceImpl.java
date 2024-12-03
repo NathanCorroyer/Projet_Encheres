@@ -11,7 +11,7 @@ import fr.eni.projet.bll.CategorieService;
 import fr.eni.projet.bo.Categorie;
 
 @Service
-public class CatégorieServiceImpl implements CategorieService {
+public class CategorieServiceImpl implements CategorieService {
 
 	@Autowired
 	CategorieDAO categorieDAO;
@@ -28,20 +28,18 @@ public class CatégorieServiceImpl implements CategorieService {
 
 	@Override
 	public void create(Categorie categorie) {
-		// TODO Auto-generated method stub
+		categorieDAO.create(categorie);
 		
 	}
 
 	@Override
 	public Categorie findByLibelle(String libelle) {
-		// TODO Auto-generated method stub
-		return null;
+		return categorieDAO.findByLabel(libelle);
 	}
 
 	@Override
 	public void update(Categorie categorie) {
-		// TODO Auto-generated method stub
-		
+		categorieDAO.update(categorie);
 	}
 
 		
