@@ -33,6 +33,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	private final static String FIND_BY_NOM = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE nom_article = :nom";
 	private final static String FIND_BY_UTILISATEUR = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_utilisateur = :no_utilisateur";
 	private final static String FIND_ALL_ACTIVE = "SELECT a.no_article, a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres, a.prix_initial, a.prix_vente, a.no_utilisateur, a.no_categorie, a.statut_enchere, a.no_adresse_retrait, a.path_image FROM ARTICLES a WHERE a.statut_enchere = 1";
+	private final static String FIND_ACTIVE_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie AND statut_enchere = 1";
 	//	private final static String FIND_ALL_ACTIVE ="SELECT a.no_article, a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres, a.prix_initial, a.prix_vente, a.no_utilisateur, a.no_categorie, a.statut_enchere, a.no_adresse_retrait, a.path_image, u.pseudo AS pseudo_proprietaire FROM ARTICLES a JOIN UTILISATEURS u ON a.no_utilisateur = u.no_utilisateur" + " WHERE a.statut_enchere = 1";
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -148,6 +149,13 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("no_categorie", categorieId);
 		return namedParameterJdbcTemplate.query(FIND_BY_CATEGORIE, namedParameters, new ArticleRowMapper());
+	}
+	
+	@Override
+	public List<Article> findAllByCategorie(int categorieId) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_categorie", categorieId);
+		return namedParameterJdbcTemplate.query(FIND_ACTIVE_BY_CATEGORIE, namedParameters, new ArticleRowMapper());
 	}
 	
 	@Override

@@ -1,31 +1,38 @@
-<div xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-encheres-actives">
+<div xmlns:th="http://www.thymeleaf.org"
+	data-th-fragment="frag-encheres-actives">
 	<h1>Enchères en cours</h1>
 	<div>
-		    <form action="#" data-th-action="@{/articles}" method="get">
-		    
-		    	
-	        <label for="searchNom">Nom de l'article :</label>
-	        <input type="text" class="form-control" id="searchNom" placeholder="Le nom de l'article contient" />
-		    
-	        <label for="searchCategorie" class="form-label mt-2">Catégorie :</label>
-	        <select class="form-select" id="searchCategorie" >
-	        <option data-th-each="categorie : ${categorie}" data-th-value="${categorie.id}" data-th-text="${categorie.libelle}">Toutes</option>
-	        </select>
-
-	
-	        <button type="submit">Filtrer</button>
-    	</form>
+		<form action="#" data-th-action="@{/}" method="get">
+			<label for="categorie">Catégorie :</label> 
+			<select id="categorie" name="categorie">
+				<option value="">Toutes</option>					
+				<option th:each="categorie : ${categories}"
+				th:value="${categorie.id}" th:text="${categorie.libelle}"></option>
+			</select>
+			<button type="submit">Filtrer</button>
+		</form>
 	</div>
 	<div class="row">
 		<div class="col-sm-4 mb-4" data-th-each="article : ${articles}">
 			<div class="card ">
 				<div class="card-header">
-				<h5 class="card-title" data-th-text="${article.nom}"></h5>
+					<h5 class="card-title" data-th-text="${article.nom}"></h5>
 				</div>
-					<div class="card-body">
-					<p class="card-text">Prix : <span data-th-text="${article.prix_vente > article.prix_initial ? article.prix_vente : article.prix_initial}"></span> point(s)</p>
-					<p class="card-text">Fin de l'enchère : <span data-th-text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span></p>
-					<p class="card-text">Vendeur : <a data-th-href="${'/users/profil?pseudo=' + article.proprietaire.pseudo}"><span data-th-text="${article.proprietaire.pseudo}"></span></a></p>
+				<div class="card-body">
+					<p class="card-text">
+						Prix : <span
+							data-th-text="${article.prix_vente > article.prix_initial ? article.prix_vente : article.prix_initial}"></span>
+						point(s)
+					</p>
+					<p class="card-text">
+						Fin de l'enchère : <span
+							data-th-text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span>
+					</p>
+					<p class="card-text">
+						Vendeur : <a
+							data-th-href="${'/users/profil?pseudo=' + article.proprietaire.pseudo}"><span
+							data-th-text="${article.proprietaire.pseudo}"></span></a>
+					</p>
 				</div>
 			</div>
 		</div>
@@ -33,16 +40,20 @@
 </div>
 
 <script>
-	// Filter method
-	function displayArticles(articles, criteres, ordre = 'asc'){
-		return articles.sort((a, b) => {
-			if (a[critere] < b[critere]){
-				return ordre === 'asc' ? -1 : 1;
-			}
-			if (a[critere] > b[critere]){
-				return ordre === 'asc' ? 1 : -1;
-			}
-			return 0;
-		})
-	}
+	document.getElementById('searchCategorie').addEventListener('input',
+			function() {
+				var filter = this.value.toLowerCase(); // Récupérer la valeur du filtre
+				var options = document.getElementById('categorie').options; // Récupérer les options du select
+
+				// Parcourir toutes les options
+				for (var i = 0; i < options.length; i++) {
+					var optionText = options[i].text.toLowerCase(); // Texte de l'option
+					// Si le texte de l'option contient le filtre, on l'affiche, sinon on la cache
+					if (optionText.includes(filter)) {
+						options[i].style.display = ''; // Afficher l'option
+					} else {
+						options[i].style.display = 'none'; // Masquer l'option
+					}
+				}
+			});
 </script>

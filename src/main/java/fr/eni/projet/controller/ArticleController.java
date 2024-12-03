@@ -134,9 +134,14 @@ public class ArticleController {
 	}
 	
 	@GetMapping("/")
-	public String afficherActiveEncheres(Model model) {
-		List<Article> lstArticles = articleService.findAllActive();
-		model.addAttribute("articles", lstArticles);
+	public String afficherActiveEncheres(@RequestParam(value = "categorie", required = false) Long categorieId ,Model model) {
+		List<Categorie> categories = articleService.findAllCategories();
+		model.addAttribute("categories",categories);
+		
+		List<Article> articles = articleService.findAllActive();
+		articles = articleService.filterByCategorie(articles, categorieId);
+		
+		model.addAttribute("articles", articles);
 		
 		return "index";
 	}

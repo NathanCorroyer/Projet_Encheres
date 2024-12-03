@@ -8,7 +8,6 @@ public interface CategorieDAO {
 
 	public void create(Categorie categorie);
 	
-	public List<Categorie> findAll();
-	
+	public List<Categorie> findAll();	
 	
 }
