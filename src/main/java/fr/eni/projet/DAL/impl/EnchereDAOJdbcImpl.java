@@ -4,9 +4,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -25,9 +28,9 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 			+ "FROM ENCHERES e "
 			+ "LEFT JOIN ARTICLES a ON e.no_article = a.no_article "
 			+ "LEFT JOIN UTILISATEURS u ON a.no_utilisateur = u.no_utilisateur ";
-//	private final static String INSERT = "";
+	private final static String INSERT = "INSERT INTO ENCHERES(date_enchere, montant_enchere, no_utilisateur, no_article) VALUES (:date_enchere, :montant_enchere, :no_utilisateur, :no_article) ";
 //	private final static String FIND_ALL_FROM_ARTICLE = "";
-//	private final static String FIND_BIGGEST_FROM_ARTICLE = "";
+	private final static String FIND_BIGGEST_FROM_ARTICLE = "SELECT TOP 1 date_enchere, montant_enchere, no_utilisateur, no_article FROM ENCHERES WHERE no_article = :id_article ORDER BY montant_enchere DESC";
 		
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -44,8 +47,13 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 	
 	@Override
 	public void create(Enchere enchere) {
-		// TODO Auto-generated method stub
-
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("date_enchere", enchere.getDate());
+		namedParameters.addValue("montant_enchere", enchere.getMontant());
+		namedParameters.addValue("no_utilisateur", enchere.getAcheteur().getId());
+		namedParameters.addValue("no_article", enchere.getArticle().getId());
+		
+		namedParameterJdbcTemplate.update(INSERT, namedParameters);
 	}
 
 	@Override
@@ -55,9 +63,19 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 	}
 
 	@Override
-	public Enchere findBiggestEnchereFromArticle(int id_article) {
-		// TODO Auto-generated method stub
-		return null;
+	public Optional<Enchere> findBiggestEnchereFromArticle(int id_article) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("id_article", id_article); 
+		try {
+	        Enchere enchere = namedParameterJdbcTemplate.queryForObject(
+	            FIND_BIGGEST_FROM_ARTICLE,
+	            namedParameters,
+	            new EnchereRowMapper()
+	        );
+	        return Optional.ofNullable(enchere);
+	    } catch (EmptyResultDataAccessException e) {
+	        return Optional.empty();
+	    }
 	}
 
 	

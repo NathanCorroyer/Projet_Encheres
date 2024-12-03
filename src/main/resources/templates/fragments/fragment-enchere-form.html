@@ -1,0 +1,31 @@
+<form xmlns:th="http://www.thymeleaf.org"
+      data-th-fragment="frag-enchere-form(action)"
+      data-th-action="${action}"
+      method="post" 
+      data-th-object="${enchere}">
+      
+      <!-- Messages globaux de succès et d'erreur -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <p th:text="${successMessage}"></p>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <p th:text="${errorMessage}"></p>
+    </div>
+	<div class="row" data-th-if="${!isOwner && encherisseur.pseudo != utilisateurConnecte.pseudo}">
+		<input type="hidden" data-th-field="*{article.id}"/>
+	    <div>
+	    	<label data-th-text="#{form.enchere.montant}" for="montant" class="form-label"></label>
+	    	<input type="number" data-th-min="${prix_mini}" data-th-max="${utilisateurConnecte.credit}" name="montant" data-th-field="*{montant}" data-th-value="${prix_mini}" class="form-control"/>
+	    </div>
+	    <div>
+	    	<button type="submit" class="btn btn-primary mt-2">Enchérir</button>
+	    </div>
+	</div>
+</form>
+
+
+<script>
+function confirmerEnchere() {
+    return confirm("Êtes-vous sûr de vouloir enchérir sur cet article ? Cette action est irréversible.");
+}
+</script>

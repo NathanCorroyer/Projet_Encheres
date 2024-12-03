@@ -1,58 +1,82 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Détails de l'article</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<title>Détails de l'article</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
-    <div th:fragment="frag-details-article">
-        <div class="container mt-5">
-            <!-- Carte pour afficher les détails de l'article -->
-            <div class="card mx-auto" style="max-width: 800px;">
-                <div class="card-header">
-                    <h5 class="text-center">Détails de l'article</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Première colonne : Détails textuels -->
-                        <div class="col-md-6 col-sm-12 mb-3">
-                            <p><strong>Article : </strong> <span th:text="${article.nom}"></span></p>
-                            <p><strong>Catégorie : </strong><span th:text="${article.categorie.libelle}"></span></p>
-                            <p><strong>Description : </strong> <span th:text="${article.description}"></span></p>
-                            <p><strong>Retrait : </strong> 
-                                <span th:text="${article.adresse.rue}"></span>,
-                                <span th:text="${article.adresse.code_postal}"></span>,
-                                <span th:text="${article.adresse.ville}"></span>
-                            </p>
-                            <p><strong>Vendeur : </strong><span th:text="${pseudo}"></span> </p>
-                        </div>
+	<div th:fragment="frag-details-article">
+		<div class="container mt-5">
+			<!-- Carte pour afficher les détails de l'article -->
+			<div class="card mx-auto" style="max-width: 800px;">
+				<div class="card-header">
+					<h5 class="text-center">Détails de l'article</h5>
+				</div>
+				<div class="card-body">
+					<div class="row">
+						<!-- Première colonne : Détails textuels -->
+						<div class="col-md-6 col-sm-12 mb-3">
+							<p>
+								<strong>Article : </strong>
+								<span th:text="${article.nom}"></span>
+							</p>
+							<p>
+								<strong>Catégorie : </strong>
+								<span th:text="${article.categorie.libelle}"></span>
+							</p>
+							<p>
+								<strong>Description : </strong>
+								<span th:text="${article.description}"></span>
+							</p>
+							<p>
+								<strong>Retrait : </strong>
+								<span th:text="${article.adresse.rue}"></span>
+								,
+								<span th:text="${article.adresse.code_postal}"></span>
+								,
+								<span th:text="${article.adresse.ville}"></span>
+							</p>
+							<p>
+								<strong>Vendeur : </strong>
+								<span th:text="${pseudo}"></span>
+							</p>
+						</div>
 
-                        <!-- Deuxième colonne : Détails supplémentaires -->
-                        <div class="col-md-6 col-sm-12 mb-3">
-                            <p><strong>Mise à prix : </strong> <span th:text="${article.prix_initial}"></span> </p>
-                            <p><strong>Meilleure offre : </strong> <span th:text="${article.prix_initial}"></span> </p>
-                            <p><strong>Fin de l'enchère : </strong> <span th:text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span></p>
-                            
-                            <div th:if="${article.path_image != null}">
-                                <img th:src="@{'/uploads/' + ${article.path_image}}" class="img-fluid" alt="Image de l'article"/>
-                            </div>
-                        </div>
-                    </div>
+						<!-- Deuxième colonne : Détails supplémentaires -->
+						<div class="col-md-6 col-sm-12 mb-3">
+							<p>
+								<strong>Mise à prix : </strong>
+								<span th:text="${article.prix_initial}"></span>
+							</p>
+							<p>
+								<strong>Meilleure offre :</strong> <span th:text="${enchere.montant - 1}"></span><span data-th-if="${encherisseur.id != -1}"> par <span th:text="${encherisseur.pseudo}"></span></span>
+								
+							</p>
+							<p>
+								<strong>Fin de l'enchère : </strong>
+								<span th:text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span>
+							</p>
 
-                    <!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->
-                    <div class="d-flex justify-content-center mt-4">
-    <!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->
-    <div th:if="${isOwner}" class="w-50">
-        <a class="btn btn-primary w-100" th:href="@{/articles/editer/{id}(id=${article.id})}">Modifier</a>
-    </div>
-
-    <!-- Bouton Retour à l'accueil affiché dans tous les cas -->
-    <div class="w-50 ms-2">
-        <a href="/" class="btn btn-secondary w-100">Retour à l'accueil</a>
-    </div>
-</div>
-                </div>
-            </div>
-        </div>
-    </div>
+							<div th:if="${article.path_image != null}">
+								<img th:src="@{'/uploads/' + ${article.path_image}}" class="img-fluid" alt="Image de l'article" />
+							</div>
+						</div>
+					</div>
+					<div th:replace="~{fragments/fragment-enchere-form :: frag-enchere-form(action = '/encheres/creer')}"></div>
+					<!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->
+					<div class="d-flex justify-content-center mt-4">
+						<!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->
+						<div th:if="${isOwner && article.statut_enchere == 0}" class="w-50">
+							<a class="btn btn-primary w-100" th:href="@{/articles/editer/{id}(id=${article.id})}">Modifier</a>
+						</div>
+						
+						<!-- Bouton Retour à l'accueil affiché dans tous les cas -->
+						<div class="w-50 ms-2">
+							<a href="/" class="btn btn-secondary w-100">Retour à l'accueil</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

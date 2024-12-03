@@ -165,6 +165,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		utilisateurDAO.modifierActivation(utilisateur); // Modification de l'état d'activation
 	}
 
+	@Override
+	public void updateCredit(Utilisateur utilisateur) {
+		utilisateurDAO.updateCredit(utilisateur);		
+	}
 	/**
 	 * Valide un objet Utilisateur selon les règles métier définies.
 	 *
@@ -286,4 +290,5 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		}
 		return isValid;
 	}
+
 }

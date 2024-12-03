@@ -121,9 +121,9 @@ public class ArticleServiceImpl implements ArticleService {
 		articles.forEach(article -> {
 			Utilisateur user = userDAO.findById(article.getProprietaire().getId());
 			article.setProprietaire(user);
-			Enchere enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
-			if (enchere != null) {
-				article.setPrix_vente(enchere.getMontant());
+			Optional<Enchere> enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
+			if (!enchere.isEmpty()) {
+				article.setPrix_vente(enchere.get().getMontant());
 			}
 		});
 		return articles;
