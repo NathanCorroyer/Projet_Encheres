@@ -125,8 +125,8 @@ public class ArticleController {
 				article.setDate_fin(dateFin);
 			}
 			article.setStatut_enchere(StatutEnchere.PAS_COMMENCEE);
-
-			return "redirect:/articles/details/" + articleService.create(article);
+			int id = articleService.create(article);
+			return "redirect:/articles/picture/" + id;
 
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -153,8 +153,7 @@ public class ArticleController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		model.addAttribute("id", id);
-		return "redirect:/";
+		return "redirect:/articles/details/"+id;
 	}
 	@GetMapping("/")
 	public String afficherActiveEncheres(Model model) {

@@ -3,7 +3,45 @@
 	<div class="row mb-3">
 		<input type="file" name="file" id="file" accept="image/*" class="form-control" required>
 	</div>
+	 <!-- Zone d'affichage de l'image téléchargée -->
+    <div class="mb-3" id="image-preview-container">
+        <img id="image-preview" src="#" alt="Image Preview" style="display: none; width: 100%; max-width: 300px;"/>
+    </div>
 	<div class="">
 		<button type="submit" class="btn btn-primary">Valider</button>
 	</div>
+	
+	<script type="text/javascript">
+		const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+		document.getElementById('file').addEventListener('change', function(event) {
+		    const file = event.target.files[0]; // Récupérer le premier fichier sélectionné
+	
+		    if (file) {
+				console.log(file.size );
+		    	if (file.size > MAX_FILE_SIZE) {
+		            alert("Le fichier est trop volumineux. La taille maximale est de 5 Mo.");
+		            event.target.value = '';  // Réinitialiser l'input pour que l'utilisateur puisse choisir un autre fichier
+		        }else{
+		        	const reader = new FileReader();
+			        
+			        // Lorsque le fichier est chargé, on met à jour l'image
+			        reader.onload = function(e) {
+			            const imgElement = document.getElementById('image-preview');
+			            imgElement.src = e.target.result;  // Définir la source de l'image
+			            imgElement.style.display = 'block';  // Afficher l'image
+			        };
+			        
+			        // Lire le fichier comme une URL de données (pour les images)
+			        reader.readAsDataURL(file);
+		        }
+		    }
+		});
+		
+		// Optionnel : vérifier la taille du fichier lorsque l'utilisateur sélectionne un fichier
+	    document.getElementById('file').addEventListener('change', function(event) {
+	        const file = event.target.files[0];
+	        
+	    });
+	</script>
 </form>
+

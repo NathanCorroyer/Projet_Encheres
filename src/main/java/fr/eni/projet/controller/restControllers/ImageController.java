@@ -1,14 +1,16 @@
 package fr.eni.projet.controller.restControllers;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @RestController
 public class ImageController {
@@ -27,7 +29,14 @@ public class ImageController {
             if (resource.exists() && resource.isReadable()) {
                 // Retourner le fichier en tant que ressource
             	
-                return ResponseEntity.ok().body(resource);
+            	 // Détection du type MIME
+                String mimeType = Files.probeContentType(filePath);
+                
+                // Si le type MIME est indéfini, on peut le définir à image/jpeg par défaut
+                if (mimeType == null) {
+                    mimeType = "image/jpeg";
+                }
+                return ResponseEntity.ok() .contentType(MediaType.parseMediaType(mimeType)).body(resource);
             } else {
                 return ResponseEntity.notFound().build();
             }
