@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -145,6 +146,16 @@ public class ArticleController {
 		return "/upload/view-image-upload-article";
 	}
 	
+	@GetMapping("/")
+	public String afficherActiveEncheres(@RequestParam(value = "categorie", required = false) Long categorieId ,Model model) {
+		List<Categorie> categories = articleService.findAllCategories();
+		model.addAttribute("categories",categories);
+		
+		List<Article> articles = articleService.findAllActive();
+		articles = articleService.filterByCategorie(articles, categorieId);
+		
+		model.addAttribute("articles", articles);
+		
 	@PostMapping("/articles/picture/{id}")
 	public String uploadImageArticle(@PathVariable("id") int id, Model model, @RequestParam("file") MultipartFile image ) {
 		try {
@@ -155,12 +166,12 @@ public class ArticleController {
 		}
 		return "redirect:/articles/details/"+id;
 	}
+    
 	@GetMapping("/")
 	public String afficherActiveEncheres(Model model) {
 		List<Article> lstArticles = articleService.findAllActive();
 		lstArticles.sort(Comparator.comparing(Article::getDate_fin));
 		model.addAttribute("articles", lstArticles);
-
 		return "index";
 	}
 

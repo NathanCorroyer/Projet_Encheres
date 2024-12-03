@@ -1,5 +1,14 @@
 <div xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-encheres-actives">
     <h1>Enchères en cours</h1>
+   <form action="#" data-th-action="@{/}" method="get">
+			<label for="categorie" class="form-label">Catégorie :</label> 
+			<select id="categorie" name="categorie" class="form-control">
+				<option value="">Toutes</option>					
+				<option th:each="categorie : ${categories}"
+				th:value="${categorie.id}" th:text="${categorie.libelle}"></option>
+			</select>
+			<button type="submit">Filtrer</button>
+		</form>
     <div class="row">
         <div class="col-12 col-md-6 col-xl-4 mb-4" data-th-each="article : ${articles}">
             <div class="card bg-dark text-white h-100 shadow-sm">

@@ -19,6 +19,10 @@ public interface ArticleDAO {
 	public void update(Article article);
 
 	public List<Article> findByCategorie(int categorieId);
+	
+	public List<Article> findAllByCategorie(int categorieId);
+	
+	public List<Article> findByNom(String nom);
 
 	public List<Article> findByUtilisateur(int utilisateurId);
 

@@ -3,6 +3,9 @@ package fr.eni.projet.bll.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import java.util.stream.Collectors;
+
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import fr.eni.projet.bo.Article;
 import fr.eni.projet.bo.Categorie;
 import fr.eni.projet.bo.Enchere;
 import fr.eni.projet.bo.Utilisateur;
+import fr.eni.projet.controller.ArticleController;
 import fr.eni.projet.enums.StatutEnchere;
 import fr.eni.projet.exceptions.BusinessCode;
 import fr.eni.projet.exceptions.BusinessException;
@@ -34,6 +38,16 @@ public class ArticleServiceImpl implements ArticleService {
 	private UtilisateurDAO userDAO;
 	@Autowired
 	private EnchereDAO enchereDAO;
+	@Autowired
+	private CategorieDAO categorieDAO;
+	
+	public ArticleServiceImpl(ArticleDAO articleDAO, UtilisateurDAO userDAO, EnchereDAO enchereDAO, CategorieDAO categorieDAO) {
+		this.articleDAO = articleDAO;
+		this.userDAO = userDAO;
+		this.enchereDAO = enchereDAO;
+		this.categorieDAO = categorieDAO;
+	}
+	
 
 	@Autowired
 	private CategorieDAO categorieDAO;
@@ -98,12 +112,16 @@ public class ArticleServiceImpl implements ArticleService {
 
 		return article;
 	}
-
+	
 	@Override
 	public List<Article> findAll() {
 		return articleDAO.findAll();
 	}
-
+	
+	public List<Categorie> findAllCategories() {
+		return categorieDAO.findAll();
+	}
+	
 	@Override
 	public List<Article> findAllActive() {
 		List<Article> articles = articleDAO.findAllActive();
@@ -114,7 +132,7 @@ public class ArticleServiceImpl implements ArticleService {
 			if (enchere != null) {
 				article.setPrix_vente(enchere.getMontant());
 			}
-		});
+			});
 		return articles;
 	}
 
@@ -151,7 +169,16 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public List<Article> findByCategorie(int categorieId) {
-		return articleDAO.findByCategorie(categorieId);
+		if (categorieId <= 0) {
+			return articleDAO.findByCategorie(categorieId);
+		}else {
+			return articleDAO.findAll();
+		}
+	}
+	
+	@Override
+	public List<Article> findByNom(String nom) {
+		return articleDAO.findByNom(nom);
 	}
 
 	@Override
@@ -159,6 +186,10 @@ public class ArticleServiceImpl implements ArticleService {
 		return articleDAO.findByUtilisateur(utilisateurId);
 	}
 
+	public List<Article> filterByCategorie(List<Article> articles, Long categorieId){
+		return articles.stream()
+					.filter(article -> categorieId == null || article.getCategorie().getId() == categorieId.intValue())
+					.collect(Collectors.toList());
 	
 	@Override
 	public void uploadImage(String fileName, int idArticle) {

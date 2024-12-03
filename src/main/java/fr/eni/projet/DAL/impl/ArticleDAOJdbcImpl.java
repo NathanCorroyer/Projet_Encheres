@@ -2,9 +2,14 @@ package fr.eni.projet.DAL.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import java.util.HashMap;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -30,8 +35,12 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	private final static String UPDATE = "UPDATE ARTICLES SET nom_article = :nom_article, description = :description, date_debut_encheres = :date_debut_encheres, date_fin_encheres = :date_fin_encheres, prix_initial = :prix_initial, no_categorie = :no_categorie, no_adresse_retrait = :no_adresse_retrait WHERE no_article = :no_article";
 	private final static String DELETE = "DELETE FROM ARTICLES WHERE no_article = :no_article";
 	private final static String FIND_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie";
+	private final static String FIND_BY_NOM = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE nom_article = :nom";
 	private final static String FIND_BY_UTILISATEUR = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_utilisateur = :no_utilisateur";
-	private final static String FIND_ALL_ACTIVE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE statut_enchere = 1";
+
+	private final static String FIND_ALL_ACTIVE = "SELECT a.no_article, a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres, a.prix_initial, a.prix_vente, a.no_utilisateur, a.no_categorie, a.statut_enchere, a.no_adresse_retrait, a.path_image FROM ARTICLES a WHERE a.statut_enchere = 1";
+	private final static String FIND_ACTIVE_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie AND statut_enchere = 1";
+	//	private final static String FIND_ALL_ACTIVE ="SELECT a.no_article, a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres, a.prix_initial, a.prix_vente, a.no_utilisateur, a.no_categorie, a.statut_enchere, a.no_adresse_retrait, a.path_image, u.pseudo AS pseudo_proprietaire FROM ARTICLES a JOIN UTILISATEURS u ON a.no_utilisateur = u.no_utilisateur" + " WHERE a.statut_enchere = 1";
 	private static final String FIND_BY_DATE_AND_STATUT = "SELECT * FROM ARTICLES WHERE CAST(date_debut_encheres AS DATE) = :date_debut_encheres "
 			+ "AND statut_enchere = :statut_enchere";
 	private static final String UPDATE_STATUT = "UPDATE ARTICLES SET statut_enchere = :statut_enchere WHERE no_article = :no_article";
@@ -42,6 +51,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	// a.statut_enchere, a.no_adresse_retrait, a.path_image, u.pseudo AS
 	// pseudo_proprietaire FROM ARTICLES a JOIN UTILISATEURS u ON a.no_utilisateur =
 	// u.no_utilisateur" + " WHERE a.statut_enchere = 1";
+  
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -61,6 +71,50 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	public List<Article> findAllActive() {
 		return namedParameterJdbcTemplate.query(FIND_ALL_ACTIVE, new ArticleRowMapper());
 	}
+	
+	// Filter on the Server
+//	@Override
+//	public List<Article> findAllActive(String nom, Integer categorieId, String sortBy, String sortOrder) {
+//		StringBuilder sql = new StringBuilder(FIND_ALL_ACTIVE);
+//		sql.append(" JOIN categorie c ON a.no_catgeorie = c.no_categorie");
+//		
+//		// Array list to get all the request's parameters
+//		Map<String, Object> params = new HashMap<>();
+//		
+//		// Conditional filters
+//		boolean firstCondition = true;
+//		
+//		// Filter by name
+//		if (nom != null && !nom.isEmpty()) {
+//			if (firstCondition) {
+//				sql.append(" WHERE ");
+//				firstCondition = false;
+//			} else {
+//				sql.append(" AND ");
+//			}
+//			sql.append("e.nom LIKE :nom");
+//			params.put("nom", "%" + nom + "%");
+//		}
+//		
+//		// Filter by categorie
+//		if (categorieId != null) {
+//			if (firstCondition) {
+//				sql.append(" WHERE ");
+//				firstCondition = false;
+//			} else {
+//				sql.append(" AND ");
+//			}
+//			sql.append("e.catgeorie_id = :categorieId");
+//			params.put("categorieId", categorieId);
+//		}
+//		
+//		//Dynamic filters
+//		if (sortBy!= null && sortBy.isEmpty()) {
+//			sql.append(" ORDER BY e.").append(sortBy).append(" ").append(sortOrder != null ? sortOrder : "ASC");
+//		}
+//		
+//		return namedParameterJdbcTemplate.query(sql.toString(), params, new ArticleRowMapper());
+//	}
 
 	@Override
 	public int create(Article article) {
@@ -118,13 +172,41 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 
 	}
 
+	@Override
+	public List<Article> findByCategorie(int categorieId) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_categorie", categorieId);
+		return namedParameterJdbcTemplate.query(FIND_BY_CATEGORIE, namedParameters, new ArticleRowMapper());
+	}
+	
+	@Override
+	public List<Article> findAllByCategorie(int categorieId) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_categorie", categorieId);
+		return namedParameterJdbcTemplate.query(FIND_ACTIVE_BY_CATEGORIE, namedParameters, new ArticleRowMapper());
+	}
+	
+	@Override
+	public List<Article> findByNom(String nom) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("nom", nom);
+		return namedParameterJdbcTemplate.query(FIND_BY_NOM, namedParameters, new ArticleRowMapper());
+	}
+
+	@Override
+	public List<Article> findByUtilisateur(int utilisateurId) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_utilisateur", utilisateurId);
+		return namedParameterJdbcTemplate.query(FIND_BY_UTILISATEUR, namedParameters, new ArticleRowMapper());
+	}
+	
 	// RowMapper to map SQL result to Article object
 	class ArticleRowMapper implements RowMapper<Article> {
-
+		
 		@Override
 		public Article mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Article article = new Article();
-
+			
 			article.setId(rs.getInt("no_article"));
 			article.setNom(rs.getString("nom_article"));
 			article.setDescription(rs.getString("description"));
@@ -146,24 +228,12 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 			Adresse adresse = new Adresse();
 			adresse.setId(rs.getInt("no_adresse_retrait"));
 			article.setAdresse(adresse);
-
+			
 			return article;
 		}
 	}
 
-	@Override
-	public List<Article> findByCategorie(int categorieId) {
-		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("no_categorie", categorieId);
-		return namedParameterJdbcTemplate.query(FIND_BY_CATEGORIE, namedParameters, new ArticleRowMapper());
-	}
 
-	@Override
-	public List<Article> findByUtilisateur(int utilisateurId) {
-		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("no_utilisateur", utilisateurId);
-		return namedParameterJdbcTemplate.query(FIND_BY_UTILISATEUR, namedParameters, new ArticleRowMapper());
-	}
 
 	@Override
 	public List<Article> findByDateDebutAndStatutEnchere(LocalDateTime today, int statut) {
