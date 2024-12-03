@@ -46,5 +46,7 @@ public class BusinessCode {
 
 	// Clefs de validation des encheres
 	public static final String BLL_UTILISATEUR_CREATE_ERREUR = "bll.utilisateur.create.erreur";
-	public static final String BLL_AVIS_CREATE_ERREUR = "bll.avis.create.erreur";
+	public static final String BLL_ENCHERE_MONTANT_FAIBLE= "bll.enchere.montant.faible";
+	public static final String BLL_ENCHERE_CREDITS_INSUFFISANTS= "bll.enchere.credits.insuffisants";
+	
 }

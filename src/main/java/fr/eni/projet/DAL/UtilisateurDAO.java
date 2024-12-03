@@ -18,7 +18,8 @@ public interface UtilisateurDAO {
 
 	public void update(Utilisateur utilisateur);
 	public void updatePassword(Utilisateur utilisateur);
-
+	public void updateCredit(Utilisateur utilisateur);
+	
 	public void modifierActivation(Utilisateur utilisateur);
 
 	public Optional<Utilisateur> findByEmail(String email);

@@ -26,6 +26,7 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	private final static String FIND_ALL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS";
 	private final static String UPDATE = "UPDATE UTILISATEURS SET nom = :nom, prenom = :prenom, email = :email, telephone = :telephone WHERE no_utilisateur = :no_utilisateur";
 	private final static String UPDATE_PASSWORD = "UPDATE UTILISATEURS SET mot_de_passe = :password WHERE no_utilisateur = :no_utilisateur";
+	private final static String UPDATE_CREDIT = "UPDATE UTILISATEURS SET credit = :credit WHERE no_utilisateur = :no_utilisateur";
 	private final static String MODIFIER_ACTIVATION = "UPDATE UTILISATEURS SET actif = :actif WHERE no_utilisateur = :no_utilisateur";
 	private final static String FIND_BY_EMAIL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE email = :email";
 	private final static String FIND_PASSWORD = "SELECT mot_de_passe FROM UTILISATEURS WHERE pseudo = :pseudo";
@@ -108,6 +109,16 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 				.addValue("no_utilisateur", utilisateur.getId());
 
 		namedParameterJdbcTemplate.update(UPDATE_PASSWORD, namedParameters);
+		
+	}
+	
+	@Override
+	public void updateCredit(Utilisateur utilisateur) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("credit", utilisateur.getCredit())
+		.addValue("no_utilisateur", utilisateur.getId());
+		
+		namedParameterJdbcTemplate.update(UPDATE_CREDIT, namedParameters);
 		
 	}
 	
