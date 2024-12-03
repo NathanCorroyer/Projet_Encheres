@@ -1,19 +1,39 @@
 <div xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-encheres-actives">
-	<h1>Enchères en cours</h1>
-	<!--TODO : Get boostrap cards -->
-	<div class="row">
-		<div class="col-sm-4 mb-4" data-th-each="article : ${articles}">
-			<div class="card ">
-				<div class="card-header">
-				<h5 class="card-title" data-th-text="${article.nom}"></h5>
-				</div>
-					<div class="card-body">
-					<p class="card-text">Prix : <span data-th-text="${article.prix_vente > article.prix_initial ? article.prix_vente : article.prix_initial}"></span> point(s)</p>
-					<p class="card-text">Fin de l'enchère : <span data-th-text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span></p>
-					<!-- TODO : Link to vendeur profile -->
-					<p class="card-text">Vendeur : <a data-th-href="${'/users/profil?pseudo=' + article.proprietaire.pseudo}"><span data-th-text="${article.proprietaire.pseudo}"></span></a></p>
-				</div>
-			</div>
-		</div>
-	</div>
+    <h1>Enchères en cours</h1>
+    <div class="row">
+        <div class="col-12 col-md-6 col-xl-4 mb-4" data-th-each="article : ${articles}">
+            <div class="card bg-dark text-white h-100 shadow-sm">
+                <div class="card-body d-flex align-items-center">
+                    <div class="image-container me-3" data-th-if="${article.path_image != null && article.path_image != ''}"> <!-- Ajout d'une marge à droite -->
+                        <img 
+                            alt="Image article" 
+                            class="img-fluid img-article bg-dark" 
+                            data-th-src="@{'/uploads/' + ${article.path_image}}"
+                        >
+                    </div>
+                    <div class="flex-grow-1">
+                        <div>
+                            <h5 class="card-title" data-th-text="${article.nom}"></h5>
+                            <p class="mb-1">
+                                Prix : 
+                                <span data-th-text="${article.prix_vente > article.prix_initial ? article.prix_vente : article.prix_initial}"></span>
+                                point(s)
+                            </p>
+                            <p class="mb-1">
+                                Fin de l'enchère : 
+                                <span data-th-text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span>
+                            </p>
+                            <p class="mb-0">
+                            Vendeur :
+                            <a data-th-href="${'/users/profil?pseudo=' + article.proprietaire.pseudo}">
+                                <span data-th-text="${article.proprietaire.pseudo}"></span>
+                            </a>
+                        </p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

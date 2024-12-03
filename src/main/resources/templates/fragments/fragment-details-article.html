@@ -33,7 +33,7 @@
                             <p><strong>Fin de l'enchère : </strong> <span th:text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span></p>
                             
                             <div th:if="${article.path_image != null}">
-                                <img th:src="@{${article.path_image}}" class="img-fluid" alt="Image de l'article"/>
+                                <img th:src="@{'/uploads/' + ${article.path_image}}" class="img-fluid" alt="Image de l'article"/>
                             </div>
                         </div>
                     </div>
