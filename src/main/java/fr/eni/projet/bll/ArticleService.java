@@ -5,12 +5,15 @@ import java.util.List;
 import fr.eni.projet.bo.Article;
 
 public interface ArticleService {
+
+	public void activerEncheresDuJour();
+
 	public int create(Article article);
 
 	public List<Article> findAll();
-	
+
 	public List<Article> findAllActive();
- 
+
 	public void delete(int id);
 
 	public void update(Article article);

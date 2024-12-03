@@ -1,11 +1,14 @@
 package fr.eni.projet.bll.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.DAL.ArticleDAO;
@@ -37,6 +40,25 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Autowired
 	private AdresseDAO adresseDAO;
+
+	@Scheduled(cron = "0 30 9 * * ?") // Expression cron : Tous les jours à 9h30
+	@Transactional
+	@Override
+	public void activerEncheresDuJour() {
+		LocalDate today = LocalDate.now();
+		LocalDateTime startOfDay = today.atStartOfDay();
+
+		List<Article> articlesADemarrer = articleDAO.findByDateDebutAndStatutEnchere(startOfDay,
+				StatutEnchere.PAS_COMMENCEE.ordinal());
+
+		for (Article article : articlesADemarrer) {
+			article.setStatut_enchere(StatutEnchere.EN_COURS);
+			articleDAO.updateStatutEnchere(article, StatutEnchere.EN_COURS);
+		}
+
+		System.out.println(articlesADemarrer.size() + " enchères activées pour la date : " + today);
+
+	}
 
 	@Override
 	public int create(Article article) {
