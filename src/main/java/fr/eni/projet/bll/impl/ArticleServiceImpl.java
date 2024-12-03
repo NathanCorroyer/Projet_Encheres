@@ -3,6 +3,7 @@ package fr.eni.projet.bll.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,11 @@ public class ArticleServiceImpl implements ArticleService {
 	@Autowired
 	private AdresseDAO adresseDAO;
 
+	public boolean canShowRetraitButton(Article article) {
+		// Vérifie si l'article est CLOTUREE et s'il a des enchères
+		return article.getStatut_enchere() == StatutEnchere.CLOTUREE && articleDAO.hasEncheres(article.getId());
+	}
+
 	@Scheduled(cron = "0 30 9 * * ?") // Expression cron : Tous les jours à 9h30
 	@Transactional
 	@Override
@@ -65,6 +71,23 @@ public class ArticleServiceImpl implements ArticleService {
 
 		System.out.println(articlesADemarrer.size() + " enchères activées pour la date : " + today);
 
+	}
+
+	@Scheduled(cron = "0 30 9 * * ?") // Exécution quotidienne
+	@Transactional
+	@Override
+	public void cloturerEncheresDuJour() {
+		LocalDate today = LocalDate.now(); // Date actuelle sans l'heure
+		LocalDateTime startOfDay = today.atStartOfDay();
+		List<Article> articlesACloturer = articleDAO.findByDateFinBeforeAndStatutEnchere(startOfDay,
+				StatutEnchere.EN_COURS.ordinal());
+
+		for (Article article : articlesACloturer) {
+			article.setStatut_enchere(StatutEnchere.CLOTUREE); // Changer le statut à CLOTUREE
+			articleDAO.updateStatutEnchere(article, StatutEnchere.CLOTUREE);
+		}
+
+		System.out.println(articlesACloturer.size() + " enchères clôturées pour la date : " + today);
 	}
 
 	@Override

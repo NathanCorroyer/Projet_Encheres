@@ -47,12 +47,13 @@ public class ArticleController {
 	private FileUploadService fileUploadService;
 
 	public ArticleController(ArticleService articleService, CategorieService categorieService,
-			UtilisateurService utilisateurService, AdresseService adresseService, EnchereService enchereService, FileUploadService fileUploadService) {
+			UtilisateurService utilisateurService, AdresseService adresseService, EnchereService enchereService,
+			FileUploadService fileUploadService) {
 		this.articleService = articleService;
 		this.categorieService = categorieService;
 		this.userService = utilisateurService;
 		this.adresseService = adresseService;
-		this.enchereService = enchereService;		
+		this.enchereService = enchereService;
 		this.fileUploadService = fileUploadService;
 	}
 
@@ -230,7 +231,8 @@ public class ArticleController {
 	}
 
 	@GetMapping("/articles/details/{id}")
-	public String afficherDetailsArticle(@PathVariable("id") int id, Model model, Authentication authentication, @ModelAttribute("enchere") Enchere enchere) {
+	public String afficherDetailsArticle(@PathVariable("id") int id, Model model, Authentication authentication,
+			@ModelAttribute("enchere") Enchere enchere) {
 
 		Article article = articleService.findById(id);
 
@@ -252,14 +254,17 @@ public class ArticleController {
 			model.addAttribute("adresse", "Adresse non définie");
 		}
 
+		// Initialiser isOwner
+		boolean isOwner = false;
+
 		if (article.getProprietaire() != null) {
 			String pseudoUserConnected = article.getProprietaire().getPseudo();
 			model.addAttribute("pseudo", pseudoUserConnected);
-			
+
 			Utilisateur utilisateurConnecte = userService.findByPseudo(authentication.getName()).get();
 			model.addAttribute("utilisateurConnecte", utilisateurConnecte);
 			// Vérification si l'utilisateur connecté est le propriétaire
-			boolean isOwner = pseudoUserConnected.equals(authentication.getName());
+			isOwner = pseudoUserConnected.equals(authentication.getName());
 			model.addAttribute("isOwner", isOwner); // Passer l'information au modèle
 		} else {
 			model.addAttribute("pseudo", "Utilisateur anonyme");
@@ -267,12 +272,21 @@ public class ArticleController {
 		}
 
 		Optional<Enchere> enchereMax = enchereService.findBiggestEnchereFromArticle(id);
-		model.addAttribute("prix_mini", enchereMax.isEmpty() ? article.getPrix_initial() + 1 : enchereMax.get().getMontant() + 1);
-		Utilisateur encherisseur = !enchereMax.isEmpty() ? userService.findById(enchereMax.get().getAcheteur().getId()) : new Utilisateur(-1);
+		model.addAttribute("prix_mini",
+				enchereMax.isEmpty() ? article.getPrix_initial() + 1 : enchereMax.get().getMontant() + 1);
+		Utilisateur encherisseur = !enchereMax.isEmpty() ? userService.findById(enchereMax.get().getAcheteur().getId())
+				: new Utilisateur(-1);
 		model.addAttribute("encherisseur", encherisseur);
 		enchere.setArticle(article);
 		enchere.setMontant(enchereMax.isEmpty() ? article.getPrix_initial() + 1 : enchereMax.get().getMontant() + 1);
-		
+
+		// Logique pour activer ou désactiver le bouton "Retrait effectué"
+		boolean showRetraitEffectue = false;
+		if (isOwner) {
+			showRetraitEffectue = articleService.canShowRetraitButton(article);
+		}
+		model.addAttribute("showRetraitEffectue", showRetraitEffectue);
+
 		// Ajouter l'article à l'attribut modèle
 		model.addAttribute("article", article);
 

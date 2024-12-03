@@ -19,9 +19,9 @@ public interface ArticleDAO {
 	public void update(Article article);
 
 	public List<Article> findByCategorie(int categorieId);
-	
+
 	public List<Article> findAllByCategorie(int categorieId);
-	
+
 	public List<Article> findByNom(String nom);
 
 	public List<Article> findByUtilisateur(int utilisateurId);
@@ -31,7 +31,11 @@ public interface ArticleDAO {
 	public List<Article> findByDateDebutAndStatutEnchere(LocalDateTime today, int i);
 
 	void updateStatutEnchere(Article article, StatutEnchere statutEnchere);
+
 	public void uploadImage(String fileName, int idArticle);
 
-  
+	public List<Article> findByDateFinBeforeAndStatutEnchere(LocalDateTime today, int i);
+
+	boolean hasEncheres(int articleId);
+
 }
