@@ -66,10 +66,8 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 		Article article = articleDAO.findArticleById(id);
 		if (article != null) {
-			Optional<Categorie> categorieOptional = categorieDAO.findById(article.getCategorie().getId());
-			if (categorieOptional.isPresent()) {
-				article.setCategorie(categorieOptional.get());
-			}
+			Categorie categorie = categorieDAO.findById(article.getCategorie().getId());
+			article.setCategorie(categorie);
 			Utilisateur utilisateur = userDAO.findById(article.getProprietaire().getId());
 			article.setProprietaire(utilisateur);
 			Adresse adresse = adresseDAO.findById(article.getAdresse().getId());

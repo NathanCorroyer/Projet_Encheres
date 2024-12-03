@@ -22,7 +22,27 @@ public class CatégorieServiceImpl implements CategorieService {
 	}
 
 	@Override
-	public Optional<Categorie> findById(int id) {
+	public Categorie findById(int id) {
 		return categorieDAO.findById(id);
 	}
+
+	@Override
+	public void create(Categorie categorie) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Categorie findByLibelle(String libelle) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void update(Categorie categorie) {
+		// TODO Auto-generated method stub
+		
+	}
+
+		
 }
