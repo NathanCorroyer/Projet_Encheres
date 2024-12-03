@@ -7,8 +7,10 @@ import fr.eni.projet.bo.Categorie;
 
 public interface CategorieService {
 
-	List<Categorie> findAll();
-
-	public Optional<Categorie> findById(int id);
+	public void create(Categorie categorie);
+	public Categorie findById(int id);
+	public Categorie findByLibelle(String libelle);
+	public List<Categorie> findAll();
+	public void update(Categorie categorie);
 
 }

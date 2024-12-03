@@ -27,4 +27,7 @@ public interface ArticleDAO {
 	public List<Article> findByDateDebutAndStatutEnchere(LocalDateTime today, int i);
 
 	void updateStatutEnchere(Article article, StatutEnchere statutEnchere);
+	public void uploadImage(String fileName, int idArticle);
+
+  
 }

@@ -24,4 +24,6 @@ public interface ArticleService {
 
 	List<Article> findByUtilisateur(int utilisateurId);
 
+	public void uploadImage(String fileName, int idArticle);
+
 }

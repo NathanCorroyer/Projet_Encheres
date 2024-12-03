@@ -9,8 +9,11 @@ public interface CategorieDAO {
 
 	public void create(Categorie categorie);
 
+	public Categorie findById(int id);
+	public Categorie findByLabel(String libelle);
 	public List<Categorie> findAll();
 
-	public Optional<Categorie> findById(int id);
+	public void update(Categorie categorie);
+	public void delete(int id);
 
 }
