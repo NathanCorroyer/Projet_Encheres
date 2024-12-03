@@ -62,6 +62,10 @@ public class Utilisateur {
 	// ----------------------- CONSTRUCTEURS -----------------------------------
 	public Utilisateur() {
 	}
+	
+	public Utilisateur(int id) {
+		this.id = id;
+	}
 
 	public Utilisateur(int id, String pseudo, String nom, String prenom, String email, String telephone,
 			Adresse adresse, String password, int credit, boolean actif, int code_role) {

@@ -17,18 +17,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bll.ArticleService;
 import fr.eni.projet.bll.CategorieService;
+import fr.eni.projet.bll.EnchereService;
 import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Article;
 import fr.eni.projet.bo.Categorie;
+import fr.eni.projet.bo.Enchere;
 import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.enums.StatutEnchere;
 import fr.eni.projet.exceptions.BusinessException;
@@ -41,14 +43,16 @@ public class ArticleController {
 	private CategorieService categorieService;
 	private UtilisateurService userService;
 	private AdresseService adresseService;
+	private EnchereService enchereService;
 	private FileUploadService fileUploadService;
 
 	public ArticleController(ArticleService articleService, CategorieService categorieService,
-			UtilisateurService utilisateurService, AdresseService adresseService, FileUploadService fileUploadService) {
+			UtilisateurService utilisateurService, AdresseService adresseService, EnchereService enchereService, FileUploadService fileUploadService) {
 		this.articleService = articleService;
 		this.categorieService = categorieService;
 		this.userService = utilisateurService;
 		this.adresseService = adresseService;
+		this.enchereService = enchereService;		
 		this.fileUploadService = fileUploadService;
 	}
 
@@ -218,7 +222,7 @@ public class ArticleController {
 	}
 
 	@GetMapping("/articles/details/{id}")
-	public String afficherDetailsArticle(@PathVariable("id") int id, Model model, Authentication authentication) {
+	public String afficherDetailsArticle(@PathVariable("id") int id, Model model, Authentication authentication, @ModelAttribute("enchere") Enchere enchere) {
 
 		Article article = articleService.findById(id);
 
@@ -243,7 +247,9 @@ public class ArticleController {
 		if (article.getProprietaire() != null) {
 			String pseudoUserConnected = article.getProprietaire().getPseudo();
 			model.addAttribute("pseudo", pseudoUserConnected);
-
+			
+			Utilisateur utilisateurConnecte = userService.findByPseudo(authentication.getName()).get();
+			model.addAttribute("utilisateurConnecte", utilisateurConnecte);
 			// Vérification si l'utilisateur connecté est le propriétaire
 			boolean isOwner = pseudoUserConnected.equals(authentication.getName());
 			model.addAttribute("isOwner", isOwner); // Passer l'information au modèle
@@ -252,6 +258,13 @@ public class ArticleController {
 			model.addAttribute("isOwner", false); // L'utilisateur anonyme ne peut pas modifier
 		}
 
+		Optional<Enchere> enchereMax = enchereService.findBiggestEnchereFromArticle(id);
+		model.addAttribute("prix_mini", enchereMax.isEmpty() ? article.getPrix_initial() + 1 : enchereMax.get().getMontant() + 1);
+		Utilisateur encherisseur = !enchereMax.isEmpty() ? userService.findById(enchereMax.get().getAcheteur().getId()) : new Utilisateur(-1);
+		model.addAttribute("encherisseur", encherisseur);
+		enchere.setArticle(article);
+		enchere.setMontant(enchereMax.isEmpty() ? article.getPrix_initial() + 1 : enchereMax.get().getMontant() + 1);
+		
 		// Ajouter l'article à l'attribut modèle
 		model.addAttribute("article", article);
 
