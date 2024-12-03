@@ -11,7 +11,7 @@
     <div th:if="${errorMessage}" class="alert alert-danger">
         <p th:text="${errorMessage}"></p>
     </div>
-	<div class="row" data-th-if="${!isOwner && encherisseur.pseudo != utilisateurConnecte.pseudo}">
+	<div class="row" data-th-if="${!isOwner && encherisseur.pseudo != utilisateurConnecte.pseudo && article.statut_enchere == 1}">
 		<input type="hidden" data-th-field="*{article.id}"/>
 	    <div>
 	    	<label data-th-text="#{form.enchere.montant}" for="montant" class="form-label"></label>
