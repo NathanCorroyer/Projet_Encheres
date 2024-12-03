@@ -179,9 +179,11 @@ public class ArticleServiceImpl implements ArticleService {
 		return articleDAO.findByUtilisateur(utilisateurId);
 	}
 
-	public List<Article> filterByCategorie(List<Article> articles, Long categorieId) {
+	public List<Article> filterByCategorieAndNom(List<Article> articles, Long categorieId, String nom) {
 		return articles.stream()
-				.filter(article -> categorieId == null || article.getCategorie().getId() == categorieId.intValue())
+				.filter(article -> 
+					(categorieId == null || article.getCategorie().getId() == categorieId.intValue()) &&
+					(nom == null || article.getNom().toLowerCase().contains(nom.toLowerCase())))
 				.collect(Collectors.toList());
 	}
 

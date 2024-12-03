@@ -1,48 +1,68 @@
-<div xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-encheres-actives">
-    <h1>Enchères en cours</h1>
-   <form action="#" data-th-action="@{/}" method="get">
-			<label for="categorie" class="form-label">Catégorie :</label> 
-			<select id="categorie" name="categorie" class="form-control">
-				<option value="">Toutes</option>					
-				<option th:each="categorie : ${categories}"
-				th:value="${categorie.id}" th:text="${categorie.libelle}"></option>
-			</select>
-			<button type="submit">Filtrer</button>
-		</form>
-    <div class="row">
-        <div class="col-12 col-md-6 col-xl-4 mb-4" data-th-each="article : ${articles}">
-            <div class="card bg-dark text-white h-100 shadow-sm">
-                <div class="card-body d-flex align-items-center">
-                    <div class="image-container me-3" data-th-if="${article.path_image != null && article.path_image != ''}"> <!-- Ajout d'une marge à droite -->
-                        <img 
-                            alt="Image article" 
-                            class="img-fluid img-article bg-dark" 
-                            data-th-src="@{'/uploads/' + ${article.path_image}}"
-                        >
-                    </div>
-                    <div class="flex-grow-1">
-                        <div>
-                            <h5 class="card-title" data-th-text="${article.nom}"></h5>
-                            <p class="mb-1">
-                                Prix : 
-                                <span data-th-text="${article.prix_vente > article.prix_initial ? article.prix_vente : article.prix_initial}"></span>
-                                point(s)
-                            </p>
-                            <p class="mb-1">
-                                Fin de l'enchère : 
-                                <span data-th-text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span>
-                            </p>
-                            <p class="mb-0">
-                            Vendeur :
-                            <a data-th-href="${'/users/profil?pseudo=' + article.proprietaire.pseudo}">
-                                <span data-th-text="${article.proprietaire.pseudo}"></span>
-                            </a>
-                        </p>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div xmlns:th="http://www.thymeleaf.org"
+	data-th-fragment="frag-encheres-actives">
+	<h1>Liste des enchères</h1>
+
+	<form action="#" th:action="@{/}" method="get" id="filterForm">
+		<h4>Filtres :</h4>
+		<div class="row m-3">
+			<div class="col-4">
+				<label for="nom" class="form-label visually-hidden"></label> 
+				<input type="text" id="nom" name="nom" placeholder="Le nom de l'article contient..." th:value="${param.nom}" class="form-control" /> 
+				<div class="form-group row mt-3">
+					<label for="categorie" class="col-sm-3 col-form-label">Catégorie :</label>
+					<div class="col-sm-9">
+						<select id="categorie" name="categorie" class="form-select">
+							<option value="">Toutes</option>
+							<th:block th:each="categorie : ${categories}">
+								<option th:value="${categorie.id}" th:text="${categorie.libelle}"></option>
+							</th:block>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="col-2 mb-3">
+				<button type="submit" class="btn btn-primary w-100 mb-3">Rechercher</button>
+				<button type="button" class="btn btn-secondary w-100 mb-4" onclick="resetForm()">Annuler</button>
+			</div>
+		</div>
+	</form>
+	<div th:if="${articles.isEmpty()}">
+		<p>Aucun article trouvé</p>
+	</div>
+	<div class="row">
+		<div class="col-12 col-md-6 col-xl-4 mb-4"
+			data-th-each="article : ${articles}">
+			<div class="card bg-dark text-white h-100 shadow-sm">
+				<div class="card-body d-flex align-items-center">
+					<div class="image-container me-3"
+						data-th-if="${article.path_image != null && article.path_image != ''}">
+						<!-- Ajout d'une marge à droite -->
+						<img alt="Image article" class="img-fluid img-article bg-dark"
+							data-th-src="@{'/uploads/' + ${article.path_image}}">
+					</div>
+					<div class="flex-grow-1">
+						<div>
+							<h5 class="card-title" data-th-text="${article.nom}"></h5>
+							<p class="mb-1">
+								Prix : <span
+									data-th-text="${article.prix_vente > article.prix_initial ? article.prix_vente : article.prix_initial}"></span>
+								point(s)
+							</p>
+							<p class="mb-1">
+								Fin de l'enchère : <span
+									data-th-text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span>
+							</p>
+							<p class="mb-0">
+								Vendeur : <a
+									data-th-href="${'/users/profil?pseudo=' + article.proprietaire.pseudo}">
+									<span data-th-text="${article.proprietaire.pseudo}"></span>
+								</a>
+							</p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
