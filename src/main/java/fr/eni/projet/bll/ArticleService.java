@@ -6,10 +6,13 @@ import fr.eni.projet.bo.Article;
 import fr.eni.projet.bo.Categorie;
 
 public interface ArticleService {
-	public void create(Article article);
+
+	public void activerEncheresDuJour();
+
+	public int create(Article article);
 
 	public List<Article> findAll();
-	
+
 	public List<Article> findAllActive();
 	
 	public List<Categorie> findAllCategories();
@@ -27,6 +30,8 @@ public interface ArticleService {
 	List<Article> findByUtilisateur(int utilisateurId);
 	
 	List<Article> filterByCategorie(List<Article> articles, Long categorieId);
+
+	public void uploadImage(String fileName, int idArticle);
 
 }
  

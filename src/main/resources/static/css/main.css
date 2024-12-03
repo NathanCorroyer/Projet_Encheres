@@ -2,3 +2,24 @@ main{
 	margin : 10px;
 	height: 100%;
 }
+
+/* Conteneur pour l'image à gauche */
+.image-container {
+    width: 50%;               /* Largeur fixe pour l'image */
+    height: 200px;              /* Hauteur fixe pour l'image */
+    display: flex;
+    align-items: center;        /* Centre l'image verticalement */
+    justify-content: center;    /* Centre l'image horizontalement */
+    overflow: hidden;           /* Évite tout débordement */
+    border-radius: 8px;         /* Coins arrondis */
+    position: relative;         /* Positionnement relatif pour gérer le zoom */
+}
+
+/* Styles pour l'image */
+.img-article {
+    max-width: 100%;            /* L'image ne dépasse pas la largeur */
+    max-height: 100%;           /* L'image ne dépasse pas la hauteur */
+    object-fit: contain;        /* Garde l'image entière sans déformation */
+}
+
+

@@ -74,7 +74,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 	@Override
 	public Optional<Utilisateur> findByPseudo(String pseudo) {
-		System.out.println("Pseudo : " +pseudo);
 		if (pseudo == null || pseudo.isBlank()) {
 			throw new IllegalArgumentException("Le pseudo ne peut pas être vide.");
 		}

@@ -22,4 +22,5 @@ public interface AdresseService {
 	public List<Adresse> findByUtilisateur(Optional<Utilisateur> utilisateur);
 
 	public List<Adresse> findByAdresseENI(boolean isENI);
+
 }

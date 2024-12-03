@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
+
+<head>
+
+<title data-th-text="#{upload.picture}"></title>
+</head>
+
+
+<body>
+	<main id="contenuPage">
+		<!-- AJOUTER LE LISTING DES USERS -->
+		<div class="card mx-auto" style="max-width:800px;">
+			<div class="card-header">
+				<h1 data-th-text="#{view-image-upload-article.h1}"></h1>
+			</div>
+			<div class="card-body">
+				<div th:if="${error}">
+					<div class="alert alert-danger" th:text="${error}"></div>
+				</div>
+				<form data-th-replace="~{fragments/fragment-image-upload :: frag-image-upload(action = '/articles/picture/' + ${id})}">
+					
+				</form>
+				<p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}"></p>
+						
+			</div>		
+		
+		</div>
+		
+	</main>
+</body>
+</html>

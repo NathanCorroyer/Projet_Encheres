@@ -1,10 +1,13 @@
 package fr.eni.projet.controller;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,9 +15,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bll.ArticleService;
@@ -26,6 +33,7 @@ import fr.eni.projet.bo.Categorie;
 import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.enums.StatutEnchere;
 import fr.eni.projet.exceptions.BusinessException;
+import fr.eni.projet.service.FileUploadService;
 
 @Controller
 public class ArticleController {
@@ -34,13 +42,15 @@ public class ArticleController {
 	private CategorieService categorieService;
 	private UtilisateurService userService;
 	private AdresseService adresseService;
+	private FileUploadService fileUploadService;
 
 	public ArticleController(ArticleService articleService, CategorieService categorieService,
-			UtilisateurService utilisateurService, AdresseService adresseService) {
+			UtilisateurService utilisateurService, AdresseService adresseService, FileUploadService fileUploadService) {
 		this.articleService = articleService;
 		this.categorieService = categorieService;
 		this.userService = utilisateurService;
 		this.adresseService = adresseService;
+		this.fileUploadService = fileUploadService;
 	}
 
 	/**
@@ -50,6 +60,11 @@ public class ArticleController {
 	@ModelAttribute("categories")
 	public List<Categorie> chargerCategories() {
 		return categorieService.findAll();
+	}
+
+	@ModelAttribute("adressesENI")
+	public List<Adresse> chargerAdresses() {
+		return adresseService.findByAdresseENI(true);
 	}
 
 	@GetMapping("/articles/vendre")
@@ -78,50 +93,41 @@ public class ArticleController {
 	@PostMapping("/articles/vendre")
 	public String vendreArticle(@ModelAttribute("article") Article article, BindingResult bindingResult, Model model,
 			Authentication auth) {
-		// Vérifier si des erreurs de validation existent
 		if (bindingResult.hasErrors()) {
 			bindingResult.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
-			return "/articles/view-vendre-article"; // Retourner à la page de formulaire si des erreurs
+			return "/articles/view-vendre-article";
 		}
 		System.out.println(article.getAdresse().getId());
 		try {
-			// Récupérer le nom d'utilisateur de l'authentification
 			String pseudoUserConnected = auth != null ? auth.getName() : null;
-
-			// Si l'utilisateur est connecté, récupérer ses informations
 			if (pseudoUserConnected != null) {
 				Optional<Utilisateur> optionalUtilisateur = userService.findByPseudo(pseudoUserConnected);
 				if (optionalUtilisateur.isPresent()) {
 					Utilisateur principal = optionalUtilisateur.get();
-					article.setProprietaire(principal); // Associer l'utilisateur comme propriétaire de l'article
+					article.setProprietaire(principal);
 				} else {
 					model.addAttribute("pseudo", "Utilisateur non trouvé");
-					return "/articles/view-vendre-article"; // Si l'utilisateur n'est pas trouvé
+					return "/articles/view-vendre-article";
 				}
 			} else {
 				model.addAttribute("pseudo", "Utilisateur anonyme");
 				return "/articles/view-vendre-article";
 			}
 
-			// Si les dates ne sont pas nulles, on les parse et les assigne
 			if (article.getDate_debut() != null) {
-				// Exemple de format de date : 2024-11-28T16:15 (pour datetime-local)
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 				LocalDateTime dateDebut = LocalDateTime.parse(article.getDate_debut().toString(), formatter);
-				article.setDate_debut(dateDebut); // Assigner la date correctement
+				article.setDate_debut(dateDebut);
 			}
 
 			if (article.getDate_fin() != null) {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 				LocalDateTime dateFin = LocalDateTime.parse(article.getDate_fin().toString(), formatter);
-				article.setDate_fin(dateFin); // Assigner la date correctement
+				article.setDate_fin(dateFin);
 			}
 			article.setStatut_enchere(StatutEnchere.PAS_COMMENCEE);
-
-			// Créer l'article si tout est valide
-			articleService.create(article);
-
-			return "redirect:/"; // Rediriger vers la page d'accueil après la création de l'article
+			int id = articleService.create(article);
+			return "redirect:/articles/picture/" + id;
 
 		} catch (BusinessException e) {
 			e.printStackTrace();
@@ -131,6 +137,13 @@ public class ArticleController {
 			model.addAttribute("pseudo", "Erreur lors de la vente de l'article");
 			return "/articles/view-vendre-article";
 		}
+	}
+
+	@GetMapping("/articles/picture/{id}")
+	public String redirectToUploadImageArticle(@PathVariable("id") int id, Model model) {
+		model.addAttribute("id", id);
+		fileUploadService.showDirectory();
+		return "/upload/view-image-upload-article";
 	}
 	
 	@GetMapping("/")
@@ -143,7 +156,132 @@ public class ArticleController {
 		
 		model.addAttribute("articles", articles);
 		
+	@PostMapping("/articles/picture/{id}")
+	public String uploadImageArticle(@PathVariable("id") int id, Model model, @RequestParam("file") MultipartFile image ) {
+		try {
+			String fileName = fileUploadService.uploadFile(image);
+			articleService.uploadImage(fileName, id);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "redirect:/articles/details/"+id;
+	}
+    
+	@GetMapping("/")
+	public String afficherActiveEncheres(Model model) {
+		List<Article> lstArticles = articleService.findAllActive();
+		lstArticles.sort(Comparator.comparing(Article::getDate_fin));
+		model.addAttribute("articles", lstArticles);
 		return "index";
+	}
+
+	@GetMapping("/articles/editer/{id}")
+	public String editerArticle(@PathVariable("id") int id, Model model, Authentication auth) {
+		Article article = articleService.findById(id);
+
+		// Vérification que l'enchère n'a pas déjà commencé
+		if (article.getDate_debut() != null && article.getDate_debut().isBefore(LocalDateTime.now())) {
+			model.addAttribute("errorMessage",
+					"Vous ne pouvez pas modifier un article dont l'enchère a déjà commencé.");
+			return "redirect:/articles"; // Rediriger si l'enchère a déjà commencé
+		}
+
+		model.addAttribute("article", article);
+		// Récupérer l'utilisateur connecté
+		if (auth != null) {
+			String pseudoUserConnected = auth.getName();
+			Optional<Utilisateur> optionalUtilisateur = userService.findByPseudo(pseudoUserConnected);
+
+			if (optionalUtilisateur.isPresent()) {
+				Utilisateur utilisateur = optionalUtilisateur.get();
+				// Ajouter les adresses personnelles au modèle
+				List<Adresse> adressesUtilisateur = adresseService.findByUtilisateur(optionalUtilisateur);
+				model.addAttribute("adressesUtilisateur", adressesUtilisateur);
+			}
+		}
+		return "articles/view-edit-article";
+	}
+
+	@PostMapping("articles/editer/{id}")
+	public String enregistrerModifications(@PathVariable("id") int id, @ModelAttribute Article article,
+			RedirectAttributes redirectAttributes) {
+
+		try {
+			// Récupérer l'article existant
+			Article existingArticle = articleService.findById(id);
+
+			if (existingArticle == null) {
+				throw new IllegalArgumentException("L'article n'existe pas.");
+			}
+
+			System.out.println(article);
+
+			articleService.update(article);
+
+			// Message de succès et redirection vers la page de détails de l'article
+			redirectAttributes.addFlashAttribute("successMessage", "Article modifié avec succès.");
+			return "redirect:/articles/details/" + article.getId(); // Redirection vers la page de détails
+		} catch (BusinessException e) {
+			// En cas d'erreur (ex. problème de base de données, validation échouée, etc.)
+			redirectAttributes.addFlashAttribute("errorMessage", "Erreur lors de la modification de l'article.");
+			return "redirect:/articles/editer/" + id; // Rester sur la page d'édition
+		}
+	}
+
+	@GetMapping("/articles/details/{id}")
+	public String afficherDetailsArticle(@PathVariable("id") int id, Model model, Authentication authentication) {
+
+		Article article = articleService.findById(id);
+
+		if (article == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Article non trouvé");
+		}
+
+		// Vérification de la catégorie
+		if (article.getCategorie() != null) {
+			model.addAttribute("categorie", article.getCategorie().getId());
+		} else {
+			model.addAttribute("categorie", "Catégorie non définie");
+		}
+
+		// Vérification de l'adresse
+		if (article.getAdresse() != null) {
+			model.addAttribute("adresse", article.getAdresse().getId());
+		} else {
+			model.addAttribute("adresse", "Adresse non définie");
+		}
+
+		if (article.getProprietaire() != null) {
+			String pseudoUserConnected = article.getProprietaire().getPseudo();
+			model.addAttribute("pseudo", pseudoUserConnected);
+
+			// Vérification si l'utilisateur connecté est le propriétaire
+			boolean isOwner = pseudoUserConnected.equals(authentication.getName());
+			model.addAttribute("isOwner", isOwner); // Passer l'information au modèle
+		} else {
+			model.addAttribute("pseudo", "Utilisateur anonyme");
+			model.addAttribute("isOwner", false); // L'utilisateur anonyme ne peut pas modifier
+		}
+
+		// Ajouter l'article à l'attribut modèle
+		model.addAttribute("article", article);
+
+		return "articles/details-article";
+	}
+
+	@GetMapping("/delete/{id}")
+	public String supprimerArticle(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+		try {
+			articleService.delete(id);
+			redirectAttributes.addFlashAttribute("successMessage", "L'article a été supprimé avec succès.");
+		} catch (BusinessException be) {
+			// Gestion des erreurs métier
+			redirectAttributes.addFlashAttribute("errorMessage", "Impossible de supprimer l'article : " + be.isValid());
+		} catch (IllegalArgumentException iae) {
+			// Gestion des erreurs générales
+			redirectAttributes.addFlashAttribute("errorMessage", "Erreur : " + iae.getMessage());
+		}
+		return "redirect:/";
 	}
 
 }

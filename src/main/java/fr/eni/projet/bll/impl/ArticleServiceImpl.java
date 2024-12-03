@@ -1,12 +1,19 @@
 package fr.eni.projet.bll.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import fr.eni.projet.DAL.AdresseDAO;
 import fr.eni.projet.DAL.ArticleDAO;
 import fr.eni.projet.DAL.CategorieDAO;
 import fr.eni.projet.DAL.EnchereDAO;
@@ -42,8 +49,33 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 	
 
+	@Autowired
+	private CategorieDAO categorieDAO;
+
+	@Autowired
+	private AdresseDAO adresseDAO;
+
+	@Scheduled(cron = "0 30 9 * * ?") // Expression cron : Tous les jours à 9h30
+	@Transactional
 	@Override
- 	public void create(Article article) {
+	public void activerEncheresDuJour() {
+		LocalDate today = LocalDate.now();
+		LocalDateTime startOfDay = today.atStartOfDay();
+
+		List<Article> articlesADemarrer = articleDAO.findByDateDebutAndStatutEnchere(startOfDay,
+				StatutEnchere.PAS_COMMENCEE.ordinal());
+
+		for (Article article : articlesADemarrer) {
+			article.setStatut_enchere(StatutEnchere.EN_COURS);
+			articleDAO.updateStatutEnchere(article, StatutEnchere.EN_COURS);
+		}
+
+		System.out.println(articlesADemarrer.size() + " enchères activées pour la date : " + today);
+
+	}
+
+	@Override
+	public int create(Article article) {
 		BusinessException be = new BusinessException();
 
 		if (!validerArticle(article, be)) {
@@ -53,8 +85,8 @@ public class ArticleServiceImpl implements ArticleService {
 
 		try {
 			System.out.println("L'article est valide. Tentative de création dans la base de données.");
-			articleDAO.create(article);
 			System.out.println("L'article a été créé avec succès: " + article);
+			return articleDAO.create(article);
 		} catch (Exception e) {
 
 			System.err.println("Erreur lors de la création de l'article: " + article);
@@ -68,7 +100,17 @@ public class ArticleServiceImpl implements ArticleService {
 		if (id <= 0) {
 			throw new IllegalArgumentException("L'ID de l'article doit être supérieur à 0.");
 		}
-		return articleDAO.findArticleById(id);
+		Article article = articleDAO.findArticleById(id);
+		if (article != null) {
+			Categorie categorie = categorieDAO.findById(article.getCategorie().getId());
+			article.setCategorie(categorie);
+			Utilisateur utilisateur = userDAO.findById(article.getProprietaire().getId());
+			article.setProprietaire(utilisateur);
+			Adresse adresse = adresseDAO.findById(article.getAdresse().getId());
+			article.setAdresse(adresse);
+		}
+
+		return article;
 	}
 	
 	@Override
@@ -87,7 +129,7 @@ public class ArticleServiceImpl implements ArticleService {
 			Utilisateur user = userDAO.findById(article.getProprietaire().getId());
 			article.setProprietaire(user);
 			Enchere enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
-			if(enchere != null) {
+			if (enchere != null) {
 				article.setPrix_vente(enchere.getMontant());
 			}
 			});
@@ -96,10 +138,9 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public void update(Article article) {
-		// Validation avant la mise à jour
 		BusinessException be = new BusinessException();
 		if (!validerArticle(article, be)) {
-			throw be; // Lève une exception si la validation échoue
+			throw be;
 		}
 		articleDAO.update(article);
 	}
@@ -109,6 +150,20 @@ public class ArticleServiceImpl implements ArticleService {
 		if (id <= 0) {
 			throw new IllegalArgumentException("L'ID de l'article doit être supérieur à 0.");
 		}
+
+		// Récupération de l'article
+		Article article = articleDAO.findArticleById(id);
+		if (article == null) {
+			throw new IllegalArgumentException("L'article avec cet ID n'existe pas.");
+		}
+
+		// Validation de la date de début
+		BusinessException be = new BusinessException();
+		if (!validerDateDebut(article.getDate_debut(), be)) {
+			throw be; // Lancer une exception avec les messages de validation
+		}
+
+		// Suppression si toutes les validations passent
 		articleDAO.delete(id);
 	}
 
@@ -135,6 +190,10 @@ public class ArticleServiceImpl implements ArticleService {
 		return articles.stream()
 					.filter(article -> categorieId == null || article.getCategorie().getId() == categorieId.intValue())
 					.collect(Collectors.toList());
+	
+	@Override
+	public void uploadImage(String fileName, int idArticle) {
+		articleDAO.uploadImage(fileName,idArticle);
 	}
 	
 	/**
@@ -157,7 +216,7 @@ public class ArticleServiceImpl implements ArticleService {
 		isValid &= validerDateDebut(article.getDate_debut(), be);
 		isValid &= validerPrix(article.getPrix_initial(), be);
 		isValid &= validerAdresse(article.getAdresse(), be);
-		isValid &= validerStatutEnchere(article.getStatut_enchere(), be);
+//		isValid &= validerStatutEnchere(article.getStatut_enchere(), be);
 //		isValid &= validerPathImage(article.getPath_image(), be);
 
 		return isValid;
@@ -196,7 +255,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	private boolean validerDateDebut(LocalDateTime dateDebut, BusinessException be) {
-		if (dateDebut == null) {
+		if (dateDebut == null || dateDebut.isBefore(LocalDateTime.now())) {
 			be.add(BusinessCode.VALIDATION_ARTICLE_DATE_DEBUT_NULL);
 			return false;
 		}

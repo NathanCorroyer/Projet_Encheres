@@ -24,7 +24,6 @@ public class EnchereController {
 	@GetMapping
 	public String afficherEncheres(Model model) {
 		List<Enchere> lstEncheres = enchereService.getEncheres();
-		
 		model.addAttribute("encheres", lstEncheres);
 		
 		return null;
