@@ -31,9 +31,6 @@ public interface ArticleService {
 	
 	List<Article> filterByCategorieAndNom(List<Article> articles, Long categorieId, String nom);
 
-	List<Article> filterByCategorie(List<Article> articles, Long categorieId);
-
-
 	public void uploadImage(String fileName, int idArticle);
 
 	public void cloturerEncheresDuJour();
