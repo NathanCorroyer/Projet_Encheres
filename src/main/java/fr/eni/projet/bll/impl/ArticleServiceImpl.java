@@ -3,10 +3,13 @@ package fr.eni.projet.bll.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,23 +34,47 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Autowired
 	private ArticleDAO articleDAO;
+
 	@Autowired
 	private UtilisateurDAO userDAO;
+
 	@Autowired
 	private EnchereDAO enchereDAO;
+
 	@Autowired
 	private CategorieDAO categorieDAO;
 
-	public ArticleServiceImpl(ArticleDAO articleDAO, UtilisateurDAO userDAO, EnchereDAO enchereDAO,
-			CategorieDAO categorieDAO) {
-		this.articleDAO = articleDAO;
-		this.userDAO = userDAO;
-		this.enchereDAO = enchereDAO;
-		this.categorieDAO = categorieDAO;
-	}
-
 	@Autowired
 	private AdresseDAO adresseDAO;
+
+	@Autowired
+	private MessageSource message;
+
+	private Locale locale;
+
+	public ArticleServiceImpl() {
+		this.locale = LocaleContextHolder.getLocale();
+	}
+
+	public String titre(Article article, boolean isEncherisseur, String pseudoWinner, boolean hasEnchere) {
+
+		String titre = message.getMessage("detail-article.h1", null, locale);
+
+		if (article.getStatut_enchere().getValue() >= 2) {
+			if (hasEnchere) {
+				if (isEncherisseur) {
+					titre = message.getMessage("detail-article-winner.h1", null, locale);
+				} else {
+					titre = message.getMessage("detail-article-looser.h1", new Object[] { pseudoWinner }, locale);
+				}
+			} else {
+				titre = message.getMessage("detail-article-none.h1", null, locale);
+			}
+
+		}
+		return titre;
+
+	}
 
 	public boolean canShowRetraitButton(Article article) {
 		// Vérifie si l'article est CLOTUREE et s'il a des enchères

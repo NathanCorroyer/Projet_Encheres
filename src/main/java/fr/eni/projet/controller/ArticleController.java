@@ -256,13 +256,13 @@ public class ArticleController {
 
 		// Initialiser isOwner
 		boolean isOwner = false;
+		Utilisateur utilisateurConnecte = userService.findByPseudo(authentication.getName()).get();
+		model.addAttribute("utilisateurConnecte", utilisateurConnecte);
 
 		if (article.getProprietaire() != null) {
 			String pseudoUserConnected = article.getProprietaire().getPseudo();
 			model.addAttribute("pseudo", pseudoUserConnected);
 
-			Utilisateur utilisateurConnecte = userService.findByPseudo(authentication.getName()).get();
-			model.addAttribute("utilisateurConnecte", utilisateurConnecte);
 			// Vérification si l'utilisateur connecté est le propriétaire
 			isOwner = pseudoUserConnected.equals(authentication.getName());
 			model.addAttribute("isOwner", isOwner); // Passer l'information au modèle
@@ -289,6 +289,11 @@ public class ArticleController {
 
 		// Ajouter l'article à l'attribut modèle
 		model.addAttribute("article", article);
+
+		String pseudoWinner = encherisseur.getPseudo() == null ? "" : encherisseur.getPseudo();
+		boolean isEncherisseur = utilisateurConnecte.getPseudo().equals(pseudoWinner);
+		var titre = articleService.titre(article, isEncherisseur, pseudoWinner, !enchereMax.isEmpty());
+		model.addAttribute("titre", titre);
 
 		return "articles/details-article";
 	}

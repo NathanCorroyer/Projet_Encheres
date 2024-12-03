@@ -37,4 +37,6 @@ public interface ArticleService {
 
 	public boolean canShowRetraitButton(Article article);
 
+	public String titre(Article article, boolean isEncherisseur, String pseudoWinner, boolean hasEnchere);
+
 }

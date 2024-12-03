@@ -8,9 +8,7 @@
 		<div class="container mt-5">
 			<!-- Carte pour afficher les détails de l'article -->
 			<div class="card mx-auto" style="max-width: 800px;">
-				<div class="card-header">
-					<h5 class="text-center">Détails de l'article</h5>
-				</div>
+				
 				<div class="card-body">
 					<div class="row">
 						<!-- Première colonne : Détails textuels -->
@@ -69,8 +67,9 @@
 						<div th:if="${isOwner && article.statut_enchere == 0}" class="w-50">
 							<a class="btn btn-primary w-100" th:href="@{/articles/editer/{id}(id=${article.id})}">Modifier</a>
 						</div>
+						
 						<!-- Bouton Retrait effectué affiché uniquement si l'article est clôturé et qu'il y a au moins une enchère -->
-                    	<div th:if="${article.statut_enchere == 'CLOTUREE' and article.statut.encheres != null and #lists.size(article.encheres) > 0}" class="w-50 ms-2">
+                    	<div th:if="${isOwner && showRetraitEffectue}" class="w-50 ms-2">
                          <a href="#" class="btn btn-success w-100">Retrait effectué</a>
                     	</div>
 						
