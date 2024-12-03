@@ -20,5 +20,14 @@
 	<main data-th-replace="${contenuPage}"></main>
 
 	<div data-th-replace="~{fragments/fragment-footer :: frag-footer}"></div>
+	
+	<script>
+		// Method to reset the URL in the fragment-encheres-actives
+		function resetForm(){
+			document.getElementById("filterForm").reset();
+			document.getElementById("filterForm").submit();			
+			window.history.pushState({}, document.title, window.location.pathname);
+		}
+	</script>
 </body>
 </html>

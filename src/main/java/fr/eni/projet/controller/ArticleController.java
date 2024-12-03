@@ -150,14 +150,17 @@ public class ArticleController {
 		return "/upload/view-image-upload-article";
 	}
 
+	// Home page with filters
 	@GetMapping("/")
-	public String afficherActiveEncheres(@RequestParam(value = "categorie", required = false) Long categorieId,
+	public String afficherActiveEncheres(
+			@RequestParam(value = "categorie", required = false) Long categorieId,
+			@RequestParam(value = "nom", required = false) String nom,
 			Model model) {
 		List<Categorie> categories = articleService.findAllCategories();
 		model.addAttribute("categories", categories);
 
 		List<Article> articles = articleService.findAllActive();
-		articles = articleService.filterByCategorie(articles, categorieId);
+		articles = articleService.filterByCategorieAndNom(articles, categorieId, nom);
 
 		articles.sort(Comparator.comparing(Article::getDate_fin));
 

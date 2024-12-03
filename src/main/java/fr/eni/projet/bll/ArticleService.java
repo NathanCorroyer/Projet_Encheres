@@ -28,8 +28,11 @@ public interface ArticleService {
 	List<Article> findByNom(String nom);
 
 	List<Article> findByUtilisateur(int utilisateurId);
+	
+	List<Article> filterByCategorieAndNom(List<Article> articles, Long categorieId, String nom);
 
 	List<Article> filterByCategorie(List<Article> articles, Long categorieId);
+
 
 	public void uploadImage(String fileName, int idArticle);
 
