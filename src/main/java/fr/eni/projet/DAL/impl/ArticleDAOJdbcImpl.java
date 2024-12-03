@@ -2,6 +2,8 @@ package fr.eni.projet.DAL.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	private final static String FIND_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie";
 	private final static String FIND_BY_UTILISATEUR = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_utilisateur = :no_utilisateur";
 	private final static String FIND_ALL_ACTIVE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE statut_enchere = 1";
+	private static final String FIND_BY_DATE_AND_STATUT = "SELECT * FROM ARTICLES WHERE CAST(date_debut_encheres AS DATE) = :date_debut_encheres "
+			+ "AND statut_enchere = :statut_enchere";
+	private static final String UPDATE_STATUT = "UPDATE ARTICLES SET statut_enchere = :statut_enchere WHERE no_article = :no_article";
 	private final static String UPLOAD_IMAGE = "UPDATE ARTICLES SET path_image = :path_image WHERE no_article = :no_article";
 	// private final static String FIND_ALL_ACTIVE ="SELECT a.no_article,
 	// a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres,
@@ -79,6 +84,14 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 			return keyHolder.getKey().intValue();
 		}
 		return 0;
+	}
+
+	@Override
+	public void updateStatutEnchere(Article article, StatutEnchere statutEnchere) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("statut_enchere", statutEnchere.ordinal());
+		namedParameters.addValue("no_article", article.getId());
+		namedParameterJdbcTemplate.update(UPDATE_STATUT, namedParameters);
 	}
 
 	@Override
@@ -152,6 +165,22 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		return namedParameterJdbcTemplate.query(FIND_BY_UTILISATEUR, namedParameters, new ArticleRowMapper());
 	}
 
+	@Override
+	public List<Article> findByDateDebutAndStatutEnchere(LocalDateTime today, int statut) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		// Ne comparer que la date, pas l'heure
+		LocalDate date = today.toLocalDate();
+		namedParameters.addValue("date_debut_encheres", date);
+		namedParameters.addValue("statut_enchere", statut);
+
+		return namedParameterJdbcTemplate.query(FIND_BY_DATE_AND_STATUT, namedParameters, (rs, rowNum) -> {
+			Article article = new Article();
+			article.setId(rs.getInt("no_article"));
+			article.setDate_debut(rs.getTimestamp("date_debut_encheres").toLocalDateTime());
+			article.setStatut_enchere(StatutEnchere.fromValue(rs.getInt("statut_enchere")));
+			return article;
+		});
+	}
 	
 	@Override
 	public void uploadImage(String fileName, int idArticle) {
@@ -160,4 +189,5 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		namedParameters.addValue("path_image", fileName);
 		namedParameterJdbcTemplate.update(UPLOAD_IMAGE, namedParameters);
 	}
+
 }
