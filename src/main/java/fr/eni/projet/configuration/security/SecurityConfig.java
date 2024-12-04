@@ -44,13 +44,13 @@ public class SecurityConfig {
 	@SuppressWarnings("removal")
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http, UserSecurity userSecurity) throws Exception {
-		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**")).authorizeHttpRequests(auth -> {
+		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**", "/admin/users/activation/**", "/admin/users/delete/**")).authorizeHttpRequests(auth -> {
 			auth.requestMatchers("/").permitAll();
 			auth.requestMatchers("/css/*").permitAll();
 			auth.requestMatchers("/img/*").permitAll();
 			auth.requestMatchers("/articles/vendre").authenticated();
 			auth.requestMatchers("/users/creer").permitAll();
-      auth.requestMatchers("/uploads/**").permitAll();
+			auth.requestMatchers("/uploads/**").permitAll();
 
 			// Configurer les règles de sécurité pour des routes spécifiques avant
 			// 'anyRequest'
@@ -67,13 +67,13 @@ public class SecurityConfig {
 			auth.requestMatchers("/users/modifiermdp/**").access((authentication, context) -> UserSecurity
 					.hasAccessToUser(authentication.get(), context.getRequest()));
 
-			
+			auth.requestMatchers("/admin/**").hasRole("ADMIN");
 			auth.anyRequest().authenticated();
 		});
 
 		// Configurer la gestion de la session et de la déconnexion
 		http.formLogin(
-				form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/").failureUrl("/login?error=true"))
+				form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/", true).failureUrl("/login?error=true"))
 				.logout(logout -> logout.invalidateHttpSession(true).clearAuthentication(true)
 						.deleteCookies("JSESSIONID").logoutSuccessUrl("/")
 						.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll())

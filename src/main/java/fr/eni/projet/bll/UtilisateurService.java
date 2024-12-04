@@ -18,7 +18,9 @@ public interface UtilisateurService {
 	public void updatePassword(Utilisateur utilisateur, String currentPassword, String newPassword, String confirmPassword);
 	public void updateCredit(Utilisateur utilisateur);
 
-	public void modifierActivation(Utilisateur utilisateur);
+	public boolean modifierActivation(Utilisateur utilisateur);
 
 	public Optional<Utilisateur> findByEmail(String email);
+	
+	public boolean supprimerUser(int id);
 }
