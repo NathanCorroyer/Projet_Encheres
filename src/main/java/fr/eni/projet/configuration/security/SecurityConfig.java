@@ -73,7 +73,13 @@ public class SecurityConfig {
 
 		// Configurer la gestion de la session et de la déconnexion
 		http.formLogin(
-				form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/").failureUrl("/login?error=true"))
+				form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/")
+				// Pour ajouter ne récupérer que les enchères en cours à la connexion
+				.successHandler((request, response, authentification) -> {
+					String redirectUrl = "?nom=&categorie=&check=ventesCheck&statutEnchere=1";
+					response.sendRedirect(redirectUrl);
+				})
+				.failureUrl("/login?error=true"))
 				.logout(logout -> logout.invalidateHttpSession(true).clearAuthentication(true)
 						.deleteCookies("JSESSIONID").logoutSuccessUrl("/")
 						.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll())

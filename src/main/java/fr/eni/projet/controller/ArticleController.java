@@ -3,6 +3,7 @@ package fr.eni.projet.controller;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -152,19 +153,42 @@ public class ArticleController {
 
 	// Home page with filters
 	@GetMapping("/")
-	public String afficherActiveEncheres(
-			@RequestParam(value = "categorie", required = false) Long categorieId,
+	public String afficherActiveEncheres(@RequestParam(value = "categorie", required = false) Long categorieId,
 			@RequestParam(value = "nom", required = false) String nom,
-			Model model) {
+			@RequestParam(value = "statutEnchere", required = false) Integer statutEnchere,
+			Authentication auth, Model model) {
+		// Get the categories to show in the select
 		List<Categorie> categories = articleService.findAllCategories();
 		model.addAttribute("categories", categories);
+		
+		// Get the statut to
+		StatutEnchere statut = (statutEnchere != null) ? StatutEnchere.fromValue(statutEnchere) : StatutEnchere.EN_COURS ;
+		model.addAttribute("statutEnchere", statutEnchere);
+		
+		String pseudoUserConnected = auth != null ? auth.getName() : null;
+		model.addAttribute("pseudoUserConnected", pseudoUserConnected);
 
+		// If connected
+		if (pseudoUserConnected != null) {
+			Optional<Utilisateur> optionalUtilisateur = userService.findByPseudo(pseudoUserConnected);
+			if (optionalUtilisateur.isPresent()) {
+				Utilisateur userConnecte = optionalUtilisateur.get();
+				
+				// Articles => User connected
+				List<Article> articlesUser = articleService.findByProprietaireOrAcheteur(userConnecte.getId());
+				articlesUser = articleService.filtersHomePage(articlesUser, categorieId, nom, statut);
+				articlesUser.sort(Comparator.comparing(Article::getDate_fin).reversed());
+				model.addAttribute("articlesUser", articlesUser);
+				
+			}
+		// If not connected
+		}
+		
+		// Articles => Actives encheres
 		List<Article> articles = articleService.findAllActive();
-		articles = articleService.filterByCategorieAndNom(articles, categorieId, nom);
-
-		articles.sort(Comparator.comparing(Article::getDate_fin));
-
+		articles.sort(Comparator.comparing(Article::getDate_fin).reversed());
 		model.addAttribute("articles", articles);
+		
 		return "index";
 	}
 

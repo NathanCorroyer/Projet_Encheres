@@ -22,12 +22,37 @@
 	<div data-th-replace="~{fragments/fragment-footer :: frag-footer}"></div>
 	
 	<script>
-		// Method to reset the URL in the fragment-encheres-actives
+		const filterForm = document.getElementById("filterForm");
+		const achatsCheck = document.getElementById("achatsCheck");
+		const ventesCheck = document.getElementById("ventesCheck");
+		const achats = document.getElementById("achats");
+		const ventes = document.getElementById("ventes");
+		
+	// Methodes fragment-encheres-actives
+	// ##################################
+	
+		// Method to reset the URL 
 		function resetForm(){
-			document.getElementById("filterForm").reset();
-			document.getElementById("filterForm").submit();			
-			window.history.pushState({}, document.title, window.location.pathname);
+			filterForm.reset();
+			filterForm.submit();			
 		}
+		
+		// Method to enabled/disable selects
+		function toggleSelect(){
+			if (achatsCheck.checked){
+				achats.disabled = false;
+				ventes.disabled = true;
+			}
+			if (ventesCheck.checked){
+				achats.disabled = true;
+				ventes.disabled = false;
+			}
+		}
+		
+		achatsCheck.addEventListener('change', toggleSelect);
+		ventesCheck.addEventListener('change', toggleSelect);
+		
+		toggleSelect();
 	</script>
 </body>
 </html>

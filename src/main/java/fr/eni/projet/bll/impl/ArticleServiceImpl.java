@@ -158,7 +158,16 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public List<Article> findAll() {
-		return articleDAO.findAll();
+		List<Article> articles = articleDAO.findAll();
+		articles.forEach(article -> {
+			Utilisateur user = userDAO.findById(article.getProprietaire().getId());
+			article.setProprietaire(user);
+			Optional<Enchere> enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
+			if (!enchere.isEmpty()) {
+				article.setPrix_vente(enchere.get().getMontant());
+			}
+		});
+		return articles;
 	}
 
 	public List<Categorie> findAllCategories() {
@@ -228,12 +237,18 @@ public class ArticleServiceImpl implements ArticleService {
 	public List<Article> findByUtilisateur(int utilisateurId) {
 		return articleDAO.findByUtilisateur(utilisateurId);
 	}
+	
+	@Override
+	public List<Article> findByProprietaireOrAcheteur(int utilisateurId) {
+		return articleDAO.findByProprietaireOrAcheteur(utilisateurId);
+	}
 
-	public List<Article> filterByCategorieAndNom(List<Article> articles, Long categorieId, String nom) {
+	public List<Article> filtersHomePage(List<Article> articles, Long categorieId, String nom, StatutEnchere statutEnchere) {
 		return articles.stream()
 				.filter(article -> 
-					(categorieId == null || article.getCategorie().getId() == categorieId.intValue()) &&
-					(nom == null || article.getNom().toLowerCase().contains(nom.toLowerCase())))
+					(categorieId == null || article.getCategorie().getId() == categorieId.intValue()) 
+					&& (nom == null || article.getNom().toLowerCase().contains(nom.toLowerCase())
+					&& (statutEnchere == null || article.getStatut_enchere().equals(statutEnchere))))
 				.collect(Collectors.toList());
 	}
 

@@ -26,6 +26,8 @@ public interface ArticleDAO {
 
 	public List<Article> findByUtilisateur(int utilisateurId);
 
+	public List<Article> findByProprietaireOrAcheteur(int utilisateurId);
+
 	public void delete(int id);
 
 	public List<Article> findByDateDebutAndStatutEnchere(LocalDateTime today, int i);

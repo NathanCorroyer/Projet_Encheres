@@ -4,6 +4,8 @@ import java.util.List;
 
 import fr.eni.projet.bo.Article;
 import fr.eni.projet.bo.Categorie;
+import fr.eni.projet.bo.Utilisateur;
+import fr.eni.projet.enums.StatutEnchere;
 
 public interface ArticleService {
 
@@ -29,7 +31,9 @@ public interface ArticleService {
 
 	List<Article> findByUtilisateur(int utilisateurId);
 	
-	List<Article> filterByCategorieAndNom(List<Article> articles, Long categorieId, String nom);
+	List<Article> findByProprietaireOrAcheteur(int utilisateurId);
+	
+	List<Article> filtersHomePage(List<Article> articles, Long categorieId, String nom, StatutEnchere statutEnchere);
 
 	public void uploadImage(String fileName, int idArticle);
 

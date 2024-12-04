@@ -31,7 +31,8 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	private final static String DELETE = "DELETE FROM ARTICLES WHERE no_article = :no_article";
 	private final static String FIND_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie";
 	private final static String FIND_BY_NOM = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE nom_article = :nom";
-	private final static String FIND_BY_UTILISATEUR = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_utilisateur = :no_utilisateur";
+	private final static String FIND_BY_UTILISATEUR = "SELECT * FROM ARTICLES WHERE no_utilisateur = :no_utilisateur";
+	private final static String FIND_BY_PRORIETAIRE_OR_ACHETEUR = "SELECT a.* FROM ARTICLES a JOIN ENCHERES e ON a.no_article = e.no_article WHERE e.no_utilisateur = :no_utilisateur OR a.no_utilisateur = :no_utilisateur";
 
 	private final static String FIND_ALL_ACTIVE = "SELECT a.no_article, a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres, a.prix_initial, a.prix_vente, a.no_utilisateur, a.no_categorie, a.statut_enchere, a.no_adresse_retrait, a.path_image FROM ARTICLES a WHERE a.statut_enchere = 1";
 	private final static String FIND_ACTIVE_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie AND statut_enchere = 1";
@@ -64,6 +65,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		namedParameters.addValue("no_article", id);
 		return namedParameterJdbcTemplate.queryForObject(FIND_BY_ID, namedParameters, new ArticleRowMapper());
 	}
+	
 
 	@Override
 	public List<Article> findAll() {
@@ -210,6 +212,13 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("no_utilisateur", utilisateurId);
 		return namedParameterJdbcTemplate.query(FIND_BY_UTILISATEUR, namedParameters, new ArticleRowMapper());
+	}
+	
+	@Override
+	public List<Article> findByProprietaireOrAcheteur(int utilisateurId){
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_utilisateur", utilisateurId);
+		return namedParameterJdbcTemplate.query(FIND_BY_PRORIETAIRE_OR_ACHETEUR, namedParameters, new ArticleRowMapper());
 	}
 
 	// RowMapper to map SQL result to Article object
