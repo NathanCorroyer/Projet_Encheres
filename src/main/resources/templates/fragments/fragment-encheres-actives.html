@@ -2,14 +2,17 @@
 	data-th-fragment="frag-encheres-actives">
 	<h1>Liste des enchères</h1>
 
+	<!-- Formulaire des filtres -->
 	<form action="/" method="get" id="filterForm">
 		<h4>Filtres :</h4>
 		<div class="row m-3">
 			<div class="col-4">
+				<!-- Filtre par nom -->
 				<label for="nom" class="form-label visually-hidden"></label> <input
 					type="text" id="nom" name="nom"
 					placeholder="Le nom de l'article contient..."
 					th:value="${nom}" class="form-control" />
+					<!-- Filtre par catégorie -->
 				<div class="form-group row mt-3">
 					<label for="categorie" class="col-sm-3 col-form-label">Catégorie
 						:</label>
@@ -33,26 +36,23 @@
 		<div th:if="${pseudoUserConnected != null}">
 			<div class="row m-3">
 				<div class="col-3 mb-3">
-					<input class="col-3 mb-3" type="radio" id="achatsCheck" name="check"
-						value="achatsCheck" checked /> 
-					<label for="achatsCheck">Achats</label>
-					<label for="achats" class="form-label"></label> 
-					<select id="achats" name="statutEnchere" class="form-select" disabled>
+					<input class="col-3 mb-3" type="radio" id="hasEncheri" name="userType" value="hasEncheri" th:checked=${hasEncheri} /> 
+					<label for="hasEncheri">Achats</label>
+					<label for="hasEncheri" class="form-label"></label> 
+					<select id="hasEncheriSelect" name="statutEnchere" class="form-select" disabled>
 						<option th:value="1">Enchères ouvertes(1)</option>
-						<option th:value="100">Mes enchères en cours(100)</option>
+						<option th:value="1">Mes enchères en cours(1)</option>
 						<option th:value="2">Mes enchères remportées(2)</option>
 					</select>
 				</div>
 				<div class="col-3 mb-3">
-					<input type="hidden" name="pseudo"/>
-					<input class="col-3 mb-3" type="radio" id="ventesCheck" name="check"
-						value="ventesCheck" /> 
-					<label for="ventesCheck">Ventes</label>
-					<label for="ventes" class="form-label"></label> 
-					<select id="ventes" name="statutEnchere" class="form-select" disabled>
+					<input class="col-3 mb-3" type="radio" id="isVendeur" name="userType" value="isVendeur" th:checked=${isVendeur}/> 
+					<label for="isVendeur">Ventes</label>
+					<label for="isVendeur" class="form-label"></label> 
+					<select id="isVendeurSelect" name="statutEnchere" class="form-select" disabled>
 						<option th:value="1">Mes ventes en cours(1)</option>
 						<option th:value="0">Mes ventes non débutées(0)</option>
-						<option th:value="3">Mes ventes terminées(3)</option>
+						<option th:value="2">Mes ventes terminées(2)</option>
 					</select>
 				</div>
 			</div>

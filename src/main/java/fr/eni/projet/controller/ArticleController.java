@@ -27,6 +27,7 @@ import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bll.ArticleService;
 import fr.eni.projet.bll.CategorieService;
 import fr.eni.projet.bll.EnchereService;
+import fr.eni.projet.bll.FilterService;
 import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Article;
@@ -46,16 +47,18 @@ public class ArticleController {
 	private AdresseService adresseService;
 	private EnchereService enchereService;
 	private FileUploadService fileUploadService;
+	private FilterService filterService;
 
 	public ArticleController(ArticleService articleService, CategorieService categorieService,
 			UtilisateurService utilisateurService, AdresseService adresseService, EnchereService enchereService,
-			FileUploadService fileUploadService) {
+			FileUploadService fileUploadService, FilterService filterService) {
 		this.articleService = articleService;
 		this.categorieService = categorieService;
 		this.userService = utilisateurService;
 		this.adresseService = adresseService;
 		this.enchereService = enchereService;
 		this.fileUploadService = fileUploadService;
+		this.filterService = filterService;
 	}
 
 	/**
@@ -153,39 +156,51 @@ public class ArticleController {
 
 	// Home page with filters
 	@GetMapping("/")
-	public String afficherActiveEncheres(@RequestParam(value = "categorie", required = false) Long categorieId,
+	public String afficherActiveEncheres(
+			@RequestParam(value = "categorie", required = false) Long categorieId,
 			@RequestParam(value = "nom", required = false) String nom,
-			@RequestParam(value = "statutEnchere", required = false) Integer statutEnchere,
-			Authentication auth, Model model) {
+			@RequestParam(value = "statutEnchere", required = false) String statutEnchereString,
+			@RequestParam(value = "isVendeur", required = false, defaultValue = "false") boolean isVendeur,
+			@RequestParam(value = "hasEncheri", required = false, defaultValue = "false") boolean hasEncheri,
+			Authentication auth, Model model) {		
+		
 		// Get the categories to show in the select
 		List<Categorie> categories = articleService.findAllCategories();
 		model.addAttribute("categories", categories);
 		
-		// Get the statut to
-		StatutEnchere statut = (statutEnchere != null) ? StatutEnchere.fromValue(statutEnchere) : StatutEnchere.EN_COURS ;
-		model.addAttribute("statutEnchere", statutEnchere);
+		StatutEnchere statut = StatutEnchere.EN_COURS;
+		
+		// Get the statut
+		if (statutEnchereString != null) {
+			try {
+				statut = StatutEnchere.fromValue(Integer.parseInt(statutEnchereString));
+			}
+			catch (NumberFormatException e) {
+				statut = StatutEnchere.EN_COURS;	
+			}
+		} else {
+			statut = StatutEnchere.EN_COURS;
+		}
+		model.addAttribute("statut", statut);
 		
 		String pseudoUserConnected = auth != null ? auth.getName() : null;
 		model.addAttribute("pseudoUserConnected", pseudoUserConnected);
+		
+		List<Article> articles = articleService.findAllWithEncheres();
 
 		// If connected
-		if (pseudoUserConnected != null) {
-			Optional<Utilisateur> optionalUtilisateur = userService.findByPseudo(pseudoUserConnected);
-			if (optionalUtilisateur.isPresent()) {
-				Utilisateur userConnecte = optionalUtilisateur.get();
-				
-				// Articles => User connected
-				List<Article> articlesUser = articleService.findByProprietaireOrAcheteur(userConnecte.getId());
-				articlesUser = articleService.filtersHomePage(articlesUser, categorieId, nom, statut);
-				articlesUser.sort(Comparator.comparing(Article::getDate_fin).reversed());
-				model.addAttribute("articlesUser", articlesUser);
-				
-			}
-		// If not connected
-		}
+//		if (pseudoUserConnected != null) {
+//			Optional<Utilisateur> optionalUtilisateur = userService.findByPseudo(pseudoUserConnected);
+//			if (optionalUtilisateur.isPresent()) {
+//				Utilisateur userConnecte = optionalUtilisateur.get();
+//				
+//				articles = filterService.filterHomePageLogin(articles, categorieId, nom, statut, userConnecte, isVendeur, hasEncheri);
+//			}
+//		// If not connected
+//		} else {
+//			articles = filterService.filterHomePageLogout(articles, categorieId, nom, statut);
+//		}
 		
-		// Articles => Actives encheres
-		List<Article> articles = articleService.findAllActive();
 		articles.sort(Comparator.comparing(Article::getDate_fin).reversed());
 		model.addAttribute("articles", articles);
 		

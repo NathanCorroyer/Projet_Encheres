@@ -2,6 +2,7 @@ package fr.eni.projet.bll.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import fr.eni.projet.DAL.CategorieDAO;
 import fr.eni.projet.DAL.EnchereDAO;
 import fr.eni.projet.DAL.UtilisateurDAO;
 import fr.eni.projet.bll.ArticleService;
+import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Article;
 import fr.eni.projet.bo.Categorie;
@@ -46,6 +49,9 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Autowired
 	private AdresseDAO adresseDAO;
+	
+	@Autowired
+	private UtilisateurService utilisateurService;
 
 	@Autowired
 	private MessageSource message;
@@ -170,6 +176,10 @@ public class ArticleServiceImpl implements ArticleService {
 		return articles;
 	}
 
+	public List<Article> findAllWithEncheres(){
+		return  articleDAO.findAllActiveWithEncheres();
+	}
+	
 	public List<Categorie> findAllCategories() {
 		return categorieDAO.findAll();
 	}
@@ -236,20 +246,6 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public List<Article> findByUtilisateur(int utilisateurId) {
 		return articleDAO.findByUtilisateur(utilisateurId);
-	}
-	
-	@Override
-	public List<Article> findByProprietaireOrAcheteur(int utilisateurId) {
-		return articleDAO.findByProprietaireOrAcheteur(utilisateurId);
-	}
-
-	public List<Article> filtersHomePage(List<Article> articles, Long categorieId, String nom, StatutEnchere statutEnchere) {
-		return articles.stream()
-				.filter(article -> 
-					(categorieId == null || article.getCategorie().getId() == categorieId.intValue()) 
-					&& (nom == null || article.getNom().toLowerCase().contains(nom.toLowerCase())
-					&& (statutEnchere == null || article.getStatut_enchere().equals(statutEnchere))))
-				.collect(Collectors.toList());
 	}
 
 	@Override

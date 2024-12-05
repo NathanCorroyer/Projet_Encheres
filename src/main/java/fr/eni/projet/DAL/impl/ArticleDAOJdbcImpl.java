@@ -27,14 +27,15 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	private final static String INSERT = "INSERT INTO ARTICLES(nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial,  no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait) VALUES (:nom_article, :description, :date_debut_encheres, :date_fin_encheres, :prix_initial, :no_utilisateur, :no_categorie, :statut_enchere, :no_adresse_retrait)";
 	private final static String FIND_BY_ID = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_article = :no_article";
 	private final static String FIND_ALL = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES";
+	private final static String FIND_ALL_WITH_ENCHERES = "SELECT a.* FROM ARTICLES a LEFT JOIN ENCHERES e ON a.no_article = e.no_article";
 	private final static String UPDATE = "UPDATE ARTICLES SET nom_article = :nom_article, description = :description, date_debut_encheres = :date_debut_encheres, date_fin_encheres = :date_fin_encheres, prix_initial = :prix_initial, no_categorie = :no_categorie, no_adresse_retrait = :no_adresse_retrait WHERE no_article = :no_article";
 	private final static String DELETE = "DELETE FROM ARTICLES WHERE no_article = :no_article";
 	private final static String FIND_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie";
 	private final static String FIND_BY_NOM = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE nom_article = :nom";
 	private final static String FIND_BY_UTILISATEUR = "SELECT * FROM ARTICLES WHERE no_utilisateur = :no_utilisateur";
-	private final static String FIND_BY_PRORIETAIRE_OR_ACHETEUR = "SELECT a.* FROM ARTICLES a JOIN ENCHERES e ON a.no_article = e.no_article WHERE e.no_utilisateur = :no_utilisateur OR a.no_utilisateur = :no_utilisateur";
+	private final static String FIND_BY_ACHETEUR = "SELECT DISTINCT a.* FROM ARTICLES a JOIN ENCHERES e ON a.no_article = e.no_article WHERE e.no_utilisateur = :no_utilisateur";
 
-	private final static String FIND_ALL_ACTIVE = "SELECT a.no_article, a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres, a.prix_initial, a.prix_vente, a.no_utilisateur, a.no_categorie, a.statut_enchere, a.no_adresse_retrait, a.path_image FROM ARTICLES a WHERE a.statut_enchere = 1";
+	private final static String FIND_ALL_ACTIVE = "SELECT a.* FROM ARTICLES a WHERE a.statut_enchere = 1";
 	private final static String FIND_ACTIVE_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie AND statut_enchere = 1";
 	// private final static String FIND_ALL_ACTIVE ="SELECT a.no_article,
 	// a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres,
@@ -75,6 +76,11 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	@Override
 	public List<Article> findAllActive() {
 		return namedParameterJdbcTemplate.query(FIND_ALL_ACTIVE, new ArticleRowMapper());
+	}
+	
+	@Override
+	public List<Article> findAllActiveWithEncheres() {
+		return namedParameterJdbcTemplate.query(FIND_ALL_WITH_ENCHERES, new ArticleRowMapper());
 	}
 
 	// Filter on the Server
@@ -215,10 +221,10 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	}
 	
 	@Override
-	public List<Article> findByProprietaireOrAcheteur(int utilisateurId){
+	public List<Article> findByEncherisseur(int utilisateurId){
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("no_utilisateur", utilisateurId);
-		return namedParameterJdbcTemplate.query(FIND_BY_PRORIETAIRE_OR_ACHETEUR, namedParameters, new ArticleRowMapper());
+		return namedParameterJdbcTemplate.query(FIND_BY_ACHETEUR, namedParameters, new ArticleRowMapper());
 	}
 
 	// RowMapper to map SQL result to Article object

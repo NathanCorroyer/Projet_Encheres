@@ -16,6 +16,8 @@ public interface ArticleService {
 	public List<Article> findAll();
 
 	public List<Article> findAllActive();
+	
+	public List<Article> findAllWithEncheres();
 
 	public List<Categorie> findAllCategories();
 
@@ -30,10 +32,6 @@ public interface ArticleService {
 	List<Article> findByNom(String nom);
 
 	List<Article> findByUtilisateur(int utilisateurId);
-	
-	List<Article> findByProprietaireOrAcheteur(int utilisateurId);
-	
-	List<Article> filtersHomePage(List<Article> articles, Long categorieId, String nom, StatutEnchere statutEnchere);
 
 	public void uploadImage(String fileName, int idArticle);
 

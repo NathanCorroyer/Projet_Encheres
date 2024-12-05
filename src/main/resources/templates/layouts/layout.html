@@ -23,10 +23,11 @@
 	
 	<script>
 		const filterForm = document.getElementById("filterForm");
-		const achatsCheck = document.getElementById("achatsCheck");
-		const ventesCheck = document.getElementById("ventesCheck");
-		const achats = document.getElementById("achats");
-		const ventes = document.getElementById("ventes");
+		const achatsRadio = document.getElementById("hasEncheri");
+		const ventesRadio = document.getElementById("isVendeur");
+		const achatsSelect = document.getElementById("hasEncheriSelect");
+		const ventesSelect = document.getElementById("isVendeurSelect");
+
 		
 	// Methodes fragment-encheres-actives
 	// ##################################
@@ -38,21 +39,25 @@
 		}
 		
 		// Method to enabled/disable selects
-		function toggleSelect(){
-			if (achatsCheck.checked){
-				achats.disabled = false;
-				ventes.disabled = true;
-			}
-			if (ventesCheck.checked){
-				achats.disabled = true;
-				ventes.disabled = false;
+		function toggleSelects(){
+			if (achatsRadio.checked){
+				achatsSelect.disabled = false;
+				ventesSelect.disabled = true;
+				ventesRadio.checked = false;
+			} else if (ventesRadio.checked){
+				ventesSelect.disabled = false;
+				achatsSelect.disabled = true;
+				achatsRadio.checked = false;
+			} else {
+				achatsSelect.disabled = true;
+				ventesSelect.disabled = true;
 			}
 		}
 		
-		achatsCheck.addEventListener('change', toggleSelect);
-		ventesCheck.addEventListener('change', toggleSelect);
+		achatsRadio.addEventListener('change', toggleSelects);
+		ventesRadio.addEventListener('change', toggleSelects);
 		
-		toggleSelect();
+		toggleSelects();
 	</script>
 </body>
 </html>
