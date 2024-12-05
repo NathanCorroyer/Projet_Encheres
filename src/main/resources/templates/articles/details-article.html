@@ -11,40 +11,11 @@
     <main id="contenuPage">
         <div class="header-container">
             <h1 th:text="${titre}"></h1> <!-- Affichage du nom de l'article -->
-            <div class="date-card">
-                 <!-- Élément où la date sera affichée -->
-                <!-- Affichage du pseudo si l'utilisateur est connecté -->
-                <div th:if="${pseudo != null}">
-                    <p>
-                        Participant <span th:text="${utilisateurConnecte.pseudo}"></span>
-                    </p>
-                    <p id="current-date"></p>
-                </div>
-            </div>
+            
         </div>
 
         <!-- Inclusion du fragment pour afficher les détails de l'article -->
         <div th:replace="~{fragments/fragment-details-article :: frag-details-article(article = ${article})}"></div>
-        <script>
-			function updateDate() {
-				const dateElement = document.getElementById("current-date");
-				const now = new Date();
-				const options = {
-					weekday : 'long',
-					year : 'numeric',
-					month : 'long',
-					day : 'numeric'
-				};
-				// Génération de la date au format local
-				const formattedDate = now.toLocaleDateString('fr-FR', options);
-				console.log("Date générée :", formattedDate);
-				dateElement.textContent = formattedDate;
-			}
-			// Mettre à jour la date au chargement de la page
-			updateDate();
-			// Optionnel : Actualiser la date chaque minute
-			setInterval(updateDate, 60000);
-		</script>
     </main>
 </body>
 </html>

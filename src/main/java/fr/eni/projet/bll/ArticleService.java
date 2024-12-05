@@ -28,7 +28,7 @@ public interface ArticleService {
 	List<Article> findByNom(String nom);
 
 	List<Article> findByUtilisateur(int utilisateurId);
-	
+
 	List<Article> filterByCategorieAndNom(List<Article> articles, Long categorieId, String nom);
 
 	public void uploadImage(String fileName, int idArticle);
@@ -38,5 +38,7 @@ public interface ArticleService {
 	public boolean canShowRetraitButton(Article article);
 
 	public String titre(Article article, boolean isEncherisseur, String pseudoWinner, boolean hasEnchere);
+
+	public void marquerCommeLivre(int id);
 
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import fr.eni.projet.bll.EnchereService;
 import fr.eni.projet.bll.UtilisateurService;
@@ -27,26 +28,30 @@ import fr.eni.projet.exceptions.BusinessException;
 
 @Controller
 @RequestMapping("/encheres")
+@SessionAttributes({ "userSession" })
 public class EnchereController {
 	private EnchereService enchereService;
 	private UtilisateurService userService;
+
 	@Autowired
 	private MessageSource messageSource;
+
 	private Locale locale;
+
 	public EnchereController(EnchereService enchereService, UtilisateurService userService) {
 		this.enchereService = enchereService;
 		this.userService = userService;
 		this.locale = LocaleContextHolder.getLocale();
 	}
-	
+
 	@GetMapping
 	public String afficherEncheres(Model model) {
 		List<Enchere> lstEncheres = enchereService.getEncheres();
 		model.addAttribute("encheres", lstEncheres);
-		
+
 		return null;
 	}
-	
+
 	@PostMapping("/creer")
 	public String creerEnchere(@ModelAttribute Enchere enchere, BindingResult bindingResult, Authentication auth) {
 		Utilisateur user = userService.findByPseudo(auth.getName()).get();
@@ -57,8 +62,8 @@ public class EnchereController {
 		} catch (BusinessException be) {
 			List<String> errorMessages = new ArrayList<>();
 			be.getClefsExternalisations().forEach(key -> {
-			    String errorMessage = messageSource.getMessage(key, null, locale);
-			    errorMessages.add(errorMessage);
+				String errorMessage = messageSource.getMessage(key, null, locale);
+				errorMessages.add(errorMessage);
 			});
 		}
 		return "redirect:/articles/details/" + enchere.getArticle().getId();

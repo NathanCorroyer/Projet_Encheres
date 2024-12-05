@@ -10,15 +10,7 @@
 	<main id="contenuPage">
 		<div class="header-container">
 			<h1 data-th-text="#{view-article-form.h1}"></h1>
-			<div class="date-card">
-				<p id="current-date"></p>
-				<!-- Affichage du pseudo si l'utilisateur est connecté -->
-				<div th:if="${pseudo != null}">
-					<p>
-						Participant <span th:text="${pseudo}"></span>
-					</p>
-				</div>
-			</div>
+			
 		</div>
 		<form
 			data-th-replace="~{fragments/fragment-article-form :: frag-article-form(action = '/articles/vendre', text_button = #{view-article-form.btn}, disabled = false, visible = true)}">

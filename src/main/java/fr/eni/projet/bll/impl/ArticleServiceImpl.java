@@ -28,6 +28,7 @@ import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.enums.StatutEnchere;
 import fr.eni.projet.exceptions.BusinessCode;
 import fr.eni.projet.exceptions.BusinessException;
+import fr.eni.projet.service.SessionService;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -50,10 +51,40 @@ public class ArticleServiceImpl implements ArticleService {
 	@Autowired
 	private MessageSource message;
 
+	@Autowired
+	private SessionService sessionService;
+
 	private Locale locale;
 
 	public ArticleServiceImpl() {
 		this.locale = LocaleContextHolder.getLocale();
+	}
+
+	public void marquerCommeLivre(int id) {
+		// Récupérer l'article
+		Article article = articleDAO.findArticleById(id);
+		if (article == null) {
+			throw new IllegalArgumentException("Article non trouvé.");
+		}
+
+		// Vérifier que le statut actuel est CLOTURE
+		if (article.getStatut_enchere() != StatutEnchere.CLOTUREE) {
+			throw new IllegalStateException("L'article doit être clôturé avant de passer à LIVREE.");
+		}
+
+		Utilisateur vendeur = sessionService.getUserSessionAttribute();
+		int creditsGagnes = article.getPrix_vente();
+
+		// Mettre à jour le statut
+		article.setStatut_enchere(StatutEnchere.LIVREE);
+
+		// Créditer le vendeur
+		vendeur.setCredit(vendeur.getCredit() + creditsGagnes);
+		userDAO.updateCredit(vendeur);
+
+		// Sauvegarder les modifications
+		articleDAO.updateStatutEnchere(article, StatutEnchere.LIVREE);
+
 	}
 
 	public String titre(Article article, boolean isEncherisseur, String pseudoWinner, boolean hasEnchere) {
@@ -110,6 +141,11 @@ public class ArticleServiceImpl implements ArticleService {
 				StatutEnchere.EN_COURS.ordinal());
 
 		for (Article article : articlesACloturer) {
+			// Récupérer l'enchère la plus élevée pour cet article
+			Optional<Enchere> enchereMaxOpt = enchereDAO.findBiggestEnchereFromArticle(article.getId());
+			Enchere enchereMax = enchereMaxOpt.get();
+			article.setPrix_vente(enchereMax.getMontant());
+
 			article.setStatut_enchere(StatutEnchere.CLOTUREE); // Changer le statut à CLOTUREE
 			articleDAO.updateStatutEnchere(article, StatutEnchere.CLOTUREE);
 		}
@@ -231,9 +267,8 @@ public class ArticleServiceImpl implements ArticleService {
 
 	public List<Article> filterByCategorieAndNom(List<Article> articles, Long categorieId, String nom) {
 		return articles.stream()
-				.filter(article -> 
-					(categorieId == null || article.getCategorie().getId() == categorieId.intValue()) &&
-					(nom == null || article.getNom().toLowerCase().contains(nom.toLowerCase())))
+				.filter(article -> (categorieId == null || article.getCategorie().getId() == categorieId.intValue())
+						&& (nom == null || article.getNom().toLowerCase().contains(nom.toLowerCase())))
 				.collect(Collectors.toList());
 	}
 
