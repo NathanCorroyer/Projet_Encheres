@@ -225,7 +225,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		isValid &= validerPseudoUnique(utilisateur.getPseudo(), be);
 		isValid &= validerPassword(utilisateur.getPassword(), be);
 		isValid &= validerEmail(utilisateur.getEmail(), be);
-		isValid &= validerEmailUnique(utilisateur.getPseudo(), be);
+		isValid &= validerEmailUnique(utilisateur.getEmail(), be);
 		isValid &= validerCredit(utilisateur.getCredit(), be);
 		isValid &= validerAdresse(utilisateur.getAdresse(), be);
 
@@ -298,7 +298,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	private boolean validerEmailUnique(String email, BusinessException be) {
 		boolean isValid = true;
 		Optional<Utilisateur> existingUserByEmail = utilisateurDAO.findByEmail(email);
-		if (existingUserByEmail.isPresent()) {
+		if (!existingUserByEmail.isEmpty()) {
 			isValid = false;
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_EMAIL_EXISTANT);
 		}

@@ -5,7 +5,7 @@
 	<div class="container mt-5">
 		<div class="card mx-auto" style="max-width: 800px;">
 			<div class="card-body">
-			<p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}"></p>
+			<p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}" class="cards"></p>
 				<fieldset data-th-disabled="${disabled}">
 					<input type="hidden" data-th-field="*{id}">
 					<div class="row mb-3">

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -78,12 +79,13 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	public Optional<Utilisateur> findByEmail(String email) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("email", email);
-		List<Utilisateur> results = namedParameterJdbcTemplate.query(FIND_BY_EMAIL, namedParameters,
-				new UtilisateurRowMapper());
-		if (results.isEmpty()) {
+		try {
+			Utilisateur user = namedParameterJdbcTemplate.queryForObject(FIND_BY_EMAIL, namedParameters,
+					new UtilisateurRowMapper());
+			return Optional.ofNullable(user);
+		}catch(EmptyResultDataAccessException e){
 			return Optional.empty();
 		}
-		return Optional.of(results.get(0));
 	}
 
 	@Override

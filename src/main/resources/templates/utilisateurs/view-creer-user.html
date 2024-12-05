@@ -6,7 +6,7 @@
 <title data-th-text="#{index.title}"></title>
 <link rel="stylesheet" th:href="@{/css/layout.css}" />
 <th:block id="ressourcesSupp">
-	<link rel="stylesheet" data-th-href="@{/css/errors.css}">	
+	<link rel="stylesheet" data-th-href="@{/css/errors.css}">
 </th:block>
 </head>
 
@@ -15,33 +15,36 @@
 	<main id="contenuPage">
 		<!-- AJOUTER LE LISTING DES USERS -->
 		<div class="header-container">
-    		<h1 data-th-text="#{view-user-form.h1}" ></h1>
-    			
-			</div>
-		<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/creer',text_button = #{view-user-form.btn}, disabled = false, visible = true, creation=true)}">
-			
-		</form>
-		
+			<h1 data-th-text="#{view-user-form.h1}"></h1>
+
+		</div>
+		<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/creer',text_button = #{view-user-form.btn}, disabled = false, visible = true, creation=true)}"></form>
+
 		<script>
-	function updateDate() {
-        const dateElement = document.getElementById("current-date");
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+			function updateDate() {
+				const dateElement = document.getElementById("current-date");
+				const now = new Date();
+				const options = {
+					weekday : 'long',
+					year : 'numeric',
+					month : 'long',
+					day : 'numeric'
+				};
 
-        // Vérification des données générées
-        const formattedDate = now.toLocaleDateString('fr-FR', options);
-        console.log("Date générée :", formattedDate);
+				// Vérification des données générées
+				const formattedDate = now.toLocaleDateString('fr-FR', options);
+				console.log("Date générée :", formattedDate);
 
-        dateElement.textContent = formattedDate;
-    }
+				dateElement.textContent = formattedDate;
+			}
 
-    // Mettre à jour la date au chargement de la page
-    updateDate();
+			// Mettre à jour la date au chargement de la page
+			updateDate();
 
-    // Optionnel : Actualiser chaque minute (si nécessaire)
-    setInterval(updateDate, 60000);
-</script>
+			// Optionnel : Actualiser chaque minute (si nécessaire)
+			setInterval(updateDate, 60000);
+		</script>
 	</main>
-	
+
 </body>
 </html>
