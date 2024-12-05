@@ -44,14 +44,14 @@ public class SecurityConfig {
 	@SuppressWarnings("removal")
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http, UserSecurity userSecurity) throws Exception {
-		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**", "/users/retrait/**"))
-				.authorizeHttpRequests(auth -> {
-					auth.requestMatchers("/").permitAll();
-					auth.requestMatchers("/css/*").permitAll();
-					auth.requestMatchers("/img/*").permitAll();
-					auth.requestMatchers("/articles/vendre").authenticated();
-					auth.requestMatchers("/users/creer").permitAll();
-					auth.requestMatchers("/uploads/**").permitAll();
+		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**", "/users/retrait/**", "/admin/users/activation/**", "/admin/users/delete/**", "/categories/delete/**")).authorizeHttpRequests(auth -> {
+			auth.requestMatchers("/").permitAll();
+			auth.requestMatchers("/css/*").permitAll();
+			auth.requestMatchers("/img/*").permitAll();
+			auth.requestMatchers("/articles/vendre").authenticated();
+			auth.requestMatchers("/users/creer").permitAll();
+			auth.requestMatchers("/uploads/**").permitAll();
+
 
 					// Configurer les règles de sécurité pour des routes spécifiques avant
 					// 'anyRequest'
@@ -68,10 +68,11 @@ public class SecurityConfig {
 					auth.requestMatchers("/users/modifiermdp/**").access((authentication, context) -> UserSecurity
 							.hasAccessToUser(authentication.get(), context.getRequest()));
 
-					auth.requestMatchers("/users/retrait/**").authenticated();
+			auth.requestMatchers("/admin/**").hasRole("ADMIN");
+			auth.requestMatchers("/categories/**").hasRole("ADMIN");
+			auth.anyRequest().authenticated();
+		});
 
-					auth.anyRequest().authenticated();
-				});
 
 		// Configurer la gestion de la session et de la déconnexion
 		http.formLogin(form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/session", true)

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -23,7 +24,7 @@ public class CategorieDAOJdbcImpl implements CategorieDAO {
 	private final static String FIND_BY_LIBELLE = "SELECT no_categorie, libelle FROM CATEGORIES WHERE libelle = :libelle";
 	private final static String FIND_ALL = "SELECT no_categorie, libelle FROM CATEGORIES";
 	private final static String UPDATE = "UPDATE CATEGORIES SET libelle = :libelle WHERE no_categorie = :no_categorie";
-	private final static String DELETE = "DELETE FROM CATEGORIES WHERE no_categorie = :noCategorie";
+	private final static String DELETE = "DELETE FROM CATEGORIES WHERE no_categorie = :no_categorie";
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -54,7 +55,11 @@ public class CategorieDAOJdbcImpl implements CategorieDAO {
 	public Categorie findById(int id) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("no_categorie", id);
-		return namedParameterJdbcTemplate.queryForObject(FIND_BY_ID, namedParameters, new CategorieRowMapper());
+		try {			
+			return namedParameterJdbcTemplate.queryForObject(FIND_BY_ID, namedParameters, new CategorieRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 	
 	@Override
@@ -69,19 +74,17 @@ public class CategorieDAOJdbcImpl implements CategorieDAO {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 
 		namedParameters
-		.addValue("libelle", categorie.getLibelle());
+		.addValue("libelle", categorie.getLibelle())
+		.addValue("no_categorie", categorie.getId());
 
 		namedParameterJdbcTemplate.update(UPDATE, namedParameters);
 	}
 	
 	@Override
-	public void delete(int id) {
+	public boolean delete(int id) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-
-		namedParameters
-		.addValue("no_categorie", id);
-
-		namedParameterJdbcTemplate.update(DELETE, namedParameters);
+		namedParameters.addValue("no_categorie", id);
+		return namedParameterJdbcTemplate.update(DELETE, namedParameters) > 0;
 	}
 	
 	class CategorieRowMapper implements RowMapper<Categorie> {
