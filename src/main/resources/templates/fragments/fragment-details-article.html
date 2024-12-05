@@ -62,7 +62,9 @@
 							</div>
 						</div>
 					</div>
-					<div th:replace="~{fragments/fragment-enchere-form :: frag-enchere-form(action = '/encheres/creer')}"></div>
+					<div data-th-if="${!isOwner && encherisseur.pseudo != userSession.pseudo && article.statut_enchere.value == 1 && userSession.actif}">
+						<div th:replace="~{fragments/fragment-enchere-form :: frag-enchere-form(action = '/encheres/creer')}"></div>
+					</div>
 					<!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->
 					<div class="d-flex justify-content-center mt-4">
 						<!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->

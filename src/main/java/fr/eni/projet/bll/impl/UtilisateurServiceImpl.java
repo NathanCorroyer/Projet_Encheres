@@ -19,6 +19,7 @@ import fr.eni.projet.bo.Enchere;
 import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.exceptions.BusinessCode;
 import fr.eni.projet.exceptions.BusinessException;
+import fr.eni.projet.service.SessionService;
 
 @Service
 public class UtilisateurServiceImpl implements UtilisateurService {
@@ -35,6 +36,8 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	@Autowired
 	private ArticleDAO articleDAO;
 	
+	@Autowired
+	private SessionService sessionService;
 	
 
 	@Override
@@ -325,14 +328,20 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 	
 	private void rendreCredit(List<Article> articles) {
+		Utilisateur userConnecte = sessionService.getUserSessionAttribute();
 		articles.forEach( article-> {
 			//On récupère l'enchère la plus haute
 			Optional<Enchere> enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
+			//Si l'enchère existe, on rend les crédits à l'enchérisseur
 			if(!enchere.isEmpty()) {
-				//Si l'enchère existe, on rend les crédits à l'enchérisseur
-				Utilisateur user = utilisateurDAO.findById(enchere.get().getAcheteur().getId());
-				user.setCredit(user.getCredit() + enchere.get().getMontant());
-				utilisateurDAO.updateCredit(user);
+				if(userConnecte.getId() == enchere.get().getAcheteur().getId()) {
+					userConnecte.setCredit(userConnecte.getCredit() + enchere.get().getMontant());
+					utilisateurDAO.updateCredit(userConnecte);
+				}else {					
+					Utilisateur user = utilisateurDAO.findById(enchere.get().getAcheteur().getId());
+					user.setCredit(user.getCredit() + enchere.get().getMontant());
+					utilisateurDAO.updateCredit(user);
+				}
 			}
 		});
 	}
