@@ -1,0 +1,15 @@
+<div xmlns:th="http://www.thymeleaf.org"
+	data-th-fragment="fragment-card">
+	<div th:if="${session.userSession != null && session.userSession.pseudo != null && session.userSession.pseudo != ''}">
+	<div class="date-card">
+			<p>
+				<strong>Participant : </strong><span th:text="${session.userSession.pseudo}"></span>
+			</p>
+			<p>
+				<strong>Nombre de crédit : </strong><span
+					th:text="${session.userSession.credit}"></span>
+			</p>
+			<p id="current-date"></p>
+		</div>
+	</div>
+</div>
