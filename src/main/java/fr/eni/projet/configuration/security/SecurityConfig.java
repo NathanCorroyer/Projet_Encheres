@@ -44,7 +44,7 @@ public class SecurityConfig {
 	@SuppressWarnings("removal")
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http, UserSecurity userSecurity) throws Exception {
-		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**", "/admin/users/activation/**", "/admin/users/delete/**")).authorizeHttpRequests(auth -> {
+		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**", "/admin/users/activation/**", "/admin/users/delete/**", "/categories/delete/**")).authorizeHttpRequests(auth -> {
 			auth.requestMatchers("/").permitAll();
 			auth.requestMatchers("/css/*").permitAll();
 			auth.requestMatchers("/img/*").permitAll();
@@ -68,6 +68,7 @@ public class SecurityConfig {
 					.hasAccessToUser(authentication.get(), context.getRequest()));
 
 			auth.requestMatchers("/admin/**").hasRole("ADMIN");
+			auth.requestMatchers("/categories/**").hasRole("ADMIN");
 			auth.anyRequest().authenticated();
 		});
 

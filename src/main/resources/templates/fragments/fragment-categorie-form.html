@@ -1,0 +1,22 @@
+<form xmlns:th="http://www.thymeleaf.org"
+      data-th-fragment="frag-categorie-form(action)"
+      data-th-action="${action}"
+      method="post" 
+      data-th-object="${categorie}">
+      
+    
+	<div class="row">
+	    <div>
+	    	<label data-th-text="#{form-categorie-libelle}" for="libelle" class="form-label"></label>
+	    	<input type="text" name="libelle" data-th-field="*{libelle}" class="form-control"/>
+	    </div>
+	    <div>
+	    	<button type="submit" class="btn btn-primary mt-2" data-th-text="${creation} ? #{form-categorie-submit-creer} : #{form-categorie-submit-modifier}"></button>
+	    </div>
+	</div>
+</form>
+
+
+<script>
+
+</script>

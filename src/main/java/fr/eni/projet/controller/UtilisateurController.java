@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,12 +39,12 @@ public class UtilisateurController {
 		this.userService = userService;
 	}
 
-//	// Méthode pour charger l'utilisateur en session
+	// Méthode pour charger l'utilisateur en session
 //		@ModelAttribute("userSession")
 //		public Utilisateur chargerUserSession() {
 //			return userService.findByPseudo(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
 //		}
-//	
+	
 	@GetMapping("/creer")
 	private String creer(@ModelAttribute("user") Utilisateur user) {
 		if (user.getAdresse() == null) {
