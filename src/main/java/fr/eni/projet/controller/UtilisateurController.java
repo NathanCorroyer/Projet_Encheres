@@ -123,7 +123,7 @@ public class UtilisateurController {
 			boolean emailModifie = !origine.getEmail().equals(user.getEmail());
 			userService.update(user, emailModifie);
 			// Ajouter le paramètre "pseudo" à l'URL de redirection
-			redirectAttributes.addFlashAttribute("message", "Profil mis à jour avec succès.");
+			redirectAttributes.addFlashAttribute("messageKey", "success.profile.updated");
 			// Rediriger vers le profil de l'utilisateur avec le paramètre "pseudo"
 			return "redirect:/users/profil";
 		} catch (BusinessException e) {

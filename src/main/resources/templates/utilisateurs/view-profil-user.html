@@ -12,8 +12,9 @@
         <h1 data-th-text="#{view-profil-form.h1}"></h1>
 
         <!-- Affichage des messages de succès ou d'erreur -->
-        <div th:if="${message}">
-            <div class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${messageKey}">
+            <div class="alert alert-success mx-auto text-center" 
+     style="max-width: 600px;" th:text="#{${messageKey}}"></div>
         </div>
         
         <div th:if="${error}">

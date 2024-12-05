@@ -33,23 +33,27 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		if (!validerUtilisateur(utilisateur, be)) {
 			throw be;
 		}
+		System.out.println("salut je passe ici");
 
 		Adresse adresse = utilisateur.getAdresse();
 		if (adresse == null) {
 			throw new IllegalArgumentException("L'adresse est obligatoire pour créer un utilisateur.");
 		}
-
-		int adresseKey = adresseDAO.create(adresse); // Création de l'adresse
+		// Créer l'adresse et récupérer la clé générée
+		int adresseKey = adresseDAO.create(adresse);
 		utilisateur.getAdresse().setId(adresseKey);
-
-		if (be.isValid()) {
+		if (!be.isValid()) {
 			throw be;
 		}
-		String password = utilisateur.getPassword();
-		password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
+
+		// Hachage du mot de passe
+		String password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(utilisateur.getPassword());
 		utilisateur.setPassword(password);
+
+		// Crédit initial
 		utilisateur.setCredit(10);
-		utilisateurDAO.create(utilisateur); // Création de l'utilisateur
+
+		utilisateurDAO.create(utilisateur);
 	}
 
 	@Override
@@ -239,7 +243,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		if (password == null || password.isBlank()) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_BLANK);
 			isValid = false;
-		} else if (!password.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[\\W_])[A-Za-z\\d\\W_]{8,20}$")) {
+		} else if (!password.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[\\W])[A-Za-z\\d\\W]{8,20}$")) {
 			// Validation du format du mot de passe
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_FORMAT);
 			isValid = false;

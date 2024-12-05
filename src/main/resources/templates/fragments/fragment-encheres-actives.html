@@ -1,18 +1,18 @@
 <div xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-encheres-actives">
-    <h1>Liste des enchères</h1>
+    <h1 th:text="#{label.biddingsList}"></h1>
 
     <form action="#" th:action="@{/}" method="get" id="filterForm">
-        <h4>Filtres :</h4>
+        <h4 th:text="#{label.filters}"></h4>
         <div class="row m-3">
             <div class="col-4">
                 <label for="nom" class="form-label visually-hidden"></label>
                 <input type="text" id="nom" name="nom" placeholder="Le nom de l'article contient..." 
                        th:value="${param.nom}" class="form-control" />
                 <div class="form-group row mt-3">
-                    <label for="categorie" class="col-sm-3 col-form-label">Catégorie :</label>
+                    <label for="categorie" class="col-sm-3 col-form-label" th:text="#{label.category}"></label>
                     <div class="col-sm-9">
                         <select id="categorie" name="categorie" class="form-select">
-                            <option value="">Toutes</option>
+                            <option value="" th:text="#{label.all}"></option>
                             <th:block th:each="categorie : ${categories}">
                                 <option th:value="${categorie.id}" th:text="${categorie.libelle}"></option>
                             </th:block>
@@ -21,14 +21,14 @@
                 </div>
             </div>
             <div class="col-2 mb-3">
-                <button type="submit" class="btn btn-primary w-100 mb-3">Rechercher</button>
-                <button type="button" class="btn btn-secondary w-100 mb-4" onclick="resetForm()">Annuler</button>
+                <button type="submit" class="btn btn-primary w-100 mb-3" th:text="#{label.search}"></button>
+                <button type="button" class="btn btn-secondary w-100 mb-4" onclick="resetForm()" th:text="#{label.cancel}"></button>
             </div>
         </div>
     </form>
 
     <div th:if="${articles.isEmpty()}">
-        <p>Aucun article trouvé</p>
+        <p th:text="#{label.noArticleFound}"></p>
     </div>
 
     <div class="row">
@@ -46,17 +46,22 @@
                     <!-- Détails de l'article -->
                     <div class="flex-grow-1">
                         <h5 class="card-title" data-th-text="${article.nom}"></h5>
-                        <p class="mb-1">
-                            Prix : 
+                        <div><p>
+                        <span class="mb-1" th:text="#{label.price}">
+                           </span> 
                             <span data-th-text="${article.prix_vente > article.prix_initial ? article.prix_vente : article.prix_initial}"></span>
-                            point(s)
-                        </p>
+                            <span th:text="#{label.point}"></span>
+                            
+                        </p></div>
+                        
                         <p class="mb-1">
-                            Fin de l'enchère : 
+                        <span th:text="#{label.auctionEndDate}"></span>
+                            
                             <span data-th-text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span>
                         </p>
                         <p class="mb-0">
-                            Vendeur : 
+                        <span th:text="#{label.seller}"></span>
+                             
                             <a data-th-href="${'/users/profil?pseudo=' + article.proprietaire.pseudo}">
                                 <span data-th-text="${article.proprietaire.pseudo}"></span>
                             </a>
