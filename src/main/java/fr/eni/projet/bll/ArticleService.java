@@ -17,7 +17,7 @@ public interface ArticleService {
 
 	public List<Article> findAllActive();
 	
-	public List<Article> findAllWithEncheres();
+	public List<Article> findAllWithEncheres(int userId);
 
 	public List<Categorie> findAllCategories();
 
@@ -40,5 +40,13 @@ public interface ArticleService {
 	public boolean canShowRetraitButton(Article article);
 
 	public String titre(Article article, boolean isEncherisseur, String pseudoWinner, boolean hasEnchere);
+
+	public List<Article> findAllWithEncheresFinies(int userId);
+
+	public List<Article> findEnCoursFromVendeur(int id);
+
+	public List<Article> findNonCommenceeFromVendeur(int id);
+
+	public List<Article> findFiniesFromVendeur(int id);
 
 }

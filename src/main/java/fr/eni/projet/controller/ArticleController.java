@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -154,39 +155,59 @@ public class ArticleController {
 		return "/upload/view-image-upload-article";
 	}
 
+	
 	// Home page with filters
 	@GetMapping("/")
 	public String afficherActiveEncheres(
-			@RequestParam(value = "categorie", required = false) Long categorieId,
+			@RequestParam(value = "categorie", required = false, defaultValue = "0") int categorieId,
 			@RequestParam(value = "nom", required = false) String nom,
-			@RequestParam(value = "statutEnchere", required = false) String statutEnchereString,
-			@RequestParam(value = "isVendeur", required = false, defaultValue = "false") boolean isVendeur,
-			@RequestParam(value = "hasEncheri", required = false, defaultValue = "false") boolean hasEncheri,
-			Authentication auth, Model model) {		
+			@RequestParam(value = "statutEnchereAchat", required = false, defaultValue = "0") int statutEnchereAchat,
+			@RequestParam(value = "statutEnchereVente", required = false, defaultValue = "0") int statutEnchereVente,
+			@RequestParam(value = "userType", required = false, defaultValue = "hasEncheri") String userType,
+			Model model) {		
 		
 		// Get the categories to show in the select
 		List<Categorie> categories = articleService.findAllCategories();
 		model.addAttribute("categories", categories);
-		
-		StatutEnchere statut = StatutEnchere.EN_COURS;
-		
-		// Get the statut
-		if (statutEnchereString != null) {
-			try {
-				statut = StatutEnchere.fromValue(Integer.parseInt(statutEnchereString));
-			}
-			catch (NumberFormatException e) {
-				statut = StatutEnchere.EN_COURS;	
-			}
-		} else {
-			statut = StatutEnchere.EN_COURS;
-		}
-		model.addAttribute("statut", statut);
-		
-		String pseudoUserConnected = auth != null ? auth.getName() : null;
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String pseudoUserConnected = auth != null && !auth.getName().equals("anonymousUser") ? auth.getName() : null;
 		model.addAttribute("pseudoUserConnected", pseudoUserConnected);
 		
-		List<Article> articles = articleService.findAllWithEncheres();
+		List<Article> articles = new ArrayList<Article>();
+		// Get the statut
+		if(userType.equals("hasEncheri")) {	
+			Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
+			switch (statutEnchereAchat) {
+			case 2: 
+				articles = articleService.findAllWithEncheres(user.getId());
+				break;
+			case 3 : 
+				articles = articleService.findAllWithEncheresFinies(user.getId());
+				break;
+			default:
+				articles = articleService.findAllActive();
+				break;
+			}
+		}
+		
+		if(userType.equals("isVendeur")) {
+			Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
+			switch (statutEnchereVente) {
+			case 1: 
+				articles = articleService.findEnCoursFromVendeur(user.getId());
+				break;
+			case 2 : 
+				articles = articleService.findNonCommenceeFromVendeur(user.getId());
+				break;
+			default:
+				articles = articleService.findFiniesFromVendeur(user.getId());
+				break;
+			}
+		}
+		
+		
+		
+//		List<Article> articles = articleService.findAllWithEncheres();
 
 		// If connected
 //		if (pseudoUserConnected != null) {
@@ -200,7 +221,10 @@ public class ArticleController {
 //		} else {
 //			articles = filterService.filterHomePageLogout(articles, categorieId, nom, statut);
 //		}
-		
+		model.addAttribute("userType", userType);
+		model.addAttribute("statutEnchereAchat", statutEnchereAchat);
+		model.addAttribute("statutEnchereVente", statutEnchereVente);
+		articles = filterService.filterHomePageLogin(articles,categorieId, nom);
 		articles.sort(Comparator.comparing(Article::getDate_fin).reversed());
 		model.addAttribute("articles", articles);
 		

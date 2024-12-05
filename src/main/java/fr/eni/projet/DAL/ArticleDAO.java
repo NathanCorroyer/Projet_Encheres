@@ -14,7 +14,7 @@ public interface ArticleDAO {
 
 	public List<Article> findAllActive();
 	
-	public List<Article> findAllActiveWithEncheres();
+	public List<Article> findAllActiveWithEncheres(int userId);
 
 	public int create(Article article);
 
@@ -41,6 +41,14 @@ public interface ArticleDAO {
 	public List<Article> findByDateFinBeforeAndStatutEnchere(LocalDateTime today, int i);
 
 	boolean hasEncheres(int articleId);
+
+	public List<Article> findAllFiniesWithEncheres(int userId);
+
+	public List<Article> findEnCoursFromVendeur(int id);
+
+	public List<Article> findNonCommenceeFromVendeur(int id);
+
+	public List<Article> findFiniesFromVendeur(int id);
 	
 	//Filters
 

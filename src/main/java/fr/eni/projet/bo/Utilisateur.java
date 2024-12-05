@@ -47,7 +47,7 @@ public class Utilisateur {
 	@NotBlank
 	@NotNull
 	@Size(min = 8, max = 20, message = "{validation.utilisateur.password.format}")
-	@Pattern(regexp = "^(?=.[a-z])(?=.[A-Z])(?=.\\d)(?=.[@$!%?&])[A-Za-z\\d@$!%?&]{8,20}$", message = "{validation.utilisateur.password.format}" )
+	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[\\d])(?=.*[\\W_])[A-Za-z\\d\\W_]{8,20}$", message = "{validation.utilisateur.password.format}" )
 	private String password;
 
 	@NotNull

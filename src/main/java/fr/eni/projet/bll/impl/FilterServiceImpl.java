@@ -21,17 +21,10 @@ public class FilterServiceImpl implements FilterService {
 	public FilterServiceImpl() {
 	}
 
-	public List<Article> filterHomePageLogin(List<Article> articles, int categorieId, String nom, StatutEnchere statut,
-			int userId, boolean isVendeur, boolean hasEncheri) {
-		System.out.println("Filtrage des articles : ");
-		System.out.println("Critères -> Categorie: " + categorieId + ", Nom: " + nom + ", Statut: "+ statut + ", Utilisateur: "+ userId);
-
+	public List<Article> filterHomePageLogin(List<Article> articles, int categorieId, String nom) {
 		return	articles.stream()
 				.filter(article -> filterByCategorie(article, categorieId))
 				.filter(article -> filterByNom(article, nom))
-				.filter(article -> filterByStatut(article, statut))
-				.filter(article -> filterByVendeur(article, userId, isVendeur))
-//				.filter(article -> filterByAcheteur(article, userId, hasEncheri))
 				.collect(Collectors.toList());
 	}
 	
@@ -46,7 +39,6 @@ public class FilterServiceImpl implements FilterService {
 
 	// Filtrer par catégorie
 	public boolean filterByCategorie(Article article, int categorieId) {
-		System.out.println("Filtrage par catégorie : "+ categorieId);
 		if (categorieId != 0) {
 			return article.getCategorie() != null && article.getCategorie().getId() == categorieId;
 		}
@@ -55,7 +47,6 @@ public class FilterServiceImpl implements FilterService {
 
 	// Filtrer par nom
 	public boolean filterByNom(Article article, String nom) {
-		System.out.println("Filtrage par nom : "+ nom);
 		if (nom != null && !nom.isEmpty()) {
 			return article.getNom() != null && article.getNom().toLowerCase().contains(nom.toLowerCase());
 		}
@@ -64,7 +55,6 @@ public class FilterServiceImpl implements FilterService {
 
 	// Filtrer par statut d'enchère
 	public boolean filterByStatut(Article article, StatutEnchere statut) {
-		System.out.println("Filtrage par statut : "+ statut);
 		switch (statut) {
 		case PAS_COMMENCEE:
 			return article.getDate_debut().isAfter(LocalDateTime.now());

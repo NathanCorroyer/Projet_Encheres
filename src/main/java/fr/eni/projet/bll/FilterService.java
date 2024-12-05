@@ -8,8 +8,7 @@ import fr.eni.projet.enums.StatutEnchere;
 public interface FilterService {
 
 	// Filtrer quand connecté
-	public List<Article> filterHomePageLogin(List<Article> articles, int categorieId, String nom, StatutEnchere statut,
-            int userId, boolean isVendeur, boolean hasEncheri);
+	public List<Article> filterHomePageLogin(List<Article> articles, int categorieId, String nom);
 	
 	// Filtrer quand déconnecté
 	public List<Article> filterHomePageLogout(List<Article> articles, int categorieId, String nom, StatutEnchere statutEnchere);	

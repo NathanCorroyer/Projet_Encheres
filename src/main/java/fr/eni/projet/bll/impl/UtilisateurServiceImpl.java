@@ -42,9 +42,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		int adresseKey = adresseDAO.create(adresse); // Création de l'adresse
 		utilisateur.getAdresse().setId(adresseKey);
 
-		if (be.isValid()) {
+		if (!be.isValid()) {
 			throw be;
 		}
+		
 		String password = utilisateur.getPassword();
 		password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
 		utilisateur.setPassword(password);

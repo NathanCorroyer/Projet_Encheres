@@ -27,7 +27,11 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	private final static String INSERT = "INSERT INTO ARTICLES(nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial,  no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait) VALUES (:nom_article, :description, :date_debut_encheres, :date_fin_encheres, :prix_initial, :no_utilisateur, :no_categorie, :statut_enchere, :no_adresse_retrait)";
 	private final static String FIND_BY_ID = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_article = :no_article";
 	private final static String FIND_ALL = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES";
-	private final static String FIND_ALL_WITH_ENCHERES = "SELECT a.* FROM ARTICLES a LEFT JOIN ENCHERES e ON a.no_article = e.no_article";
+	private final static String FIND_EN_COURS_VENDEUR = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_utilisateur = :no_utilisateur AND statut_enchere=1";
+	private final static String FIND_NON_COMMENCEES_VENDEUR = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_utilisateur = :no_utilisateur AND statut_enchere=0";
+	private final static String FIND_FINIES_VENDEUR = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_utilisateur = :no_utilisateur AND statut_enchere>1";
+	private final static String FIND_ALL_WITH_ENCHERES_FROM_USER = "SELECT DISTINCT a.* FROM ARTICLES a JOIN ENCHERES e ON a.no_article = e.no_article WHERE e.no_utilisateur = :no_utilisateur AND a.statut_enchere = 1";
+	private final static String FIND_ALL_FINIES_WITH_ENCHERES_FROM_USER = "SELECT DISTINCT a.* FROM ARTICLES a JOIN ENCHERES e ON a.no_article = e.no_article WHERE e.no_utilisateur = :no_utilisateur AND a.statut_enchere > 1";
 	private final static String UPDATE = "UPDATE ARTICLES SET nom_article = :nom_article, description = :description, date_debut_encheres = :date_debut_encheres, date_fin_encheres = :date_fin_encheres, prix_initial = :prix_initial, no_categorie = :no_categorie, no_adresse_retrait = :no_adresse_retrait WHERE no_article = :no_article";
 	private final static String DELETE = "DELETE FROM ARTICLES WHERE no_article = :no_article";
 	private final static String FIND_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie";
@@ -79,8 +83,10 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	}
 	
 	@Override
-	public List<Article> findAllActiveWithEncheres() {
-		return namedParameterJdbcTemplate.query(FIND_ALL_WITH_ENCHERES, new ArticleRowMapper());
+	public List<Article> findAllActiveWithEncheres(int userId) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_utilisateur", userId);
+		return namedParameterJdbcTemplate.query(FIND_ALL_WITH_ENCHERES_FROM_USER,namedParameters,  new ArticleRowMapper());
 	}
 
 	// Filter on the Server
@@ -300,6 +306,38 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		namedParameters.addValue("no_article", idArticle);
 		namedParameters.addValue("path_image", fileName);
 		namedParameterJdbcTemplate.update(UPLOAD_IMAGE, namedParameters);
+	}
+
+
+	@Override
+	public List<Article> findAllFiniesWithEncheres(int userId) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_utilisateur", userId);
+		return namedParameterJdbcTemplate.query(FIND_ALL_FINIES_WITH_ENCHERES_FROM_USER, namedParameters, new ArticleRowMapper());
+	}
+
+
+	@Override
+	public List<Article> findEnCoursFromVendeur(int id) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_utilisateur", id);
+		return namedParameterJdbcTemplate.query(FIND_EN_COURS_VENDEUR, namedParameters, new ArticleRowMapper());
+	}
+
+
+	@Override
+	public List<Article> findNonCommenceeFromVendeur(int id) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_utilisateur", id);
+		return namedParameterJdbcTemplate.query(FIND_NON_COMMENCEES_VENDEUR, namedParameters, new ArticleRowMapper());
+	}
+
+
+	@Override
+	public List<Article> findFiniesFromVendeur(int id) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_utilisateur", id);
+		return namedParameterJdbcTemplate.query(FIND_FINIES_VENDEUR, namedParameters, new ArticleRowMapper());
 	}
 
 }
