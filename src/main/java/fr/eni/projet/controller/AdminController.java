@@ -41,7 +41,8 @@ public class AdminController {
 	private Locale locale;
 	public AdminController() {
 		this.locale = LocaleContextHolder.getLocale();
-
+	}
+	
 	public AdminController(UtilisateurService utilisateurService) {
 		this.utilisateurService = utilisateurService;
 	}
