@@ -175,54 +175,39 @@ public class ArticleController {
 		String pseudoUserConnected = auth != null && !auth.getName().equals("anonymousUser") ? auth.getName() : null;
 		model.addAttribute("pseudoUserConnected", pseudoUserConnected);
 		
-		List<Article> articles = new ArrayList<Article>();
+		List<Article> articles = articleService.findAllActive();
 		// Get the statut
-		if(userType.equals("hasEncheri")) {	
-			Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
-			switch (statutEnchereAchat) {
-			case 2: 
-				articles = articleService.findAllWithEncheres(user.getId());
-				break;
-			case 3 : 
-				articles = articleService.findAllWithEncheresFinies(user.getId());
-				break;
-			default:
-				articles = articleService.findAllActive();
-				break;
+		if(auth != null && !auth.getName().equals("anonymousUser")) {
+			if(userType.equals("hasEncheri")) {	
+				Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
+				switch (statutEnchereAchat) {
+				case 2: 
+					articles = articleService.findAllWithEncheres(user.getId());
+					break;
+				case 3 : 
+					articles = articleService.findAllWithEncheresFinies(user.getId());
+					break;
+				default:
+					articles = articleService.findAllActive();
+					break;
+				}
+			}
+			
+			if(userType.equals("isVendeur")) {
+				Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
+				switch (statutEnchereVente) {
+				case 1: 
+					articles = articleService.findEnCoursFromVendeur(user.getId());
+					break;
+				case 2 : 
+					articles = articleService.findNonCommenceeFromVendeur(user.getId());
+					break;
+				default:
+					articles = articleService.findFiniesFromVendeur(user.getId());
+					break;
+				}
 			}
 		}
-		
-		if(userType.equals("isVendeur")) {
-			Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
-			switch (statutEnchereVente) {
-			case 1: 
-				articles = articleService.findEnCoursFromVendeur(user.getId());
-				break;
-			case 2 : 
-				articles = articleService.findNonCommenceeFromVendeur(user.getId());
-				break;
-			default:
-				articles = articleService.findFiniesFromVendeur(user.getId());
-				break;
-			}
-		}
-		
-		
-		
-//		List<Article> articles = articleService.findAllWithEncheres();
-
-		// If connected
-//		if (pseudoUserConnected != null) {
-//			Optional<Utilisateur> optionalUtilisateur = userService.findByPseudo(pseudoUserConnected);
-//			if (optionalUtilisateur.isPresent()) {
-//				Utilisateur userConnecte = optionalUtilisateur.get();
-//				
-//				articles = filterService.filterHomePageLogin(articles, categorieId, nom, statut, userConnecte, isVendeur, hasEncheri);
-//			}
-//		// If not connected
-//		} else {
-//			articles = filterService.filterHomePageLogout(articles, categorieId, nom, statut);
-//		}
 		model.addAttribute("userType", userType);
 		model.addAttribute("statutEnchereAchat", statutEnchereAchat);
 		model.addAttribute("statutEnchereVente", statutEnchereVente);

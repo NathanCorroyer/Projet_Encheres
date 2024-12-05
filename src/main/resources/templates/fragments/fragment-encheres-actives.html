@@ -16,7 +16,7 @@
 					<label for="categorie" class="col-sm-3 col-form-label" th:text="#{label.category}"></label>
 					<div class="col-sm-9">
 						<select id="categorie" name="categorie" class="form-select">
-							<option value="" th:selected="${categorieId == null}" "#{label.all}"></option>
+							<option value="" th:selected="${categorieId == null}" data-th-text="#{label.all}"></option>
 							<th:block th:each="categorie : ${categories}">
 								<option th:value="${categorie.id}"
 									th:text="${categorie.libelle}"></option>
@@ -74,7 +74,7 @@
 							<div>
 								<h5 class="card-title" data-th-text="${article.nom}"></h5>
 								<p class="mb-1">
-                  <span>th:text="#{label.price}"></span>
+                  <span th:text="#{label.price}"></span>
 									<span
 										data-th-text="${article.prix_vente > article.prix_initial ? article.prix_vente : article.prix_initial}"></span>
 									 <span th:text="#{label.point}"></span>
