@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
+
+<head>
+
+<title data-th-text="#{index.title}"></title>
+
+</head>
+
+
+<body>
+	<main id="contenuPage">
+		<!-- AJOUTER LE LISTING DES USERS -->
+		<div class="row">
+			<div class="card px-0 col-4">
+				<div class="card-header">
+					<span data-th-text="#{admin.gestion.users}"></span>
+				</div>
+				<div class="card-body">
+					<div>
+						<a data-th-href="@{/users/creer}" data-th-text="#{admin.creer.user}"></a>
+					</div>
+					<div>
+						<a data-th-href="@{/admin/users}" data-th-text="#{admin.liste.users}"></a>			
+					</div>
+				</div>
+			</div>
+			<div class="card px-0 col-4">
+				<div class="card-header">
+					<span data-th-text="#{admin.gestion.categories}"></span>
+				</div>
+				<div class="card-body">
+					<div>
+						<a data-th-href="@{/categories/creer}" data-th-text="#{admin.creer.categorie}"></a>
+					</div>
+					<div>
+						<a data-th-href="@{/admin/categories}" data-th-text="#{admin.liste.categories}"></a>			
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+</html>

@@ -12,5 +12,5 @@ public interface CategorieService {
 	public Categorie findByLibelle(String libelle);
 	public List<Categorie> findAll();
 	public void update(Categorie categorie);
-
+	public boolean delete(int id);
 }

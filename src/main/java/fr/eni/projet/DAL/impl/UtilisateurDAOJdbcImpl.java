@@ -30,6 +30,7 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	private final static String MODIFIER_ACTIVATION = "UPDATE UTILISATEURS SET actif = :actif WHERE no_utilisateur = :no_utilisateur";
 	private final static String FIND_BY_EMAIL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE email = :email";
 	private final static String FIND_PASSWORD = "SELECT mot_de_passe FROM UTILISATEURS WHERE pseudo = :pseudo";
+	private final static String DELETE_USER = "DELETE FROM UTILISATEURS WHERE no_utilisateur = :no_utilisateur";
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -126,13 +127,21 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	}
 
 	@Override
-	public void modifierActivation(Utilisateur utilisateur) {
+	public boolean modifierActivation(Utilisateur utilisateur) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("no_utilisateur", utilisateur.getId()).addValue("actif", !utilisateur.isActif());
 
-		namedParameterJdbcTemplate.update(MODIFIER_ACTIVATION, namedParameters);
+		return namedParameterJdbcTemplate.update(MODIFIER_ACTIVATION, namedParameters) > 0;
 	}
 
+	
+	@Override
+	public boolean delete(int id) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_utilisateur", id);
+		return namedParameterJdbcTemplate.update(DELETE_USER, namedParameters) > 0;
+	}
+	
 	class UtilisateurRowMapper implements RowMapper<Utilisateur> {
 
 		@Override

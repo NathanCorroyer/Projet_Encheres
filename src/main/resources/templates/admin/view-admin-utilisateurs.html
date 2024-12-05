@@ -4,6 +4,9 @@
 <head>
 
 <title data-th-text="#{index.title}"></title>
+<script th:inline="javascript">
+        
+</script>
 
 </head>
 
@@ -11,8 +14,36 @@
 <body>
 	<main id="contenuPage">
 		<!-- AJOUTER LE LISTING DES USERS -->
+		<table class="table table-striped table-responsive">
+			<thead>
+				<tr>
+					<th data-th-text="#{view-user-form.pseudo}"></th>
+					<th data-th-text="#{view-user-form.nom}"></th>
+					<th data-th-text="#{view-user-form.prenom}"></th>
+					<th data-th-text="#{view-user-form.email}"></th>
+					<th data-th-text="#{view-user-form.telephone}"></th>
+					<th data-th-text="#{admin.actions}"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-th-each="user : ${users}" th:id="'userRow_' + ${user.id}">
+					<td data-th-text="${user.pseudo}"></td>
+					<td data-th-text="${user.email}"></td>
+					<td data-th-text="${user.nom}"></td>
+					<td data-th-text="${user.prenom}"></td>
+					<td data-th-text="${user.telephone}"></td>
+					<td>
+						<a href="#" data-th-attr="data-id=${user.id}, data-actif=${user.actif}" data-th-text="${user.actif} ? #{admin.desactiver.user} : #{admin.activer.user}" class="btn btn-warning toggle-status me-2"></a>
+						<a href="#" data-th-attr="data-id=${user.id}" data-th-text="#{admin.supprimer.user}" class="delete-user btn btn-danger"></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 		
-		<a data-th-href="@{/users/creer}" th:text="#{link.createUser}"></a>
+
+		<a data-th-href="@{/users/creer}" data-th-text="#{admin.creer.user}" class="btn btn-secondary"></a>
+
 	</main>
+	
 </body>
 </html>
