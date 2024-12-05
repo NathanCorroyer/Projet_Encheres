@@ -306,6 +306,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("no_utilisateur", id);
 		return namedParameterJdbcTemplate.query(FIND_FINIES_VENDEUR, namedParameters, new ArticleRowMapper());
+	}
 	
 	@Override
 	public void deleteFromUser(int userId) {
