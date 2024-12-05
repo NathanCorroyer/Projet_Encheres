@@ -4,7 +4,6 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import fr.eni.projet.bll.CategorieService;
 import fr.eni.projet.bo.Categorie;
@@ -35,7 +36,11 @@ public class CategorieController {
 	private Locale locale;
 	
 	public CategorieController() {
-		this.locale = LocaleContextHolder.getLocale(); 
+		this.locale = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()) != null ? ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()) 
+                .getRequest()
+                .getLocale() : Locale.FRANCE;
+		
+		System.out.println("Current locale: " + locale);
 	}
 	@GetMapping("/creer")
 	public String creerCategorieGet(@ModelAttribute("categorie") Categorie categorie) {
@@ -87,6 +92,10 @@ public class CategorieController {
 	@PostMapping("/delete/{id}")
     @ResponseBody  // Indique que le résultat de la méthode doit être écrit dans la réponse HTTP
     public ResponseEntity<?> delete(@PathVariable("id") int id) {
+		locale = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()) != null ? ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()) 
+                .getRequest()
+                .getLocale() : Locale.FRANCE;
+		System.out.println(locale);
 		boolean isCategorieDeleted = categorieService.delete(id);
 		if(isCategorieDeleted) {
 			return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"message\": \"" + messageSource.getMessage("categorie.suppr.ok", null ,locale) +"\"}");

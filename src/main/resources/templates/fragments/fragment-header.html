@@ -24,7 +24,7 @@
 			<li class="nav-item" data-th-if="${#authorization.expression('isAuthenticated()')}">
 				<a data-th-href="@{/users/profil(pseudo = ${#authentication.name})}" data-th-text="#{frag-header.profil}" class="nav-link text-white"></a>
 			</li>
-			<li class="nav-item" data-th-if="${#authorization.expression('isAuthenticated()') && userSession.actif}"> 
+			<li class="nav-item" data-th-if="${#authorization.expression('isAuthenticated()') && userSession != null && userSession.actif}"> 
 				<a href="/articles/vendre" data-th-text="#{vendre}" class="nav-link text-white"></a>
 			</li>
 			<li class="nav-item" data-th-if="${#authorization.expression('hasRole(''ADMIN'')')}">
