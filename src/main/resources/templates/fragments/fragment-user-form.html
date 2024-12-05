@@ -37,6 +37,12 @@
 								<input type="email" class="form-control" data-th-field="*{email}" required />
 								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('email')}"></div>
 							</div>
+							<div>
+								<label class="form-label" data-th-text="#{view-user-form.credit}"></label>
+								<input type="text" class="form-control" data-th-field="*{credit}" required disabled />
+								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('credit')}"></div>
+							</div>
+							
 						</div>
 					</div>
 

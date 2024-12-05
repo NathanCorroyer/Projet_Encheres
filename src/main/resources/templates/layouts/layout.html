@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-th-fragment="layout-projet(titrePage, contenuPage, ressourcesSupp)">
+<html xmlns:th="http://www.thymeleaf.org"
+	data-th-fragment="layout-projet(titrePage, contenuPage, ressourcesSupp)">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,14 +12,19 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script data-th-src="@{/js/main.js}"></script>
+<script data-th-src="@{/js/card.js}"></script>
 
 <th:block data-th-replace="${ressourcesSupp}">
 
 </th:block>
+
 </head>
 <body>
+
 	<div data-th-replace="~{fragments/fragment-header :: frag-header}"></div>
 
+	<div data-th-replace="~{fragments/fragment-card :: fragment-card}"></div>
+	
 	<main data-th-replace="${contenuPage}"></main>
 
 	<div data-th-replace="~{fragments/fragment-footer :: frag-footer}"></div>
@@ -32,6 +38,14 @@
 			updateError : /*[[@{#{admin.update.error}}]]*/'Erreur lors de la mise à jour de l\'utilisateur'
 		};
 		/*]]>*/
+
+		// Method to reset the URL in the fragment-encheres-actives
+		function resetForm() {
+			document.getElementById("filterForm").reset();
+			document.getElementById("filterForm").submit();
+			window.history.pushState({}, document.title,
+					window.location.pathname);
+		}
 	</script>
 </body>
 </html>

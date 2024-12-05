@@ -112,7 +112,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	public List<Utilisateur> findAll() {
 		return utilisateurDAO.findAll();
 	}
-	
+
 	@Override
 	public String findPassword(String pseudo) {
 		return utilisateurDAO.findPassword(pseudo);
@@ -123,26 +123,26 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		// Validation complète avant mise à jour
 		BusinessException be = new BusinessException();
 		validerUtilisateurUpdate(utilisateur, isEmailModifie, be);
-		
+
 		if (!be.isValid()) {
 			throw be;
 		}
-		
+
 		adresseDAO.update(utilisateur.getAdresse());
 		// Mise à jour de l'utilisateur
 		utilisateurDAO.update(utilisateur);
 	}
-	
-	
+
 	@Override
-	public void updatePassword(Utilisateur utilisateur, String currentPassword, String newPassword, String confirmPassword) {
+	public void updatePassword(Utilisateur utilisateur, String currentPassword, String newPassword,
+			String confirmPassword) {
 		// Validation complète avant mise à jour
 		BusinessException be = new BusinessException();
 		utilisateur.setPassword(findPassword(utilisateur.getPseudo()));
 		validerPassword(newPassword, be);
 		validerConfirmPassword(newPassword, confirmPassword, be);
 		isSameAsCurrentPassword(currentPassword, utilisateur.getPassword(), be);
-		
+
 		if (!be.isValid()) {
 			throw be;
 		}
@@ -153,8 +153,8 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 	private boolean validerConfirmPassword(String newPassword, String confirmPassword, BusinessException be) {
 		boolean isValid = true;
-		
-		if(!newPassword.equals(confirmPassword)) {
+
+		if (!newPassword.equals(confirmPassword)) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_NON_IDENTIQUES);
 			isValid = false;
 		}
@@ -163,7 +163,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 	private boolean isSameAsCurrentPassword(String password, String currentPassword, BusinessException be) {
 		boolean isValid = PasswordEncoderFactories.createDelegatingPasswordEncoder().matches(password, currentPassword);
-		if(!isValid) {
+		if (!isValid) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_INCORRECT);
 		}
 		return isValid;
@@ -184,9 +184,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 	@Override
 	public void updateCredit(Utilisateur utilisateur) {
-		utilisateurDAO.updateCredit(utilisateur);		
+		utilisateurDAO.updateCredit(utilisateur);
 	}
-	
+
 	@Transactional
 	@Override
 	public boolean supprimerUser(int id) {
@@ -196,7 +196,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		rendreCredit(articles);
 		return enchereDAO.deleteEncheresFromUser(id) && utilisateurDAO.delete(id) ;
 	}
-	
+
 	/**
 	 * Valide un objet Utilisateur selon les règles métier définies.
 	 *
@@ -211,7 +211,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_NULL);
 			return false;
 		}
-		
+
 		isValid &= validerPseudo(utilisateur.getPseudo(), be);
 		isValid &= validerPseudoUnique(utilisateur.getPseudo(), be);
 		isValid &= validerPassword(utilisateur.getPassword(), be);
@@ -219,26 +219,21 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		isValid &= validerEmailUnique(utilisateur.getPseudo(), be);
 		isValid &= validerCredit(utilisateur.getCredit(), be);
 		isValid &= validerAdresse(utilisateur.getAdresse(), be);
-		
+
 		return isValid;
 	}
-	
-	
+
 	private boolean validerUtilisateurUpdate(Utilisateur utilisateur, boolean isEmailModifie, BusinessException be) {
 		boolean isValid = true;
-		
+
 		isValid &= validerEmail(utilisateur.getEmail(), be);
-		if(isEmailModifie) {
+		if (isEmailModifie) {
 			isValid &= validerEmailUnique(utilisateur.getPseudo(), be);
 		}
 		isValid &= validerCredit(utilisateur.getCredit(), be);
 		isValid &= validerAdresse(utilisateur.getAdresse(), be);
 		return isValid;
 	}
-
-
-
-	
 
 	public boolean validerPseudo(String pseudo, BusinessException be) {
 		boolean isValid = true;
@@ -252,10 +247,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PSEUDO_LONGUEUR);
 			isValid = false;
 		}
-		
+
 		return isValid;
 	}
-	
+
 	public boolean validerPseudoUnique(String pseudo, BusinessException be) {
 		boolean isValid = true;
 		Optional<Utilisateur> existingUserByPseudo = utilisateurDAO.findByPseudo(pseudo);
@@ -265,20 +260,20 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		}
 		return isValid;
 	}
+
 	private boolean validerPassword(String password, BusinessException be) {
 		boolean isValid = true;
 		if (password == null || password.isBlank()) {
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_BLANK);
 			isValid = false;
-		} else if (!password
-				.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[\\W_])[A-Za-z\\d\\W_]{8,20}$")) {
+		} else if (!password.matches("^(?=.*[A-Z])(?=.*[\\d])(?=.*[\\W_])[A-Za-z\\d\\W_]{8,20}$")) {
 			// Validation du format du mot de passe
 			be.add(BusinessCode.VALIDATION_UTILISATEUR_PASSWORD_FORMAT);
 			isValid = false;
 		}
 		return isValid;
 	}
-	
+
 	private boolean validerEmail(String email, BusinessException be) {
 		boolean isValid = true;
 		if (email == null || email.isBlank()) {
@@ -290,8 +285,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		}
 		return isValid;
 	}
-	
-	
+
 	private boolean validerEmailUnique(String email, BusinessException be) {
 		boolean isValid = true;
 		Optional<Utilisateur> existingUserByEmail = utilisateurDAO.findByEmail(email);
@@ -301,6 +295,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		}
 		return isValid;
 	}
+
 	private boolean validerAdresse(Adresse adresse, BusinessException be) {
 		boolean isValid = true;
 		if (adresse == null) {

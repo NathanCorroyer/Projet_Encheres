@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import fr.eni.projet.bll.CategorieService;
@@ -24,7 +26,7 @@ import fr.eni.projet.bo.Utilisateur;
 
 @Controller
 @RequestMapping("/admin")
-@SessionAttributes({"userSession"})
+
 public class AdminController {
 
 	@Autowired
@@ -39,6 +41,9 @@ public class AdminController {
 	private Locale locale;
 	public AdminController() {
 		this.locale = LocaleContextHolder.getLocale();
+
+	public AdminController(UtilisateurService utilisateurService) {
+		this.utilisateurService = utilisateurService;
 	}
 
 	@GetMapping("/dashboard")
@@ -52,7 +57,6 @@ public class AdminController {
 		model.addAttribute("users", users);
 		return "/admin/view-admin-utilisateurs";
 	}
-	
 	@GetMapping("/categories")
 	public String listerCategories(Model model) {
 		List<Categorie> categories = categorieService.findAll();
@@ -86,4 +90,5 @@ public class AdminController {
                     .body("Erreur lors de la suppression de l'utilisateur");
 		}
     }
+
 }
