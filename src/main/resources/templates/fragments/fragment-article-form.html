@@ -5,9 +5,11 @@
       data-th-object="${article}">
       
       <!-- Messages globaux de succès et d'erreur -->
-    <div th:if="${successMessage}" class="alert alert-success">
-        <p th:text="${successMessage}"></p>
-    </div>
+    <div th:if="${successMessage}" 
+     class="alert alert-success mx-auto text-center" 
+     style="max-width: 600px;">
+    <p th:text="${successMessage}" class="mb-0"></p>
+</div>
     <div th:if="${errorMessage}" class="alert alert-danger">
         <p th:text="${errorMessage}"></p>
     </div>
@@ -21,14 +23,14 @@
                         <div class="col-md-6">
                             <!-- Nom de l'article -->
                             <div class="mb-3">
-                                <label for="nom_article" class="form-label">Nom de l'article :</label>
+                                <label for="nom_article" class="form-label" th:text="#{label.nomArticle}"></label>
                                 <input type="text" id="nom_article" name="nom" class="form-control" data-th-value="${article.nom}" required />
                                 <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('nom')}"></div>
                             </div>
 
                             <!-- Catégorie -->
                             <div class="mb-3">
-                                <label for="categorie" class="form-label">Catégorie :</label>
+                                <label for="categorie" class="form-label" th:text="#{label.category}"></label>
                                 <select id="categorie" name="categorie" class="form-control" th:field="*{categorie.id}" required>
                                     <option th:each="categorie : ${categories}" th:value="${categorie.id}" th:text="${categorie.libelle}"></option>
                                 </select>
@@ -37,14 +39,14 @@
 
                             <!-- Description -->
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description :</label>
+                                <label for="description" class="form-label" th:text="#{label.description}"></label>
                                 <textarea id="description" name="description" class="form-control" required data-th-text="${article.description}"></textarea>
                                 <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('description')}"></div>
                             </div>
 
                             <!-- Adresse de retrait -->
                             <div class="mb-3">
-                                <label for="retrait" class="form-label">Adresse de retrait :</label>
+                                <label for="retrait" class="form-label" th:text="#{label.collectionAdress}"></label>
                                 <select id="retrait" name="retrait" class="form-control" th:field="*{adresse.id}" required>
                                     <optgroup label="Adresses personnelles">
                                         <option th:each="adresse : ${adressesUtilisateur}" th:value="${adresse.id}" th:text="${adresse.rue}" selected></option>
@@ -61,21 +63,21 @@
                         <div class="col-md-6">
                             <!-- Mise à prix -->
                             <div class="mb-3">
-                                <label for="prix_initial" class="form-label">Mise à prix :</label>
+                                <label for="prix_initial" class="form-label" th:text="#{label.initialPrice}"></label>
                                 <input type="number" id="prix_initial" name="prix_initial" class="form-control" data-th-value="${article.prix_initial}" required />
                                 <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('prix_initial')}"></div>
                             </div>
 
                             <!-- Date de début d'enchère -->
                             <div class="mb-3">
-                                <label for="date_debut_enchere" class="form-label">Date de début de l'enchère :</label>
+                                <label for="date_debut_enchere" class="form-label" th:text="#{label.auctionStartDate}"></label>
                                 <input type="datetime-local" id="date_debut_enchere" name="date_debut" class="form-control" data-th-value="${article.date_debut}" required />
                                 <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('date_debut')}"></div>
                             </div>
 
                             <!-- Date de fin d'enchère -->
                             <div class="mb-3">
-                                <label for="date_fin_enchere" class="form-label">Date de fin de l'enchère :</label>
+                                <label for="date_fin_enchere" class="form-label" th:text="#{label.auctionEndDate}"></label>
                                 <input type="datetime-local" id="date_fin_enchere" name="date_fin" class="form-control" data-th-value="${article.date_fin}" required />
                                 <div data-th-replace="~{fragments/errors/fragment-error :: frag-error('nom')}"></div>
                             </div>
@@ -86,8 +88,8 @@
                     <div class="row mt-4">
                         <div class="col-md-4">
                             <button type="submit" class="btn btn-primary w-100">
-                                <span th:if="${article.date_debut != null and article.date_debut.isAfter(T(java.time.LocalDateTime).now())}">Modifier</span>
-                                <span th:if="${article.date_debut == null or article.date_debut.isBefore(T(java.time.LocalDateTime).now())}">Suivant</span>
+                                <span th:if="${article.date_debut != null and article.date_debut.isAfter(T(java.time.LocalDateTime).now())}" th:text="#{label.modify}"></span>
+                                <span th:if="${article.date_debut == null or article.date_debut.isBefore(T(java.time.LocalDateTime).now())}" th:text="#{label.next}"></span>
                             </button>
                         </div>
 
@@ -97,11 +99,11 @@
    role="button" 
    id="btn-supprimer"
    onclick="return confirmerSuppression();"
-   >Annuler la vente</a>
+   th:text="#{label.cancelSale}"></a>
                         </div>
 
                         <div class="col-md-4">
-                            <a href="/" class="btn btn-danger w-100">Annuler</a>
+                            <a href="/" class="btn btn-danger w-100" th:text="#{label.cancel}"></a>
                         </div>
                     </div>
                 </fieldset>

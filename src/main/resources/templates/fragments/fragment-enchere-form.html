@@ -11,14 +11,14 @@
     <div th:if="${errorMessage}" class="alert alert-danger">
         <p th:text="${errorMessage}"></p>
     </div>
-	<div class="row" data-th-if="${!isOwner && encherisseur.pseudo != utilisateurConnecte.pseudo && article.statut_enchere == 1}">
+	<div class="row">
 		<input type="hidden" data-th-field="*{article.id}"/>
 	    <div>
 	    	<label data-th-text="#{form.enchere.montant}" for="montant" class="form-label"></label>
 	    	<input type="number" data-th-min="${prix_mini}" data-th-max="${utilisateurConnecte.credit}" name="montant" data-th-field="*{montant}" data-th-value="${prix_mini}" class="form-control"/>
 	    </div>
 	    <div>
-	    	<button type="submit" class="btn btn-primary mt-2">Enchérir</button>
+	    	<button type="submit" class="btn btn-primary mt-2" th:text="#{label.bid}"></button>
 	    </div>
 	</div>
 </form>

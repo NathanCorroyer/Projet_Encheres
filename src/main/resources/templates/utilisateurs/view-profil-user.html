@@ -2,28 +2,32 @@
 <html xmlns:th="http://www.thymeleaf.org" data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
 
 <head>
-
-<title data-th-text="#{index.title}"></title>
-
-</head>
-
-
+    <meta charset="UTF-8">
+    <title data-th-text="#{index.title}"></title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}" />
+    
 <body>
-	<main id="contenuPage">
-		<!-- AJOUTER LE LISTING DES USERS -->
-			<h1 data-th-text="#{view-profil-form.h1}"></h1>
-			<div th:if="${message}">
-			    <div class="alert alert-success" th:text="${message}"></div>
-			</div>
-			
-			<div th:if="${error}">
-				<div class="alert alert-danger" th:text="${error}"></div>
-			</div>
-			<p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}"></p>
-			<form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/profil', text_button = #{view-profil-form.btn}, 
-				disabled = ${#authentication.name != '' && #authentication.name != user.pseudo }, visible = ${#authentication.name != '' && #authentication.name == user.pseudo }, creation = false )}">
-			</form>
-			
-	</main>
+    <main id="contenuPage">
+        <!-- Affichage du titre -->
+        <h1 data-th-text="#{view-profil-form.h1}"></h1>
+
+        <!-- Affichage des messages de succès ou d'erreur -->
+        <div th:if="${messageKey}">
+            <div class="alert alert-success mx-auto text-center" 
+     style="max-width: 600px;" th:text="#{${messageKey}}"></div>
+        </div>
+        
+        <div th:if="${error}">
+            <div class="alert alert-danger" th:text="${error}"></div>
+        </div>
+
+        <p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}"></p>
+
+        <!-- Formulaire d'édition du profil utilisateur -->
+        <form data-th-replace="~{fragments/fragment-user-form :: frag-user-form(action = '/users/profil', text_button = #{view-profil-form.btn}, 
+            disabled = ${#authentication.name != '' && #authentication.name != user.pseudo }, visible = ${#authentication.name != '' && #authentication.name == user.pseudo }, creation = false )}">
+            
+        </form>
+    </main>
 </body>
 </html>

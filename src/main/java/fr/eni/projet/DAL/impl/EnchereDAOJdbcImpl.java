@@ -31,6 +31,7 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 	private final static String INSERT = "INSERT INTO ENCHERES(date_enchere, montant_enchere, no_utilisateur, no_article) VALUES (:date_enchere, :montant_enchere, :no_utilisateur, :no_article) ";
 //	private final static String FIND_ALL_FROM_ARTICLE = "";
 	private final static String FIND_BIGGEST_FROM_ARTICLE = "SELECT TOP 1 date_enchere, montant_enchere, no_utilisateur, no_article FROM ENCHERES WHERE no_article = :id_article ORDER BY montant_enchere DESC";
+	private final static String DELETE_FROM_USER = "DELETE FROM ENCHERES WHERE no_utilisateur = :no_utilisateur";
 		
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -100,5 +101,13 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 			return enchere;
 		}
 		
+	}
+
+
+	@Override
+	public boolean deleteEncheresFromUser(int id) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+		namedParameters.addValue("no_utilisateur", id);
+		return namedParameterJdbcTemplate.update(DELETE_FROM_USER, namedParameters) > 0;
 	}
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
+
+<head>
+
+<title data-th-text="#{admin.gestion.categories}"></title>
+<script th:inline="javascript">
+        
+</script>
+
+</head>
+
+
+<body>
+	<main id="contenuPage">
+		<!-- AJOUTER LE LISTING DES categorieS -->
+		<table class="table table-striped table-responsive">
+			<thead>
+				<tr>
+					<th data-th-text="#{form-categorie-libelle}"></th>
+					<th data-th-text="#{admin.actions}"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-th-each="categorie : ${categories}" th:id="'categorieRow_' + ${categorie.id}">
+					<td data-th-text="${categorie.libelle}"></td>
+					<td>
+						<a data-th-href="@{'/categories/modifier/' + ${categorie.id}}" data-th-text="#{modifier}" class="btn btn-warning modif-categorie me-2"></a>
+						<a href="#" data-th-attr="data-id=${categorie.id}" data-th-text="#{supprimer}" class="delete-categorie btn btn-danger"></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<a data-th-href="@{/categories/creer}" data-th-text="#{admin.creer.categorie}" class="btn btn-secondary"></a>
+		
+	</main>
+	
+</body>
+</html>

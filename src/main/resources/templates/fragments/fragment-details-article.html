@@ -14,19 +14,19 @@
 						<!-- Première colonne : Détails textuels -->
 						<div class="col-md-6 col-sm-12 mb-3">
 							<p>
-								<strong>Article : </strong>
+								<strong th:text="#{label.nomArticle}"></strong>
 								<span th:text="${article.nom}"></span>
 							</p>
 							<p>
-								<strong>Catégorie : </strong>
+								<strong th:text="#{label.category}"></strong>
 								<span th:text="${article.categorie.libelle}"></span>
 							</p>
 							<p>
-								<strong>Description : </strong>
+								<strong th:text="#{label.description}"></strong>
 								<span th:text="${article.description}"></span>
 							</p>
 							<p>
-								<strong>Retrait : </strong>
+								<strong th:text="#{label.collectionAdress}"></strong>
 								<span th:text="${article.adresse.rue}"></span>
 								,
 								<span th:text="${article.adresse.code_postal}"></span>
@@ -34,23 +34,25 @@
 								<span th:text="${article.adresse.ville}"></span>
 							</p>
 							<p>
-								<strong>Vendeur : </strong>
-								<span th:text="${pseudo}"></span>
+								<strong th:text="#{label.seller}"></strong>
+								<a data-th-href="${'/users/profil?pseudo=' + article.proprietaire.pseudo}">
+                                <span data-th-text="${article.proprietaire.pseudo}"></span>
+                            </a>
 							</p>
 						</div>
 
 						<!-- Deuxième colonne : Détails supplémentaires -->
 						<div class="col-md-6 col-sm-12 mb-3">
 							<p>
-								<strong>Mise à prix : </strong>
+								<strong th:text="#{label.initialPrice}"></strong>
 								<span th:text="${article.prix_initial}"></span>
 							</p>
 							<p>
-								<strong>Meilleure offre :</strong> <span th:text="${enchere.montant - 1}"></span><span data-th-if="${encherisseur.id != -1}"> par <span th:text="${encherisseur.pseudo}"></span></span>
+								<strong th:text="#{label.bestOffer}"></strong> <span th:text="${enchere.montant - 1}"></span><span data-th-if="${encherisseur.id != -1}"> <span th:text="#{label.by}"></span><span th:text="${encherisseur.pseudo}"></span></span>
 								
 							</p>
 							<p>
-								<strong>Fin de l'enchère : </strong>
+								<strong th:text="#{label.auctionEndDate}"></strong>
 								<span th:text="${#temporals.format(article.date_fin,'dd/MM/yyyy')}"></span>
 							</p>
 
@@ -60,28 +62,76 @@
 							</div>
 						</div>
 					</div>
-					<div th:replace="~{fragments/fragment-enchere-form :: frag-enchere-form(action = '/encheres/creer')}"></div>
+					<div data-th-if="${!isOwner && encherisseur.pseudo != userSession.pseudo && article.statut_enchere.value == 1 && userSession.actif}">
+						<div th:replace="~{fragments/fragment-enchere-form :: frag-enchere-form(action = '/encheres/creer')}"></div>
+					</div>
 					<!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->
 					<div class="d-flex justify-content-center mt-4">
 						<!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->
-						<div th:if="${isOwner && article.statut_enchere == 0}" class="w-50">
-							<a class="btn btn-primary w-100" th:href="@{/articles/editer/{id}(id=${article.id})}">Modifier</a>
+						<div th:if="${isOwner && article.statut_enchere.value == 0}" class="w-50">
+
+							<a class="btn btn-primary w-100" th:href="@{/articles/editer/{id}(id=${article.id})}" th:text="#{label.modify}"></a>
+
 						</div>
 						
 						<!-- Bouton Retrait effectué affiché uniquement si l'article est clôturé et qu'il y a au moins une enchère -->
                     	<div th:if="${isOwner && showRetraitEffectue}" class="w-50 ms-2">
-                         <a href="#" class="btn btn-success w-100">Retrait effectué</a>
-                    	</div>
+    <a href="#" id="btn-retrait-effectue" th:data-id="${article.id}" class="btn btn-success w-100" th:text="#{label.withdrawalCompleted}"></a>
+</div>
 						
 						<!-- Bouton Retour à l'accueil affiché dans tous les cas -->
 						<div class="w-50 ms-2">
-							<a href="/" class="btn btn-secondary w-100">Retour à l'accueil</a>
+							<a href="/" class="btn btn-secondary w-100" th:text="#{label.home}"></a>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+		<script>
+		$(document).ready(function() {
+		    console.log("Le script jQuery est bien chargé");
 
+		    // Vérifiez si le bouton existe
+		    const retraitButton = $("#btn-retrait-effectue");
+		    if (retraitButton.length === 0) {
+		        console.log("Le bouton 'Retrait effectué' n'a pas été trouvé.");
+		        return; // Si le bouton n'existe pas, arrêter l'exécution du script
+		    }
+
+		    retraitButton.on("click", function(event) {
+		        event.preventDefault(); // Empêcher la navigation par défaut
+
+		        // Confirmation de l'action
+		        const confirmation = confirm("Voulez-vous confirmer le retrait et créditer les points ?");
+		        if (confirmation) {
+		            // Récupérer l'ID de l'article depuis l'attribut data-id
+		            const articleId = retraitButton.data("id");
+
+		            if (!articleId) {
+		                console.log("ID de l'article non trouvé.");
+		                return;
+		            }
+
+		            console.log("Article ID:", articleId); // Vérification dans la console
+
+		            // Envoi de la requête AJAX au serveur avec jQuery
+		            $.ajax({
+		                url: "/users/retrait/" + articleId,  // Utilisation de l'URL avec PathVariable
+		                method: "POST",
+		                success: function(response) {
+		                    alert("Les points ont été crédités avec succès !");
+		                    window.location.href = "/"; // Redirection vers l'accueil
+		                },
+		                error: function(xhr, status, error) {
+		                    console.error("Erreur lors de la requête :", error);
+		                    alert("Une erreur est survenue lors du traitement. Veuillez réessayer.");
+		                }
+		            });
+		        }
+		    });
+		});
+
+</script>
+	</div>
 </body>
 </html>

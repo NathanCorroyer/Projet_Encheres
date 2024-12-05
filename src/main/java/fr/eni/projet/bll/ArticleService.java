@@ -33,7 +33,9 @@ public interface ArticleService {
 
 	List<Article> findByUtilisateur(int utilisateurId);
 
-	public void uploadImage(String fileName, int idArticle);
+	List<Article> filterByCategorieAndNom(List<Article> articles, Long categorieId, String nom);
+
+  public void uploadImage(String fileName, int idArticle);
 
 	public void cloturerEncheresDuJour();
 
@@ -48,5 +50,7 @@ public interface ArticleService {
 	public List<Article> findNonCommenceeFromVendeur(int id);
 
 	public List<Article> findFiniesFromVendeur(int id);
+  
+	public void marquerCommeLivre(int id);
 
 }

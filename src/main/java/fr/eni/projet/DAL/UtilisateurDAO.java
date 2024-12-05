@@ -14,13 +14,18 @@ public interface UtilisateurDAO {
 	public Optional<Utilisateur> findByPseudo(String pseudo);
 
 	public List<Utilisateur> findAll();
+
 	public String findPassword(String pseudo);
 
 	public void update(Utilisateur utilisateur);
+
 	public void updatePassword(Utilisateur utilisateur);
+
 	public void updateCredit(Utilisateur utilisateur);
-	
-	public void modifierActivation(Utilisateur utilisateur);
+
+	public boolean modifierActivation(Utilisateur utilisateur);
 
 	public Optional<Utilisateur> findByEmail(String email);
+	
+	public boolean delete(int id);
 }

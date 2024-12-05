@@ -14,6 +14,6 @@ public interface CategorieDAO {
 	public List<Categorie> findAll();
 
 	public void update(Categorie categorie);
-	public void delete(int id);
+	public boolean delete(int id);
 
 }

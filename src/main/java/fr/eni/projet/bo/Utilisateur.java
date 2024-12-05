@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Size;
 public class Utilisateur {
 
 	private int id;
+
 	@NotBlank
 	@NotNull
 	@Size(max = 30)
@@ -47,7 +48,7 @@ public class Utilisateur {
 	@NotBlank
 	@NotNull
 	@Size(min = 8, max = 20, message = "{validation.utilisateur.password.format}")
-	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[\\d])(?=.*[\\W_])[A-Za-z\\d\\W_]{8,20}$", message = "{validation.utilisateur.password.format}" )
+  @Pattern(regexp = "^(?=.*[A-Z])(?=.*[\\d])(?=.*[\\W])[A-Za-z\\d\\W]{8,20}$", message = "{validation.utilisateur.password.format}")
 	private String password;
 
 	@NotNull
@@ -62,7 +63,7 @@ public class Utilisateur {
 	// ----------------------- CONSTRUCTEURS -----------------------------------
 	public Utilisateur() {
 	}
-	
+
 	public Utilisateur(int id) {
 		this.id = id;
 	}
@@ -201,8 +202,5 @@ public class Utilisateur {
 				+ email + ", telephone=" + telephone + ", adresse =  " + adresse + " password=" + password + ", credit="
 				+ credit + ", actif=" + actif + ", code_role=" + code_role + "]";
 	}
-
-		
-	
 
 }

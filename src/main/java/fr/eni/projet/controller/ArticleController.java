@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -40,6 +41,7 @@ import fr.eni.projet.exceptions.BusinessException;
 import fr.eni.projet.service.FileUploadService;
 
 @Controller
+@SessionAttributes({ "userSession" })
 public class ArticleController {
 
 	private ArticleService articleService;
@@ -166,7 +168,7 @@ public class ArticleController {
 			@RequestParam(value = "userType", required = false, defaultValue = "hasEncheri") String userType,
 			Model model) {		
 		
-		// Get the categories to show in the select
+
 		List<Categorie> categories = articleService.findAllCategories();
 		model.addAttribute("categories", categories);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

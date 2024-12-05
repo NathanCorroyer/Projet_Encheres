@@ -21,26 +21,24 @@
 </div>
 		
 		<ul class="navbar-nav me-auto mb-2 mb-lg-0" style="position:absolute; right:0;">
-			<li class="nav-item">
-				<a href="" data-th-text="#{frag-header.articles}" class="nav-link text-white"></a>
-			</li>
-			<li class="nav-item" data-th-if="${#authorization.expression('hasRole(''ADMIN'')')}">
-				<a href="/admin/users" data-th-text="#{frag-header.users}" class="nav-link text-white"></a>
-			</li>
 			<li class="nav-item" data-th-if="${#authorization.expression('isAuthenticated()')}">
 				<a data-th-href="@{/users/profil(pseudo = ${#authentication.name})}" data-th-text="#{frag-header.profil}" class="nav-link text-white"></a>
 			</li>
-			<!-- TODO Ajouter un contrôle sur la connexion de l'utilisateur	 -->
+			<li class="nav-item" data-th-if="${#authorization.expression('isAuthenticated()') && userSession != null && userSession.actif}"> 
+				<a href="/articles/vendre" data-th-text="#{vendre}" class="nav-link text-white"></a>
+			</li>
+			<li class="nav-item" data-th-if="${#authorization.expression('hasRole(''ADMIN'')')}">
+				<a href="/admin/dashboard" data-th-text="#{frag-header.admin}" class="nav-link text-white"></a>
+			</li>
 			<li class="nav-item" data-th-if="${#authorization.expression('isAuthenticated()')}"> 
 				<a href="/logout" data-th-text="#{logout}" class="nav-link text-white"></a>
 			</li>
 			<li class="nav-item" data-th-if="${!#authorization.expression('isAuthenticated()')}"> 
 				<a href="/login" data-th-text="#{login}" class="nav-link text-white"></a>
 			</li>
-			<li class="nav-item" data-th-if="${#authorization.expression('isAuthenticated()')}"> 
-				<a href="/articles/vendre" data-th-text="#{vendre}" class="nav-link text-white"></a>
-			</li>
 		</ul>
 
 	</nav>
+	
 </header>
+
