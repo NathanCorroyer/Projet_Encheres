@@ -31,14 +31,12 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	private final static String FIND_BY_EMAIL = "SELECT no_utilisateur, pseudo, nom, prenom, email, telephone, no_adresse, credit, actif, code_role FROM UTILISATEURS WHERE email = :email";
 	private final static String FIND_PASSWORD = "SELECT mot_de_passe FROM UTILISATEURS WHERE pseudo = :pseudo";
 	private final static String DELETE_USER = "DELETE FROM UTILISATEURS WHERE no_utilisateur = :no_utilisateur";
-	
-	
+
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Override
 	public void create(Utilisateur utilisateur) {
-
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -96,9 +94,8 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	@Override
 	public void update(Utilisateur utilisateur) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("nom", utilisateur.getNom())
-				.addValue("prenom", utilisateur.getPrenom()).addValue("email", utilisateur.getEmail())
-				.addValue("telephone", utilisateur.getTelephone())
+		namedParameters.addValue("nom", utilisateur.getNom()).addValue("prenom", utilisateur.getPrenom())
+				.addValue("email", utilisateur.getEmail()).addValue("telephone", utilisateur.getTelephone())
 				.addValue("no_utilisateur", utilisateur.getId());
 
 		namedParameterJdbcTemplate.update(UPDATE, namedParameters);
@@ -107,30 +104,28 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 	@Override
 	public void updatePassword(Utilisateur utilisateur) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("password", utilisateur.getPassword())
-				.addValue("no_utilisateur", utilisateur.getId());
+		namedParameters.addValue("password", utilisateur.getPassword()).addValue("no_utilisateur", utilisateur.getId());
 
 		namedParameterJdbcTemplate.update(UPDATE_PASSWORD, namedParameters);
-		
+
 	}
-	
+
 	@Override
 	public void updateCredit(Utilisateur utilisateur) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("credit", utilisateur.getCredit())
-		.addValue("no_utilisateur", utilisateur.getId());
-		
+		namedParameters.addValue("credit", utilisateur.getCredit()).addValue("no_utilisateur", utilisateur.getId());
+
 		namedParameterJdbcTemplate.update(UPDATE_CREDIT, namedParameters);
-		
+
 	}
-	
+
 	@Override
 	public String findPassword(String pseudo) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("pseudo", pseudo);
 		return namedParameterJdbcTemplate.queryForObject(FIND_PASSWORD, namedParameters, String.class);
 	}
-	
+
 	@Override
 	public boolean modifierActivation(Utilisateur utilisateur) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
@@ -171,7 +166,5 @@ public class UtilisateurDAOJdbcImpl implements UtilisateurDAO {
 			return user;
 		}
 	}
-
-
 
 }

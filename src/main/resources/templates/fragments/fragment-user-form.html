@@ -1,27 +1,38 @@
-<form xmlns:th="http://www.thymeleaf.org" data-th-fragment="frag-user-form(action)" data-th-action="${action}" method="post" data-th-object="${user}">
+<form xmlns:th="http://www.thymeleaf.org"
+	data-th-fragment="frag-user-form(action)" data-th-action="${action}"
+	method="post" data-th-object="${user}">
 
 	<div class="container mt-5">
 		<div class="card mx-auto" style="max-width: 800px;">
 			<div class="card-body">
+			<p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}"></p>
 				<fieldset data-th-disabled="${disabled}">
 					<input type="hidden" data-th-field="*{id}">
 					<div class="row mb-3">
 						<!-- Première colonne -->
 						<div class="col-md-6">
 							<div>
-								<label class="form-label" data-th-text="#{view-user-form.pseudo}"></label>
-								<input type="text" class="form-control" data-th-field="*{pseudo}" th:disabled="${!creation}" required />
-								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('pseudo')}"></div>
+								<label class="form-label"
+									data-th-text="#{view-user-form.pseudo}"></label> <input
+									type="text" class="form-control" data-th-field="*{pseudo}"
+									th:disabled="${!creation}" required />
+								<div
+									data-th-replace="~{fragments/errors/fragment-error :: frag-error('pseudo')}"></div>
 							</div>
 							<div>
-								<label class="form-label" data-th-text="#{view-user-form.prenom}"></label>
-								<input type="text" class="form-control" data-th-field="*{prenom}" required />
-								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('prenom')}"></div>
+								<label class="form-label"
+									data-th-text="#{view-user-form.prenom}"></label> <input
+									type="text" class="form-control" data-th-field="*{prenom}"
+									required />
+								<div
+									data-th-replace="~{fragments/errors/fragment-error :: frag-error('prenom')}"></div>
 							</div>
 							<div>
-								<label class="form-label" data-th-text="#{view-user-form.telephone}"></label>
-								<input type="tel" class="form-control" data-th-field="*{telephone}" />
-								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('telephone')}"></div>
+								<label class="form-label"
+									data-th-text="#{view-user-form.telephone}"></label> <input
+									type="tel" class="form-control" data-th-field="*{telephone}" />
+								<div
+									data-th-replace="~{fragments/errors/fragment-error :: frag-error('telephone')}"></div>
 							</div>
 						</div>
 
@@ -29,20 +40,27 @@
 						<div class="col-md-6">
 							<div>
 								<label class="form-label" data-th-text="#{view-user-form.nom}"></label>
-								<input type="text" class="form-control" data-th-field="*{nom}" required />
-								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('nom')}"></div>
+								<input type="text" class="form-control" data-th-field="*{nom}"
+									required />
+								<div
+									data-th-replace="~{fragments/errors/fragment-error :: frag-error('nom')}"></div>
 							</div>
 							<div>
 								<label class="form-label" data-th-text="#{view-user-form.email}"></label>
-								<input type="email" class="form-control" data-th-field="*{email}" required />
-								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('email')}"></div>
+								<input type="email" class="form-control"
+									data-th-field="*{email}" required />
+								<div
+									data-th-replace="~{fragments/errors/fragment-error :: frag-error('email')}"></div>
 							</div>
 							<div>
-								<label class="form-label" data-th-text="#{view-user-form.credit}"></label>
-								<input type="text" class="form-control" data-th-field="*{credit}" required disabled />
-								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('credit')}"></div>
+								<label class="form-label"
+									data-th-text="#{view-user-form.credit}"></label> <input
+									type="text" class="form-control" data-th-field="*{credit}"
+									required disabled />
+								<div
+									data-th-replace="~{fragments/errors/fragment-error :: frag-error('credit')}"></div>
 							</div>
-							
+
 						</div>
 					</div>
 
@@ -56,16 +74,23 @@
 						</div>
 						<!-- Champs rue, ville et code postal alignés horizontalement -->
 						<div class="col-md-4">
-							<input type="text" class="form-control" data-th-field="*{adresse.rue}" required placeholder="Rue" />
-							<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.rue')}"></div>
+							<input type="text" class="form-control"
+								data-th-field="*{adresse.rue}" required placeholder="Rue" />
+							<div
+								data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.rue')}"></div>
 						</div>
 						<div class="col-md-4">
-							<input type="text" class="form-control" data-th-field="*{adresse.code_postal}" required placeholder="Code Postal" />
-							<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.code_postal')}"></div>
+							<input type="text" class="form-control"
+								data-th-field="*{adresse.code_postal}" required
+								placeholder="Code Postal" />
+							<div
+								data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.code_postal')}"></div>
 						</div>
 						<div class="col-md-4">
-							<input type="text" class="form-control" data-th-field="*{adresse.ville}" required placeholder="Ville" />
-							<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.ville')}"></div>
+							<input type="text" class="form-control"
+								data-th-field="*{adresse.ville}" required placeholder="Ville" />
+							<div
+								data-th-replace="~{fragments/errors/fragment-error :: frag-error('adresse.ville')}"></div>
 						</div>
 					</div>
 
@@ -75,86 +100,93 @@
 						<div class="col-md-6">
 							<div class="mb-3">
 								<label class="form-label" data-th-text="#{view-user-form.pwd}"></label>
-								<input type="password" id="password" class="form-control" data-th-field="*{password}" required />
-								<div data-th-replace="~{fragments/errors/fragment-error :: frag-error('password')}"></div>
+								<input type="password" id="password" class="form-control"
+									data-th-field="*{password}" required />
+								<div
+									data-th-replace="~{fragments/errors/fragment-error :: frag-error('password')}"></div>
 							</div>
 						</div>
 
 						<!-- Champ confirmation mot de passe -->
 						<div class="col-md-6">
 							<div class="mb-3">
-								<label class="form-label" data-th-text="#{view-user-form-confirmer.pwd}"></label>
-								<input type="password" id="confirmPassword" class="form-control" required />
+								<label class="form-label"
+									data-th-text="#{view-user-form-confirmer.pwd}"></label> <input
+									type="password" id="confirmPassword" class="form-control"
+									required />
 								<!-- Message d'erreur si les mots de passe ne correspondent pas -->
-								<small id="passwordError" class="form-text text-danger" style="display: none;" data-th-text="#{validation.utilisateur.password.erreur.corresp}"></small>
+								<small id="passwordError" class="form-text text-danger"
+									style="display: none;"
+									data-th-text="#{validation.utilisateur.password.erreur.corresp}"></small>
 								<!-- Message de confirmation si les mots de passe correspondent -->
-								<small id="passwordMatch" class="form-text text-success" style="display: none;" data-th-text="#{validation.utilisateur.password.corresp}"></small>
+								<small id="passwordMatch" class="form-text text-success"
+									style="display: none;"
+									data-th-text="#{validation.utilisateur.password.corresp}"></small>
 							</div>
 						</div>
 					</div>
 				</fieldset>
 				<!-- Bouton submit -->
-					<div data-th-class="${visible} ? 'row mt-4' : 'row mt-2'">
-						<div class="col-md-4" data-th-if="${visible}">
-							<button type="submit" class="btn btn-primary w-100" data-th-text="${text_button}"></button>
-						</div>
-						<div class="col-md-4" data-th-if="${!creation && visible}">
-							<a data-th-href="@{/users/modifiermdp(pseudo=*{pseudo})}" class="btn btn-secondary w-100" data-th-text="#{view-user-form-modifier.pwd}"></a>
-						</div>
-						<div data-th-class="${visible} ? col-md-4 : col">
-							<a href="/" class="btn btn-danger w-100" data-th-text="${visible} ? #{view-user-form-annuler.btn} : Retour"></a>
+				<div class="row mt-4"
+					data-th-class="${visible} ? 'row mt-4' : 'row mt-2'">
+					<div class="d-flex gap-3 justify-content-between w-100">
+						<!-- Bouton Créer/Modifier -->
+						<div class="flex-fill" data-th-if="${visible}">
+							<button type="submit" class="btn btn-primary w-100"
+								data-th-text="${text_button}"></button>
 						</div>
 
+						<!-- Bouton Modifier mot de passe -->
+						<div class="flex-fill" data-th-if="${!creation && visible}">
+							<a data-th-href="@{/users/modifiermdp(pseudo=*{pseudo})}"
+								class="btn btn-secondary w-100"
+								data-th-text="#{view-user-form-modifier.pwd}"> </a>
+						</div>
+
+						<!-- Bouton Annuler/Retour -->
+						<div class="flex-fill">
+							<a href="/" class="btn btn-danger w-100"
+								data-th-text="${visible} ? #{view-user-form-annuler.btn} : Retour">
+							</a>
+						</div>
 					</div>
+				</div>
+
 			</div>
 		</div>
+		<script>
+		document.addEventListener('DOMContentLoaded', function () {
+		    function validatePasswords() {
+		        var password = document.getElementById("password").value;
+		        var confirmPassword = document.getElementById("confirmPassword");
+		        var passwordError = document.getElementById("passwordError");
+
+		        // Vérification de la correspondance des mots de passe
+		        if (password === confirmPassword.value) {
+		            passwordError.style.display = "none"; // Cache le message d'erreur
+		            confirmPassword.style.borderColor = "green"; // Bordure verte si les mots de passe correspondent
+		        } else {
+		            passwordError.style.display = "block"; // Affiche le message d'erreur
+		            confirmPassword.style.borderColor = "red"; // Bordure rouge si les mots de passe ne correspondent pas
+		            confirmPassword.style.border = "3px solid red"; // Bordure rouge
+		        }
+		    }
+
+		    // Vérifie la correspondance des mots de passe lors de la saisie
+		    document.getElementById("confirmPassword").addEventListener("input", function () {
+		        validatePasswords(); // Vérifie à chaque modification du champ de confirmation
+		    });
+
+		    // Optionnel : réinitialise la bordure si le champ de mot de passe est modifié
+		    document.getElementById("password").addEventListener("input", function () {
+		        // Réinitialise la bordure et le message d'erreur
+		        document.getElementById("confirmPassword").style.borderColor = ""; 
+		        document.getElementById("passwordError").style.display = "none"; 
+		    });
+		});
+
+</script>
 	</div>
 </form>
-<script>
-	document
-			.addEventListener(
-					'DOMContentLoaded',
-					function() {
-						// Fonction de validation des mots de passe
-						function validatePasswords() {
-							var password = document.getElementById("password").value;
-							var confirmPassword = document
-									.getElementById("confirmPassword").value;
-							var passwordError = document
-									.getElementById("passwordError");
-							var passwordMatch = document
-									.getElementById("passwordMatch");
 
-							// Vérification de la correspondance des mots de passe
-							if (password !== confirmPassword) {
-								passwordError.style.display = "block"; // Affiche le message d'erreur
-								passwordMatch.style.display = "none"; // Cache le message de correspondance
-								return false; // Empêche l'envoi du formulaire
-							} else {
-								passwordError.style.display = "none"; // Cache le message d'erreur
-								passwordMatch.style.display = "block"; // Affiche le message de correspondance
-							}
-
-							// Validation du mot de passe avec un pattern (8-20 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial)
-							var passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,20}$/;
-							if (!passwordPattern.test(password)) {
-								alert("Le mot de passe doit contenir entre 8 et 20 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
-								return false; // Empêche l'envoi du formulaire
-							}
-
-							return true; // Si toutes les validations passent
-						}
-
-						// Associe la fonction de validation au formulaire
-						document.querySelector("form").onsubmit = function() {
-							return validatePasswords(); // Appelle la fonction lors de la soumission du formulaire
-						};
-
-						// Vérifie la correspondance des mots de passe lors de la saisie
-						document.getElementById("confirmPassword")
-								.addEventListener("input", function() {
-									validatePasswords(); // Vérifie à chaque modification du champ confirmation mot de passe
-								});
-					});
-</script>
 

@@ -42,12 +42,14 @@ public class AdresseDAOJdbcImpl implements AdresseDAO {
 		namedParameters.addValue("rue", adresse.getRue()).addValue("code_postal", adresse.getCode_postal())
 				.addValue("ville", adresse.getVille()).addValue("adresse_eni", adresse.isAdresse_eni());
 
-		namedParameterJdbcTemplate.update(INSERT, namedParameters, keyHolder);
+		int rowsAffected = namedParameterJdbcTemplate.update(INSERT, namedParameters, keyHolder);
 
-		// Récupérer l'ID généré pour l'adresse
+		// Log de vérification
 		if (keyHolder.getKey() != null) {
 			adresse.setId(keyHolder.getKey().intValue());
 			return keyHolder.getKey().intValue();
+		} else {
+
 		}
 		return 0;
 	}
