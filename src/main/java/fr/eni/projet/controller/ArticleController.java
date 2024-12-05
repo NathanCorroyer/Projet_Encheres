@@ -3,12 +3,14 @@ package fr.eni.projet.controller;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +29,7 @@ import fr.eni.projet.bll.AdresseService;
 import fr.eni.projet.bll.ArticleService;
 import fr.eni.projet.bll.CategorieService;
 import fr.eni.projet.bll.EnchereService;
+import fr.eni.projet.bll.FilterService;
 import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Article;
@@ -47,16 +50,18 @@ public class ArticleController {
 	private AdresseService adresseService;
 	private EnchereService enchereService;
 	private FileUploadService fileUploadService;
+	private FilterService filterService;
 
 	public ArticleController(ArticleService articleService, CategorieService categorieService,
 			UtilisateurService utilisateurService, AdresseService adresseService, EnchereService enchereService,
-			FileUploadService fileUploadService) {
+			FileUploadService fileUploadService, FilterService filterService) {
 		this.articleService = articleService;
 		this.categorieService = categorieService;
 		this.userService = utilisateurService;
 		this.adresseService = adresseService;
 		this.enchereService = enchereService;
 		this.fileUploadService = fileUploadService;
+		this.filterService = filterService;
 	}
 
 	/**
@@ -152,19 +157,79 @@ public class ArticleController {
 		return "/upload/view-image-upload-article";
 	}
 
+	
 	// Home page with filters
 	@GetMapping("/")
-	public String afficherActiveEncheres(@RequestParam(value = "categorie", required = false) Long categorieId,
-			@RequestParam(value = "nom", required = false) String nom, Model model) {
+	public String afficherActiveEncheres(
+			@RequestParam(value = "categorie", required = false, defaultValue = "0") int categorieId,
+			@RequestParam(value = "nom", required = false) String nom,
+			@RequestParam(value = "statutEnchereAchat", required = false, defaultValue = "0") int statutEnchereAchat,
+			@RequestParam(value = "statutEnchereVente", required = false, defaultValue = "0") int statutEnchereVente,
+			@RequestParam(value = "userType", required = false, defaultValue = "hasEncheri") String userType,
+			Model model) {		
+		
+
 		List<Categorie> categories = articleService.findAllCategories();
 		model.addAttribute("categories", categories);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String pseudoUserConnected = auth != null && !auth.getName().equals("anonymousUser") ? auth.getName() : null;
+		model.addAttribute("pseudoUserConnected", pseudoUserConnected);
+		
+		List<Article> articles = new ArrayList<Article>();
+		// Get the statut
+		if(userType.equals("hasEncheri")) {	
+			Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
+			switch (statutEnchereAchat) {
+			case 2: 
+				articles = articleService.findAllWithEncheres(user.getId());
+				break;
+			case 3 : 
+				articles = articleService.findAllWithEncheresFinies(user.getId());
+				break;
+			default:
+				articles = articleService.findAllActive();
+				break;
+			}
+		}
+		
+		if(userType.equals("isVendeur")) {
+			Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
+			switch (statutEnchereVente) {
+			case 1: 
+				articles = articleService.findEnCoursFromVendeur(user.getId());
+				break;
+			case 2 : 
+				articles = articleService.findNonCommenceeFromVendeur(user.getId());
+				break;
+			default:
+				articles = articleService.findFiniesFromVendeur(user.getId());
+				break;
+			}
+		}
+		
+		
+		
+//		List<Article> articles = articleService.findAllWithEncheres();
 
-		List<Article> articles = articleService.findAllActive();
-		articles = articleService.filterByCategorieAndNom(articles, categorieId, nom);
-
-		articles.sort(Comparator.comparing(Article::getDate_fin));
-
+		// If connected
+//		if (pseudoUserConnected != null) {
+//			Optional<Utilisateur> optionalUtilisateur = userService.findByPseudo(pseudoUserConnected);
+//			if (optionalUtilisateur.isPresent()) {
+//				Utilisateur userConnecte = optionalUtilisateur.get();
+//				
+//				articles = filterService.filterHomePageLogin(articles, categorieId, nom, statut, userConnecte, isVendeur, hasEncheri);
+//			}
+//		// If not connected
+//		} else {
+//			articles = filterService.filterHomePageLogout(articles, categorieId, nom, statut);
+//		}
+		model.addAttribute("userType", userType);
+		model.addAttribute("statutEnchereAchat", statutEnchereAchat);
+		model.addAttribute("statutEnchereVente", statutEnchereVente);
+		articles = filterService.filterHomePageLogin(articles,categorieId, nom);
+		articles.sort(Comparator.comparing(Article::getDate_fin).reversed());
 		model.addAttribute("articles", articles);
+		
 		return "index";
 	}
 

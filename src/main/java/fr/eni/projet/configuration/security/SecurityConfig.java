@@ -71,6 +71,7 @@ public class SecurityConfig {
 				});
 
 		// Configurer la gestion de la session et de la déconnexion
+
 		http.formLogin(form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/session", true).failureUrl("/login?error=true"))
 				.logout(logout -> logout.invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID").logoutSuccessUrl("/")
 						.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll())

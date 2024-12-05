@@ -47,6 +47,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Autowired
 	private AdresseDAO adresseDAO;
+	
 
 	@Autowired
 	private MessageSource message;
@@ -194,9 +195,28 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	public List<Article> findAll() {
-		return articleDAO.findAll();
+		List<Article> articles = articleDAO.findAll();
+		alimenterArticles(articles);
+		return articles;
 	}
 
+	public List<Article> findAllWithEncheres(int userId){
+		var articles = articleDAO.findAllActiveWithEncheres(userId);
+		alimenterArticles(articles);
+		return articles;
+	}
+	
+	@Override
+	public List<Article> findAllWithEncheresFinies(int userId) {
+		var articles = articleDAO.findAllFiniesWithEncheres(userId);
+		alimenterArticles(articles);
+		articles = articles.stream().filter(article -> {
+			Enchere enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId()).get();
+			return userId == enchere.getAcheteur().getId();
+		}).collect(Collectors.toList());
+		return articles;
+	}
+	
 	public List<Categorie> findAllCategories() {
 		return categorieDAO.findAll();
 	}
@@ -215,6 +235,28 @@ public class ArticleServiceImpl implements ArticleService {
 		return articles;
 	}
 
+	
+	@Override
+	public List<Article> findEnCoursFromVendeur(int id) {
+		var articles = articleDAO.findEnCoursFromVendeur(id);
+		alimenterArticles(articles);
+		return articles;
+	}
+
+	@Override
+	public List<Article> findNonCommenceeFromVendeur(int id) {
+		var articles = articleDAO.findNonCommenceeFromVendeur(id);
+		alimenterArticles(articles);
+		return articles;
+	}
+
+	@Override
+	public List<Article> findFiniesFromVendeur(int id) {
+		var articles = articleDAO.findFiniesFromVendeur(id);
+		alimenterArticles(articles);
+		return articles;
+	}
+	
 	@Override
 	public void update(Article article) {
 		BusinessException be = new BusinessException();
@@ -265,6 +307,7 @@ public class ArticleServiceImpl implements ArticleService {
 		return articleDAO.findByUtilisateur(utilisateurId);
 	}
 
+
 	public List<Article> filterByCategorieAndNom(List<Article> articles, Long categorieId, String nom) {
 		return articles.stream()
 				.filter(article -> (categorieId == null || article.getCategorie().getId() == categorieId.intValue())
@@ -298,7 +341,6 @@ public class ArticleServiceImpl implements ArticleService {
 		isValid &= validerPrix(article.getPrix_initial(), be);
 		isValid &= validerAdresse(article.getAdresse(), be);
 //		isValid &= validerStatutEnchere(article.getStatut_enchere(), be);
-//		isValid &= validerPathImage(article.getPath_image(), be);
 
 		return isValid;
 	}
@@ -382,5 +424,18 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 		return true;
 	}
+
+
+	private void alimenterArticles(List<Article> articles) {
+		articles.forEach(article -> {
+			Utilisateur user = userDAO.findById(article.getProprietaire().getId());
+			article.setProprietaire(user);
+			Optional<Enchere> enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
+			if (!enchere.isEmpty()) {
+				article.setPrix_vente(enchere.get().getMontant());
+			}
+		});
+	}
+
 
 }

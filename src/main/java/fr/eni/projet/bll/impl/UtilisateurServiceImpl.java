@@ -57,12 +57,14 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		// Créer l'adresse et récupérer la clé générée
 		int adresseKey = adresseDAO.create(adresse);
 		utilisateur.getAdresse().setId(adresseKey);
+
 		if (!be.isValid()) {
 			throw be;
 		}
-
+		
 		// Hachage du mot de passe
 		String password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(utilisateur.getPassword());
+
 		utilisateur.setPassword(password);
 
 		// Crédit initial

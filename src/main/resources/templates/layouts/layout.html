@@ -28,7 +28,8 @@
 	<main data-th-replace="${contenuPage}"></main>
 
 	<div data-th-replace="~{fragments/fragment-footer :: frag-footer}"></div>
-
+	
+		
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		var messages = {
@@ -38,14 +39,41 @@
 			updateError : /*[[@{#{admin.update.error}}]]*/'Erreur lors de la mise à jour de l\'utilisateur'
 		};
 		/*]]>*/
+    const filterForm = document.getElementById("filterForm");
+		const achatsRadio = document.getElementById("hasEncheri");
+		const ventesRadio = document.getElementById("isVendeur");
+		const achatsSelect = document.getElementById("hasEncheriSelect");
+		const ventesSelect = document.getElementById("isVendeurSelect");
 
-		// Method to reset the URL in the fragment-encheres-actives
-		function resetForm() {
-			document.getElementById("filterForm").reset();
-			document.getElementById("filterForm").submit();
-			window.history.pushState({}, document.title,
-					window.location.pathname);
+		
+	// Methodes fragment-encheres-actives
+	// ##################################
+	
+		// Method to reset the URL 
+		function resetForm(){
+			filterForm.reset();
+			filterForm.submit();			
 		}
+		
+		// Method to enabled/disable selects
+		function toggleSelects(){
+			if (achatsRadio.checked){
+				achatsSelect.disabled = false;
+				ventesSelect.disabled = true;
+				ventesRadio.checked = false;
+			} else if (ventesRadio.checked){
+				ventesSelect.disabled = false;
+				achatsSelect.disabled = true;
+			} else {
+				achatsSelect.disabled = true;
+				ventesSelect.disabled = true;
+			}
+		}
+		
+		achatsRadio.addEventListener('change', toggleSelects);
+		ventesRadio.addEventListener('change', toggleSelects);
+		
+		toggleSelects();
 	</script>
 </body>
 </html>

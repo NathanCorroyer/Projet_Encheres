@@ -4,6 +4,8 @@ import java.util.List;
 
 import fr.eni.projet.bo.Article;
 import fr.eni.projet.bo.Categorie;
+import fr.eni.projet.bo.Utilisateur;
+import fr.eni.projet.enums.StatutEnchere;
 
 public interface ArticleService {
 
@@ -14,6 +16,8 @@ public interface ArticleService {
 	public List<Article> findAll();
 
 	public List<Article> findAllActive();
+	
+	public List<Article> findAllWithEncheres(int userId);
 
 	public List<Categorie> findAllCategories();
 
@@ -31,7 +35,7 @@ public interface ArticleService {
 
 	List<Article> filterByCategorieAndNom(List<Article> articles, Long categorieId, String nom);
 
-	public void uploadImage(String fileName, int idArticle);
+  public void uploadImage(String fileName, int idArticle);
 
 	public void cloturerEncheresDuJour();
 
@@ -39,6 +43,14 @@ public interface ArticleService {
 
 	public String titre(Article article, boolean isEncherisseur, String pseudoWinner, boolean hasEnchere);
 
+	public List<Article> findAllWithEncheresFinies(int userId);
+
+	public List<Article> findEnCoursFromVendeur(int id);
+
+	public List<Article> findNonCommenceeFromVendeur(int id);
+
+	public List<Article> findFiniesFromVendeur(int id);
+  
 	public void marquerCommeLivre(int id);
 
 }
