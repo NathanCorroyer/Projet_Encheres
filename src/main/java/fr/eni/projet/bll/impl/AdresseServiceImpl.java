@@ -31,14 +31,6 @@ public class AdresseServiceImpl implements AdresseService {
 	}
 
 	@Override
-	public Adresse readByIdArticle(int id) {
-		if (id <= 0) {
-			throw new IllegalArgumentException("L'ID de l'article doit être supérieur à 0.");
-		}
-		return adresseDAO.readByIdArticle(id);
-	}
-
-	@Override
 	public Adresse findById(int id) {
 		if (id <= 0) {
 			throw new IllegalArgumentException("L'ID doit être supérieur à 0.");

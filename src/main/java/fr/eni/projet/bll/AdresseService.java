@@ -9,8 +9,6 @@ import fr.eni.projet.bo.Utilisateur;
 public interface AdresseService {
 	public void create(Adresse adresse);
 
-	public Adresse readByIdArticle(int id);
-
 	public Adresse findById(int id);
 
 	public List<Adresse> findAll();
