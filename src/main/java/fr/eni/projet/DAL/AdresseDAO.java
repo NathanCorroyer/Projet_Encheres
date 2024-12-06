@@ -9,8 +9,6 @@ public interface AdresseDAO {
 
 	public int create(Adresse adresse);
 
-	public Adresse readByIdArticle(int id);
-
 	public Adresse findById(int id);
 
 	public List<Adresse> findAll();

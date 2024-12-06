@@ -116,10 +116,4 @@ public class AdresseDAOJdbcImpl implements AdresseDAO {
 		}
 	}
 
-	@Override
-	public Adresse readByIdArticle(int id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -42,12 +42,6 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 
 	private final static String FIND_ALL_ACTIVE = "SELECT a.* FROM ARTICLES a WHERE a.statut_enchere = 1";
 	private final static String FIND_ACTIVE_BY_CATEGORIE = "SELECT no_article, nom_article, description, date_debut_encheres, date_fin_encheres, prix_initial, prix_vente, no_utilisateur, no_categorie, statut_enchere, no_adresse_retrait, path_image FROM ARTICLES WHERE no_categorie = :no_categorie AND statut_enchere = 1";
-	// private final static String FIND_ALL_ACTIVE ="SELECT a.no_article,
-	// a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres,
-	// a.prix_initial, a.prix_vente, a.no_utilisateur, a.no_categorie,
-	// a.statut_enchere, a.no_adresse_retrait, a.path_image, u.pseudo AS
-	// pseudo_proprietaire FROM ARTICLES a JOIN UTILISATEURS u ON a.no_utilisateur =
-	// u.no_utilisateur" + " WHERE a.statut_enchere = 1";
 	private static final String FIND_BY_DATE_AND_STATUT = "SELECT * FROM ARTICLES WHERE CAST(date_debut_encheres AS DATE) = :date_debut_encheres "
 			+ "AND statut_enchere = :statut_enchere";
 	private static final String UPDATE_STATUT = "UPDATE ARTICLES SET statut_enchere = :statut_enchere WHERE no_article = :no_article";
@@ -55,12 +49,6 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 	private static final String FIND_BY_DATE_FIN_AND_STATUT = "SELECT * FROM ARTICLES WHERE CAST(date_fin_encheres AS DATE) < :date_fin_encheres "
 			+ "AND statut_enchere = :statut_enchere";
 	private final static String HAS_ENCHERES = "SELECT COUNT(*) FROM ENCHERES WHERE no_article = :no_article";
-	// private final static String FIND_ALL_ACTIVE ="SELECT a.no_article,
-	// a.nom_article, a.description, a.date_debut_encheres, a.date_fin_encheres,
-	// a.prix_initial, a.prix_vente, a.no_utilisateur, a.no_categorie,
-	// a.statut_enchere, a.no_adresse_retrait, a.path_image, u.pseudo AS
-	// pseudo_proprietaire FROM ARTICLES a JOIN UTILISATEURS u ON a.no_utilisateur =
-	// u.no_utilisateur" + " WHERE a.statut_enchere = 1";
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -90,49 +78,6 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 		return namedParameterJdbcTemplate.query(FIND_ALL_WITH_ENCHERES_FROM_USER,namedParameters,  new ArticleRowMapper());
 	}
 
-	// Filter on the Server
-//	@Override
-//	public List<Article> findAllActive(String nom, Integer categorieId, String sortBy, String sortOrder) {
-//		StringBuilder sql = new StringBuilder(FIND_ALL_ACTIVE);
-//		sql.append(" JOIN categorie c ON a.no_catgeorie = c.no_categorie");
-//		
-//		// Array list to get all the request's parameters
-//		Map<String, Object> params = new HashMap<>();
-//		
-//		// Conditional filters
-//		boolean firstCondition = true;
-//		
-//		// Filter by name
-//		if (nom != null && !nom.isEmpty()) {
-//			if (firstCondition) {
-//				sql.append(" WHERE ");
-//				firstCondition = false;
-//			} else {
-//				sql.append(" AND ");
-//			}
-//			sql.append("e.nom LIKE :nom");
-//			params.put("nom", "%" + nom + "%");
-//		}
-//		
-//		// Filter by categorie
-//		if (categorieId != null) {
-//			if (firstCondition) {
-//				sql.append(" WHERE ");
-//				firstCondition = false;
-//			} else {
-//				sql.append(" AND ");
-//			}
-//			sql.append("e.catgeorie_id = :categorieId");
-//			params.put("categorieId", categorieId);
-//		}
-//		
-//		//Dynamic filters
-//		if (sortBy!= null && sortBy.isEmpty()) {
-//			sql.append(" ORDER BY e.").append(sortBy).append(" ").append(sortOrder != null ? sortOrder : "ASC");
-//		}
-//		
-//		return namedParameterJdbcTemplate.query(sql.toString(), params, new ArticleRowMapper());
-//	}
 
 	@Override
 	public boolean hasEncheres(int articleId) {
@@ -183,9 +128,7 @@ public class ArticleDAOJdbcImpl implements ArticleDAO {
 				.addValue("date_debut_encheres", article.getDate_debut())
 				.addValue("date_fin_encheres", article.getDate_fin())
 				.addValue("prix_initial", article.getPrix_initial())
-//				.addValue("no_utilisateur", article.getProprietaire().getId())
 				.addValue("no_categorie", article.getCategorie().getId())
-//				.addValue("statut_enchere", article.getStatut_enchere().ordinal())
 				.addValue("no_adresse_retrait", article.getAdresse().getId()).addValue("no_article", article.getId());
 
 		namedParameterJdbcTemplate.update(UPDATE, namedParameters);

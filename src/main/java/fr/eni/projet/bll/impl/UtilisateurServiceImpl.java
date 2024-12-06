@@ -184,16 +184,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 			throw new IllegalArgumentException("L'utilisateur est invalide ou non identifié.");
 		}
 		
-		//TODO : Si l'utilisateur va être désactivé, supprimer tous les articles créés par cet utilisateur ainsi que toutes ses encheres
+		//Si l'utilisateur va être désactivé, supprimer tous les articles créés par cet utilisateur ainsi que toutes ses encheres
 		if(utilisateur.isActif()) {
 			gererCascadeDesactivation(utilisateur);
 		}
 		return utilisateurDAO.modifierActivation(utilisateur); // Modification de l'état d'activation
-	}
-
-	@Override
-	public void updateCredit(Utilisateur utilisateur) {
-		utilisateurDAO.updateCredit(utilisateur);
 	}
 
 	@Transactional
@@ -201,10 +196,51 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	public boolean supprimerUser(int id) {
 		//On récupère tous les articles de l'utilisateur à supprimer
 		List<Article> articles = articleDAO.findByUtilisateur(id);
-		//Pour chacun de ces articles
+		//Pour chacun de ces articles, on rend le crédit à l'utilisateur ayant la plus grosse enchère
 		rendreCredit(articles);
+		//Et on supprime toutes les enchères de l'utilisateur (pas besoin de lui rendre ses crédits car compte supprimé?)
 		enchereDAO.deleteEncheresFromUser(id);
 		return utilisateurDAO.delete(id) ;
+	}
+	
+	private void gererCascadeDesactivation(Utilisateur utilisateur) {
+		//On récupère tous les articles de l'utilisateur à supprimer
+		List<Article> articles = articleDAO.findByUtilisateur(utilisateur.getId());
+		//Pour chacun de ces articles, on rend les crédits au plus gros enchérisseur
+		rendreCredit(articles);
+		/*
+		 * Et on appelle les DAO pour gérer les suppressions en cascade
+		 * Sachant que la cascade est également gérée côté SQL, donc ce n'est pas forcément nécessaire ici, mais mesure de sécurité?
+		 */
+		articleDAO.deleteFromUser(utilisateur.getId());
+		enchereDAO.deleteEncheresFromUser(utilisateur.getId());
+	}
+	
+	private void rendreCredit(List<Article> articles) {
+		//Récupération de l'utilisateur en session
+		Utilisateur userConnecte = sessionService.getUserSessionAttribute();
+		//Pour chacun des articles de la liste passée en paramètre
+		articles.forEach( article-> {
+			//On récupère l'enchère la plus haute, gérée avec un Optional
+			Optional<Enchere> enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
+			//Si l'enchère existe, on rend les crédits à l'enchérisseur
+			if(!enchere.isEmpty()) {
+				if(userConnecte.getId() == enchere.get().getAcheteur().getId()) {
+					//Directement à l'utilisateur connecté si toutefois c'est lui
+					userConnecte.setCredit(userConnecte.getCredit() + enchere.get().getMontant());
+					utilisateurDAO.updateCredit(userConnecte);
+				}else {					
+					Utilisateur user = utilisateurDAO.findById(enchere.get().getAcheteur().getId());
+					user.setCredit(user.getCredit() + enchere.get().getMontant());
+					utilisateurDAO.updateCredit(user);
+				}
+			}
+		});
+	}
+
+	@Override
+	public void updateCredit(Utilisateur utilisateur) {
+		utilisateurDAO.updateCredit(utilisateur);
 	}
 
 	/**
@@ -325,31 +361,5 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 
 	
-	private void gererCascadeDesactivation(Utilisateur utilisateur) {
-		//On récupère tous les articles de l'utilisateur à supprimer
-		List<Article> articles = articleDAO.findByUtilisateur(utilisateur.getId());
-		//Pour chacun de ces articles
-		rendreCredit(articles);
-		articleDAO.deleteFromUser(utilisateur.getId());
-		enchereDAO.deleteEncheresFromUser(utilisateur.getId());
-	}
 	
-	private void rendreCredit(List<Article> articles) {
-		Utilisateur userConnecte = sessionService.getUserSessionAttribute();
-		articles.forEach( article-> {
-			//On récupère l'enchère la plus haute
-			Optional<Enchere> enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
-			//Si l'enchère existe, on rend les crédits à l'enchérisseur
-			if(!enchere.isEmpty()) {
-				if(userConnecte.getId() == enchere.get().getAcheteur().getId()) {
-					userConnecte.setCredit(userConnecte.getCredit() + enchere.get().getMontant());
-					utilisateurDAO.updateCredit(userConnecte);
-				}else {					
-					Utilisateur user = utilisateurDAO.findById(enchere.get().getAcheteur().getId());
-					user.setCredit(user.getCredit() + enchere.get().getMontant());
-					utilisateurDAO.updateCredit(user);
-				}
-			}
-		});
-	}
 }
