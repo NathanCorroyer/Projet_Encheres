@@ -1,22 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{})}">
+<html xmlns:th="http://www.thymeleaf.org" data-th-replace="~{/layouts/layout :: layout-projet(titrePage = ~{ :: title}, contenuPage = ~{::#contenuPage}, ressourcesSupp = ~{::#ressourcesSupp})}">
 <head>
 <meta charset="UTF-8">
 <title data-th-text="#{index.title}"></title>
-<link rel="stylesheet" th:href="@{/css/layout.css}" />
+<th:block id="ressourcesSupp">
+	<link rel="stylesheet" th:href="@{/css/errors.css}" />
+</th:block>
 </head>
 <body>
 	<main id="contenuPage">
 		<div class="header-container">
 			<h1 data-th-text="#{view-article-form.h1}"></h1>
-			
+
 		</div>
-		<form
-			data-th-replace="~{fragments/fragment-article-form :: frag-article-form(action = '/articles/vendre', text_button = #{view-article-form.btn}, disabled = false, visible = true)}">
-		</form>
-		<p data-th-each="err : ${#fields.errors('global')}"
-			data-th-text="#{${err}}"></p>
+		<form data-th-replace="~{fragments/fragment-article-form :: frag-article-form(action = '/articles/vendre', text_button = #{view-article-form.btn}, disabled = false, visible = true)}"></form>
+		<p data-th-each="err : ${#fields.errors('global')}" data-th-text="#{${err}}"></p>
 	</main>
 </body>
 </html>
