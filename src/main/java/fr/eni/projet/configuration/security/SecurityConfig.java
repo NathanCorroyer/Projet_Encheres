@@ -44,43 +44,37 @@ public class SecurityConfig {
 	@SuppressWarnings("removal")
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http, UserSecurity userSecurity) throws Exception {
-		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**", "/users/retrait/**"))
+		http.csrf(csrf -> csrf.ignoringRequestMatchers("/articles/editer/**", "/users/retrait/**", "/admin/users/activation/**", "/admin/users/delete/**", "/categories/delete/**"))
 				.authorizeHttpRequests(auth -> {
 					auth.requestMatchers("/").permitAll();
 					auth.requestMatchers("/css/*").permitAll();
 					auth.requestMatchers("/img/*").permitAll();
-					auth.requestMatchers("/articles/vendre").authenticated();
 					auth.requestMatchers("/users/creer").permitAll();
 					auth.requestMatchers("/uploads/**").permitAll();
 
+					auth.requestMatchers("/articles/vendre").access((authentication, context) -> UserSecurity.isUserActif());
 					// Configurer les règles de sécurité pour des routes spécifiques avant
 					// 'anyRequest'
 					auth.requestMatchers("/articles/editer/**").access((authentication, context) -> {
-						AuthorizationDecision decision = userSecurity.hasAccessToArticle(authentication.get(),
-								context.getRequest());
+						AuthorizationDecision decision = userSecurity.hasAccessToArticle(authentication.get(), context.getRequest());
 						return decision;
 					});
 					auth.requestMatchers("/articles/delete/**").access((authentication, context) -> {
-						AuthorizationDecision decision = userSecurity.hasAccessToArticle(authentication.get(),
-								context.getRequest());
+						AuthorizationDecision decision = userSecurity.hasAccessToArticle(authentication.get(), context.getRequest());
 						return decision;
 					});
-					auth.requestMatchers("/users/modifiermdp/**").access((authentication, context) -> UserSecurity
-							.hasAccessToUser(authentication.get(), context.getRequest()));
+					auth.requestMatchers("/users/modifiermdp/**").access((authentication, context) -> UserSecurity.hasAccessToUser(authentication.get(), context.getRequest()));
 
-					auth.requestMatchers("/users/retrait/**").authenticated();
-
+					auth.requestMatchers("/admin/**").hasRole("ADMIN");
+					auth.requestMatchers("/categories/**").hasRole("ADMIN");
 					auth.anyRequest().authenticated();
 				});
 
 		// Configurer la gestion de la session et de la déconnexion
-		http.formLogin(form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/session", true)
-				.failureUrl("/login?error=true"))
-				.logout(logout -> logout.invalidateHttpSession(true).clearAuthentication(true)
-						.deleteCookies("JSESSIONID").logoutSuccessUrl("/")
+		http.formLogin(form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/session", true).failureUrl("/login?error=true"))
+				.logout(logout -> logout.invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID").logoutSuccessUrl("/")
 						.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll())
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-						.maximumSessions(1).expiredUrl("/login").and().invalidSessionUrl("/login"));
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).maximumSessions(1).expiredUrl("/login").and().invalidSessionUrl("/login"));
 
 		return http.build();
 	}

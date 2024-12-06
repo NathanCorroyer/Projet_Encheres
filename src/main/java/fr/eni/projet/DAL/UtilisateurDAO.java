@@ -23,7 +23,9 @@ public interface UtilisateurDAO {
 
 	public void updateCredit(Utilisateur utilisateur);
 
-	public void modifierActivation(Utilisateur utilisateur);
+	public boolean modifierActivation(Utilisateur utilisateur);
 
 	public Optional<Utilisateur> findByEmail(String email);
+	
+	public boolean delete(int id);
 }

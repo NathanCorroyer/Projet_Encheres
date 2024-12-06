@@ -6,6 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import fr.eni.projet.bll.ArticleService;
+import fr.eni.projet.bo.Utilisateur;
+import fr.eni.projet.service.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
@@ -13,6 +15,12 @@ public class UserSecurity {
 
 	@Autowired
 	private ArticleService articleService;
+	@Autowired
+	private static SessionService sessionService;
+	
+	public UserSecurity(SessionService sessionService) {
+		UserSecurity.sessionService = sessionService;
+	}
 
 	public static AuthorizationDecision hasAccessToUser(Authentication auth, HttpServletRequest request) {
 		String requestedPseudo = request.getParameter("pseudo");
@@ -24,7 +32,6 @@ public class UserSecurity {
 		String uri = request.getRequestURI();
 		String[] uriParts = uri.split("/");
 		String articleIdStr = uriParts[uriParts.length - 1];
-		System.out.println(articleIdStr);
 		if (articleIdStr == null) {
 			return new AuthorizationDecision(false); // Aucun ID d'article trouvé
 		}
@@ -38,7 +45,6 @@ public class UserSecurity {
 
 			// Vérifier que l'utilisateur connecté est le propriétaire de l'article
 			String articleOwner = article.getProprietaire().getPseudo();
-			System.out.println(articleOwner);// Extraire le propriétaire
 
 			return new AuthorizationDecision(loggedInUser.equals(articleOwner));
 
@@ -47,4 +53,8 @@ public class UserSecurity {
 		}
 	}
 
+	public static AuthorizationDecision isUserActif() {
+		Utilisateur userConnecte = sessionService.getUserSessionAttribute();
+		return new AuthorizationDecision(userConnecte.isActif());
+	} 
 }

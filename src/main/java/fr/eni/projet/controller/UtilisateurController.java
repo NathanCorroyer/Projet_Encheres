@@ -10,6 +10,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,21 +49,19 @@ public class UtilisateurController {
 		this.userService = userService;
 	}
 
+	// Méthode pour charger l'utilisateur en session
 	/**
 	 * Charger le user en session pour les utiliser dans toutes les vues de ce
 	 * contrôleur.
 	 */
+  
 	@ModelAttribute("userSession")
 	public Utilisateur chargerUtilisateurConnecte(Authentication auth) {
 		return userService.findByPseudo(auth.getName()).get();
 	}
 
-//	// Méthode pour charger l'utilisateur en session
-//		@ModelAttribute("userSession")
-//		public Utilisateur chargerUserSession() {
-//			return userService.findByPseudo(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
-//		}
-//	
+
+	
 	@GetMapping("/creer")
 	private String creer(@ModelAttribute("user") Utilisateur user) {
 		if (user.getAdresse() == null) {

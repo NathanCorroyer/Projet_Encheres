@@ -9,21 +9,36 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.eni.projet.DAL.AdresseDAO;
+import fr.eni.projet.DAL.ArticleDAO;
+import fr.eni.projet.DAL.EnchereDAO;
 import fr.eni.projet.DAL.UtilisateurDAO;
 import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Adresse;
+import fr.eni.projet.bo.Article;
+import fr.eni.projet.bo.Enchere;
 import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.exceptions.BusinessCode;
 import fr.eni.projet.exceptions.BusinessException;
+import fr.eni.projet.service.SessionService;
 
 @Service
 public class UtilisateurServiceImpl implements UtilisateurService {
 
 	@Autowired
-	UtilisateurDAO utilisateurDAO;
+	private UtilisateurDAO utilisateurDAO;
 
 	@Autowired
 	private AdresseDAO adresseDAO;
+	
+	@Autowired
+	private EnchereDAO enchereDAO;
+
+	@Autowired
+	private ArticleDAO articleDAO;
+	
+	@Autowired
+	private SessionService sessionService;
+	
 
 	@Override
 	@Transactional
@@ -162,16 +177,31 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 	}
 
 	@Override
-	public void modifierActivation(Utilisateur utilisateur) {
+	public boolean modifierActivation(Utilisateur utilisateur) {
 		if (utilisateur == null || utilisateur.getId() <= 0) {
 			throw new IllegalArgumentException("L'utilisateur est invalide ou non identifié.");
 		}
-		utilisateurDAO.modifierActivation(utilisateur); // Modification de l'état d'activation
+		
+		//TODO : Si l'utilisateur va être désactivé, supprimer tous les articles créés par cet utilisateur ainsi que toutes ses encheres
+		if(utilisateur.isActif()) {
+			gererCascadeDesactivation(utilisateur);
+		}
+		return utilisateurDAO.modifierActivation(utilisateur); // Modification de l'état d'activation
 	}
 
 	@Override
 	public void updateCredit(Utilisateur utilisateur) {
 		utilisateurDAO.updateCredit(utilisateur);
+	}
+
+	@Transactional
+	@Override
+	public boolean supprimerUser(int id) {
+		//On récupère tous les articles de l'utilisateur à supprimer
+		List<Article> articles = articleDAO.findByUtilisateur(id);
+		//Pour chacun de ces articles
+		rendreCredit(articles);
+		return enchereDAO.deleteEncheresFromUser(id) && utilisateurDAO.delete(id) ;
 	}
 
 	/**
@@ -291,4 +321,32 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		return isValid;
 	}
 
+	
+	private void gererCascadeDesactivation(Utilisateur utilisateur) {
+		//On récupère tous les articles de l'utilisateur à supprimer
+		List<Article> articles = articleDAO.findByUtilisateur(utilisateur.getId());
+		//Pour chacun de ces articles
+		rendreCredit(articles);
+		articleDAO.deleteFromUser(utilisateur.getId());
+		enchereDAO.deleteEncheresFromUser(utilisateur.getId());
+	}
+	
+	private void rendreCredit(List<Article> articles) {
+		Utilisateur userConnecte = sessionService.getUserSessionAttribute();
+		articles.forEach( article-> {
+			//On récupère l'enchère la plus haute
+			Optional<Enchere> enchere = enchereDAO.findBiggestEnchereFromArticle(article.getId());
+			//Si l'enchère existe, on rend les crédits à l'enchérisseur
+			if(!enchere.isEmpty()) {
+				if(userConnecte.getId() == enchere.get().getAcheteur().getId()) {
+					userConnecte.setCredit(userConnecte.getCredit() + enchere.get().getMontant());
+					utilisateurDAO.updateCredit(userConnecte);
+				}else {					
+					Utilisateur user = utilisateurDAO.findById(enchere.get().getAcheteur().getId());
+					user.setCredit(user.getCredit() + enchere.get().getMontant());
+					utilisateurDAO.updateCredit(user);
+				}
+			}
+		});
+	}
 }
