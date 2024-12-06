@@ -67,7 +67,7 @@
 							</div>
 						</div>
 					</div>
-					<div data-th-if="${!isOwner && encherisseur.pseudo != userSession.pseudo && article.statut_enchere.value == 1 && userSession.actif}">
+					<div data-th-if="${!isOwner && userSession != null && encherisseur.pseudo != userSession.pseudo && article.statut_enchere.value == 1 && userSession.actif}">
 						<div th:replace="~{fragments/fragment-enchere-form :: frag-enchere-form(action = '/encheres/creer')}"></div>
 					</div>
 					<!-- Bouton Modifier affiché uniquement si l'utilisateur est le propriétaire -->
@@ -89,7 +89,7 @@
 						</div>
 
 						<!-- Bouton Retour à l'accueil affiché dans tous les cas -->
-						<div class="w-50 ms-2">
+						<div class="w-50 ms-2"> 
 							<a href="/" class="btn btn-secondary w-100" th:text="#{label.home}"></a>
 						</div>
 					</div>
