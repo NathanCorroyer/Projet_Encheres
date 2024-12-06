@@ -78,7 +78,11 @@
 							<a class="btn btn-primary w-100" th:href="@{/articles/editer/{id}(id=${article.id})}" th:text="#{label.modify}"></a>
 
 						</div>
+						<div th:if="${isOwner && article.statut_enchere.value <= 1}" class="w-50">
 
+							<a class="btn btn-success w-100" th:href="@{/articles/picture/{id}(id=${article.id})}" th:text="#{label.add.picture}"></a>
+
+						</div>
 						<!-- Bouton Retrait effectué affiché uniquement si l'article est clôturé et qu'il y a au moins une enchère -->
 						<div th:if="${isOwner && showRetraitEffectue}" class="w-50 ms-2">
 							<a href="#" id="btn-retrait-effectue" th:data-id="${article.id}" class="btn btn-success w-100" th:text="#{label.withdrawalCompleted}"></a>
