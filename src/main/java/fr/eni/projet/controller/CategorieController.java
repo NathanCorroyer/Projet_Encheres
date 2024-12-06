@@ -40,7 +40,6 @@ public class CategorieController {
                 .getRequest()
                 .getLocale() : Locale.FRANCE;
 		
-		System.out.println("Current locale: " + locale);
 	}
 	@GetMapping("/creer")
 	public String creerCategorieGet(@ModelAttribute("categorie") Categorie categorie) {

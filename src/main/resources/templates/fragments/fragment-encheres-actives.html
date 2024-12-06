@@ -35,20 +35,20 @@
 			<div class="row m-3">
 				<div class="col-3 mb-3">
 					<input class="col-3 mb-3" type="radio" id="hasEncheri" name="userType" value="hasEncheri" th:checked="${userType == 'hasEncheri'}" /> 
-					<label for="hasEncheri" class="form-label">Achats</label>
+					<label for="hasEncheri" class="form-label" data-th-text="#{achats}"></label>
 					<select id="hasEncheriSelect" name="statutEnchereAchat" class="form-select" disabled>
-						<option th:value="1" th:selected="${statutEnchereAchat == 1}">Enchères ouvertes</option>
-						<option th:value="2" th:selected="${statutEnchereAchat == 2}">Mes enchères en cours</option>
-						<option th:value="3" th:selected="${statutEnchereAchat == 3}">Mes enchères remportées</option>
+						<option th:value="1" th:selected="${statutEnchereAchat == 1}" data-th-text="#{mes.encheres.ouvertes}"></option>
+						<option th:value="2" th:selected="${statutEnchereAchat == 2}" data-th-text="#{mes.encheres.en.cours}"></option>
+						<option th:value="3" th:selected="${statutEnchereAchat == 3}" data-th-text="#{mes.encheres.remportees}"></option>
 					</select>
 				</div>
 				<div class="col-3 mb-3">
 					<input class="col-3 mb-3" type="radio" id="isVendeur" name="userType"  value="isVendeur" th:checked="${userType == 'isVendeur'}"/> 
-					<label for="isVendeur" class="form-label">Ventes</label>
+					<label for="isVendeur" class="form-label" data-th-text="#{ventes}"></label>
 					<select id="isVendeurSelect" name="statutEnchereVente" class="form-select" disabled>
-						<option th:value="1" th:selected="${statutEnchereVente == 1}">Mes ventes en cours</option>
-						<option th:value="2" th:selected="${statutEnchereVente == 2}">Mes ventes non débutées</option>
-						<option th:value="3" th:selected="${statutEnchereVente == 3}">Mes ventes terminées</option>
+						<option th:value="1" th:selected="${statutEnchereVente == 1}" data-th-text="#{mes.ventes.en.cours}"></option>
+						<option th:value="2" th:selected="${statutEnchereVente == 2}" data-th-text="#{mes.ventes.non.debutees}"></option>
+						<option th:value="3" th:selected="${statutEnchereVente == 3}" data-th-text="#{mes.ventes.terminees}"></option>
 					</select>
 				</div>
 			</div>
