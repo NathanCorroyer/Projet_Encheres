@@ -105,9 +105,9 @@ public class EnchereDAOJdbcImpl implements EnchereDAO {
 
 
 	@Override
-	public boolean deleteEncheresFromUser(int id) {
+	public void deleteEncheresFromUser(int id) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("no_utilisateur", id);
-		return namedParameterJdbcTemplate.update(DELETE_FROM_USER, namedParameters) > 0;
+		namedParameterJdbcTemplate.update(DELETE_FROM_USER, namedParameters);
 	}
 }

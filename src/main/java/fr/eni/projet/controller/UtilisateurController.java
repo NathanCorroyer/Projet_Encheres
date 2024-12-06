@@ -30,13 +30,14 @@ import fr.eni.projet.bll.UtilisateurService;
 import fr.eni.projet.bo.Adresse;
 import fr.eni.projet.bo.Utilisateur;
 import fr.eni.projet.exceptions.BusinessException;
+import fr.eni.projet.service.SessionService;
 import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
 @SessionAttributes({ "userSession" })
 public class UtilisateurController {
-
+	@Autowired
 	private UtilisateurService userService;
 
 	@Autowired
@@ -45,8 +46,10 @@ public class UtilisateurController {
 	@Autowired
 	private ArticleService articleService;
 
-	public UtilisateurController(UtilisateurService userService) {
-		this.userService = userService;
+	@Autowired
+	SessionService sessionService;
+
+	public UtilisateurController() {
 	}
 
 	// Méthode pour charger l'utilisateur en session
@@ -54,14 +57,12 @@ public class UtilisateurController {
 	 * Charger le user en session pour les utiliser dans toutes les vues de ce
 	 * contrôleur.
 	 */
-  
+
 	@ModelAttribute("userSession")
 	public Utilisateur chargerUtilisateurConnecte(Authentication auth) {
 		return userService.findByPseudo(auth.getName()).get();
 	}
 
-
-	
 	@GetMapping("/creer")
 	private String creer(@ModelAttribute("user") Utilisateur user) {
 		if (user.getAdresse() == null) {
@@ -91,22 +92,19 @@ public class UtilisateurController {
 	}
 
 	@GetMapping("/profil")
-	private String afficher(@RequestParam(name = "pseudo", required = true) String pseudo, Model model,
-			RedirectAttributes redirectAttributes) {
+	private String afficher(@RequestParam(name = "pseudo", required = true) String pseudo, Model model, RedirectAttributes redirectAttributes) {
 		model.addAttribute("user", userService.findByPseudo(pseudo).get());
 		redirectAttributes.addAttribute("pseudo", pseudo);
 		return "/utilisateurs/view-profil-user";
 	}
 
 	@PostMapping("/profil")
-	private String modifier(@ModelAttribute("user") Utilisateur user, BindingResult bindingResult,
-			RedirectAttributes redirectAttributes, Authentication auth) {
+	private String modifier(@ModelAttribute("user") Utilisateur user, BindingResult bindingResult, RedirectAttributes redirectAttributes, Authentication auth) {
 		Utilisateur origine = userService.findById(user.getId());
 		String pseudoUserConnected = auth.getName();
 		if (!pseudoUserConnected.equals(origine.getPseudo())) {
 			redirectAttributes.addAttribute("pseudo", auth.getName());
-			redirectAttributes.addFlashAttribute("error",
-					"Vous ne pouvez pas modifier le profil d'un autre utilisateur.");
+			redirectAttributes.addFlashAttribute("error", "Vous ne pouvez pas modifier le profil d'un autre utilisateur.");
 
 			return "redirect:/users/profil";
 		}
@@ -142,10 +140,8 @@ public class UtilisateurController {
 	}
 
 	@PostMapping("/modifiermdp")
-	private String updateMdp(@RequestParam(name = "pseudo", required = true) String pseudo,
-			@RequestParam(name = "currentPassword", required = true) String currentPassword,
-			@RequestParam(name = "newPassword", required = true) String newPassword,
-			@RequestParam(name = "confirmPassword", required = true) String confirmPassword,
+	private String updateMdp(@RequestParam(name = "pseudo", required = true) String pseudo, @RequestParam(name = "currentPassword", required = true) String currentPassword,
+			@RequestParam(name = "newPassword", required = true) String newPassword, @RequestParam(name = "confirmPassword", required = true) String confirmPassword,
 			RedirectAttributes redirectAttributes, Authentication auth) {
 
 		Locale locale = LocaleContextHolder.getLocale();
@@ -153,14 +149,12 @@ public class UtilisateurController {
 		Utilisateur user = userService.findByPseudo(pseudoUserConnected).get();
 
 		if (!pseudoUserConnected.equals(pseudo)) {
-			redirectAttributes.addFlashAttribute("error",
-					messageSource.getMessage("modification.mdp.acces.interdit", null, locale));
+			redirectAttributes.addFlashAttribute("error", messageSource.getMessage("modification.mdp.acces.interdit", null, locale));
 			return "redirect:/users/profil?pseudo=" + pseudo;
 		}
 		try {
 			userService.updatePassword(user, currentPassword, newPassword, confirmPassword);
-			redirectAttributes.addFlashAttribute("message",
-					messageSource.getMessage("modification.mdp.reussite", null, locale));
+			redirectAttributes.addFlashAttribute("message", messageSource.getMessage("modification.mdp.reussite", null, locale));
 			return "redirect:/users/profil?pseudo=" + pseudo;
 		} catch (BusinessException e) {
 			List<String> errorMessages = new ArrayList<>();
@@ -176,7 +170,6 @@ public class UtilisateurController {
 	@PostMapping("/retrait/{articleId}")
 	@ResponseBody
 	public ResponseEntity<?> retirerArticle(@PathVariable("articleId") int id) {
-		System.out.println(id);
 		try {
 			if (id == 0) {
 				return ResponseEntity.badRequest().body("ID de l'article non fourni.");
@@ -191,9 +184,23 @@ public class UtilisateurController {
 			return ResponseEntity.badRequest().body("Erreur dans les paramètres : " + e.getMessage());
 		} catch (BusinessException e) {
 			e.printStackTrace(); // Afficher les détails de l'erreur
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Erreur lors du traitement. Détails : " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors du traitement. Détails : " + e.getMessage());
 		}
 	}
 
+	@GetMapping("/delete")
+	public String deleteUser(Model model, RedirectAttributes redirectAttributes) {
+		Utilisateur user = sessionService.getUserSessionAttribute();
+		if (user == null) {
+			return "redirect:/login";
+		}
+		if (userService.supprimerUser(user.getId())) {
+			model.addAttribute("succes", "account.delete.success");
+			return "redirect:/logout";
+		} else {
+			model.addAttribute("erreur", "account.delete.error");
+			redirectAttributes.addAttribute("pseudo", user.getPseudo());
+			return "/utilisateurs/view-profil-user";
+		}
+	}
 }

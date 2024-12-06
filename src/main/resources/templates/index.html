@@ -12,6 +12,9 @@
 	<main id="contenuPage" class="center-main">
 		<section class="center-section">
 			<h1 data-th-text="#{index.h1}"></h1>
+			<div data-th-if = "${succes != null && succes != ''}">
+				<p class="alert alert-success mx-auto text-center" data-th-text="#{${succes}}"></p>
+			</div>
 			<div data-th-replace="~{fragments/fragment-encheres-actives :: frag-encheres-actives}"></div>
 		</section>
 	</main>
