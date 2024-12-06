@@ -1,27 +1,59 @@
 html, body {
-    height: 100%;  
-    margin: 0;    
+    margin: 0;
+    padding: 0;
+    min-height: 100%; /* Assure une hauteur minimale de la page */
+    display: flex;
+    flex-direction: column; /* Organise en colonnes : header, main, footer */
 }
 
 body {
+    flex: 1;
+}
+
+main {
+    flex: 1; /* Prend tout l'espace disponible entre le header et le footer */
     display: flex;
     flex-direction: column;
 }
 
-main {
-    flex: 1;  
+.navbar {
+    display: flex;                  /* Utilisation de Flexbox */
+    justify-content: space-between; /* Les éléments sont espacés */
+    align-items: center;            /* Centrer les éléments verticalement */
+    width: 100%;     
+    flex-wrap: wrap; /* Permet de passer à une nouvelle ligne si nécessaire */
+    padding: 0;               /* La barre prend toute la largeur */
 }
+
+.navbar-nav {
+    display: flex;                  /* Les éléments de la navbar sont alignés sur une ligne */
+    list-style-type: none;          /* Enlève les puces des éléments */
+    padding: 0;                     /* Enlève le padding par défaut */
+    margin: 0;                      /* Enlève la marge par défaut */
+    flex-wrap: nowrap;              /* Évite que les éléments se déplacent sur plusieurs lignes */
+}
+
+.navbar-nav .nav-item {
+    margin-right: 20px;             /* Ajoute un espacement entre les éléments */
+}
+
+.nav-link {
+    color: white;                   /* Couleur des liens */
+    text-decoration: none;          /* Enlève le soulignement des liens */
+    padding: 5px 10px;              /* Espacement interne des liens */
+    border-radius: 5px;             /* Bords arrondis pour les liens */
+}
+
 
 footer {
-    padding: 10px;
-    text-align: center;
-    color: white;
-    margin-top: auto;  
     width: 100%;
-}
-
-header {
-    padding: 20px;
+    padding: 10px;
+    background-color: #333; /* Exemples de styles */
+    color: white;
+    text-align: center;
+    box-sizing: border-box;
+    margin-top: auto; /* Force le footer à toujours se placer après le contenu principal */
+    position: relative; /* Pour empêcher tout chevauchement avec le contenu */
 }
 
 header .nav-link:hover {
@@ -31,10 +63,12 @@ header .nav-link:hover {
 }
 
 .header-container {
-    display: flex;              /* Flexbox pour aligner les éléments */
-    justify-content: space-between; /* Espaces égaux entre le titre et la carte */
-    align-items: center;        /* Centre les éléments verticalement */
-    width: 100%;                /* Prend toute la largeur disponible */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap; /* Permet aux éléments du header de passer à une nouvelle ligne si nécessaire */
+    padding: 10px;  /* Assurez-vous que le padding est suffisant pour bien espacer les éléments */
 }
 
 h1 {
@@ -44,12 +78,12 @@ h1 {
 }
 
 .date-card {
-	width: 250px;
-	float: right;
-	margin-top: 20px;
-	margin-left: 20px; 
-	margin-bottom: 20px;
-	margin-right: 20px;
+    width: 250px;
+    float: right;  /* Force la carte à droite */
+    margin-top: 20px;
+    margin-left: 20px; 
+    margin-bottom: 20px;
+    margin-right: 20px;
     background-color: #f8f9fa; /* Couleur de fond */
     border: 1px solid #ddd; /* Bordure légère */
     border-radius: 5px; /* Coins arrondis */
@@ -57,7 +91,52 @@ h1 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre */
     font-size: 14px;
     color: #333; /* Couleur du texte */
-    
+    box-sizing: border-box;
 }
 
+/* Ajuster la disposition en fonction de la taille de l'écran */
+@media (max-width: 768px) {
+	
+	.navbar {
+        flex-direction: column;    /* Centre les éléments */
+    }
 
+    .navbar-nav {
+        flex-direction: row;       /* Garde les liens alignés horizontalement */
+        justify-content: flex-start; /* Les liens restent alignés à gauche */
+        width: 100%;       /* Un petit espace au-dessus des liens */
+    }
+
+    .navbar-nav .nav-item {
+        margin-right: 10px; 
+    }
+	
+    body {
+        padding: 0 10px;  /* Ajoute un petit padding sur les côtés pour éviter le débordement */
+    }
+
+    .header-container {
+        flex-direction: column; /* Empile les éléments de l'en-tête sur les petits écrans */
+        text-align: center;
+    }
+
+    .date-card {
+        width: auto; /* La carte garde sa largeur sur les petits écrans */
+        margin-left: auto;  /* Alignement à droite sur les petits écrans */
+        margin-right: auto; /* Alignement à droite */
+        float: none;  /* Annule le float sur les petits écrans */
+    }
+    
+    main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    footer {
+        position: relative; /* Empêche le chevauchement avec du contenu */
+        margin-top: auto; /* Assure que le footer est en bas même avec peu de contenu */
+    }
+    
+    
+}
