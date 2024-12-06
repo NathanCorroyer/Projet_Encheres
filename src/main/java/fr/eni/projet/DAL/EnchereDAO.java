@@ -16,6 +16,6 @@ public interface EnchereDAO {
 
 	public Optional<Enchere> findBiggestEnchereFromArticle(int id_article);
 
-	public boolean deleteEncheresFromUser(int id);
+	public void deleteEncheresFromUser(int id);
 
 }

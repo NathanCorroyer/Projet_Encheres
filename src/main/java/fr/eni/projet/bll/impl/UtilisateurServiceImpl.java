@@ -203,7 +203,8 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 		List<Article> articles = articleDAO.findByUtilisateur(id);
 		//Pour chacun de ces articles
 		rendreCredit(articles);
-		return enchereDAO.deleteEncheresFromUser(id) && utilisateurDAO.delete(id) ;
+		enchereDAO.deleteEncheresFromUser(id);
+		return utilisateurDAO.delete(id) ;
 	}
 
 	/**
