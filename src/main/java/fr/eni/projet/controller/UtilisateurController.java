@@ -58,10 +58,6 @@ public class UtilisateurController {
 	 * contrôleur.
 	 */
 
-	@ModelAttribute("userSession")
-	public Utilisateur chargerUtilisateurConnecte(Authentication auth) {
-		return userService.findByPseudo(auth.getName()).get();
-	}
 
 	@GetMapping("/creer")
 	private String creer(@ModelAttribute("user") Utilisateur user) {
@@ -81,7 +77,7 @@ public class UtilisateurController {
 
 		try {
 			userService.create(user);
-			return "redirect:/login";
+			return sessionService.getUserSessionAttribute() == null ? "redirect:/login" : "redirect:/admin/dashboard";
 		} catch (BusinessException e) {
 			e.getClefsExternalisations().forEach(key -> {
 				ObjectError error = new ObjectError("globalError", key);
